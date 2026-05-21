@@ -1,95 +1,287 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Our Product Catalog</title>
+
+    <!-- Tailwind & Google Fonts -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+
     <style>
-        body { font-family: system-ui, sans-serif; background: #fdfdfd; padding: 40px; color: #333; }
-        h1 { text-align: center; margin-bottom: 40px; }
-        
-        /* This sets up a clean, responsive product grid */
-        .catalog-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
-            gap: 30px; 
-            max-width: 1100px; 
-            margin: 0 auto; 
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
         }
-        
-        .product-card { 
-            background: white; 
-            border: 1px solid #eee; 
-            border-radius: 8px; 
-            padding: 16px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            display: flex;
-            flex-direction: column;
+
+        ::-webkit-scrollbar {
+            width: 4px;
         }
-        
-        .product-image { 
-            width: 100%; 
-            height: 200px; 
-            object-fit: cover; /* Keeps images crisp without distortion */
-            border-radius: 4px; 
-            background: #f0f0f0;
+
+        ::-webkit-scrollbar-track {
+            background: #f9f9f9;
         }
-        
-        .product-title { font-size: 18px; margin: 15px 0 8px 0; font-weight: bold; }
-        .product-price { font-size: 16px; color: #000; font-weight: 600; margin-bottom: 10px; }
-        .buy-button { background: #000; color: #fff; text-align: center; padding: 10px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px; margin-top: auto; }
+
+        ::-webkit-scrollbar-thumb {
+            background: #000;
+        }
+
+        .mobile-menu-open {
+            overflow: hidden;
+        }
     </style>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#1a1c1c",
+                        "surface-bright": "#f9f9f9",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface": "#f9f9f9",
+                        "on-surface": "#1a1c1c",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#e8e8e8",
+                        "on-surface-variant": "#4c4546",
+                        "primary-fixed": "#e2e2e2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1a1c1c",
+                        "outline-variant": "#cfc4c5",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-primary-fixed": "#1b1b1b",
+                        "surface-container-low": "#f4f3f3",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "on-error": "#ffffff",
+                        "primary": "#000000",
+                        "inverse-primary": "#c6c6c6",
+                        "tertiary": "#000000",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "inverse-surface": "#2f3131",
+                        "on-secondary-container": "#616363",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-secondary-fixed-variant": "#454747",
+                        "primary-container": "#1b1b1b",
+                        "outline": "#7e7576",
+                        "surface-tint": "#5e5e5e",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#dfe0e0",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-primary-container": "#848484",
+                        "surface-dim": "#dadada",
+                        "secondary": "#5d5f5f",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "on-tertiary-container": "#838484",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "surface-container": "#eeeeee",
+                        "error": "#ba1a1a",
+                        "background": "#f9f9f9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "80px",
+                        "stack-md": "40px",
+                        "gutter": "24px",
+                        "stack-xl": "120px",
+                        "margin-mobile": "20px",
+                        "margin-desktop": "64px",
+                        "stack-sm": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Bodoni Moda"],
+                        "headline-lg": ["Bodoni Moda"],
+                        "label-caps": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "nav-link": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Bodoni Moda"],
+                        "display-lg": ["Bodoni Moda"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "400" }],
+                        "headline-lg": ["48px", { "lineHeight": "56px", "fontWeight": "500" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "nav-link": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "38px", "fontWeight": "500" }],
+                        "display-lg": ["80px", { "lineHeight": "88px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
 </head>
-<body>
 
-    <h1>Product Catalog</h1>
+<body class="bg-surface text-on-surface font-body-md antialiased transition-colors duration-300">
 
-    <!-- Our JavaScript will inject the products right inside this container -->
-    <div class="catalog-grid" id="catalogContainer">
-        <p style="text-align: center; color: gray;">Loading products...</p>
-    </div>
+    <!-- Top Navigation Bar -->
+    <header
+        class="w-full top-0 sticky bg-surface dark:bg-surface-container-lowest border-b border-outline-variant z-50 transition-all duration-300 ease-in-out">
+        <div
+            class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 md:py-6 max-w-[1280px] mx-auto w-full">
+            <div class="flex items-center gap-8">
+                <a class="font-headline-lg text-3xl md:text-headline-lg text-primary dark:text-on-surface"
+                    href="#">B.</a>
+                <!-- Hidden on mobile, flex on tablet and up -->
+                <nav class="hidden md:flex gap-6 lg:gap-8">
+                    <a class="font-nav-link text-nav-link uppercase tracking-widest text-secondary dark:text-on-secondary-container hover:opacity-70 transition-opacity"
+                        href="#">Collections</a>
+                    <a class="font-nav-link text-nav-link uppercase tracking-widest text-primary dark:text-on-surface border-b-2 border-primary hover:opacity-70 transition-opacity"
+                        href="#">Catalog</a>
+                    <a class="font-nav-link text-nav-link uppercase tracking-widest text-secondary dark:text-on-secondary-container hover:opacity-70 transition-opacity"
+                        href="#">Whatsapp</a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4 md:gap-6">
+                <button
+                    class="material-symbols-outlined text-primary dark:text-on-surface hover:opacity-70 transition-opacity"
+                    data-icon="search">search</button>
+                <!-- Hamburger menu button visible on mobile/tablet -->
+                <button id="menuBtn"
+                    class="material-symbols-outlined md:hidden text-primary dark:text-on-surface hover:opacity-70 transition-opacity"
+                    data-icon="menu">menu</button>
+            </div>
+        </div>
 
+        <!-- Slide-out Mobile Navigation Drawer -->
+        <div id="mobileDrawer"
+            class="fixed inset-0 bg-surface z-50 flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out md:hidden p-margin-mobile">
+            <div class="flex justify-between items-center pb-6 border-b border-outline-variant">
+                <span class="font-headline-lg text-3xl text-primary">B.</span>
+                <button id="closeMenuBtn" class="material-symbols-outlined text-primary">close</button>
+            </div>
+            <nav class="flex flex-col gap-6 pt-8">
+                <a class="font-headline-md text-2xl uppercase text-secondary tracking-wide" href="#">Collections</a>
+                <a class="font-headline-md text-2xl uppercase text-primary tracking-wide font-medium"
+                    href="#">Catalog</a>
+                <a class="font-headline-md text-2xl uppercase text-secondary tracking-wide" href="#">Whatsapp</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-6 md:py-stack-md min-h-screen">
+
+        <!-- Responsive Header Block -->
+        <!-- Locate this block around line 112 and update the h1 class -->
+        <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 md:mb-12 border-b border-outline-variant pb-4 md:pb-6 gap-2">
+            <!-- Changed font-headline-md to font-body-md and adjusted weight for softness -->
+            <h1 class="font-body-md font-light text-2xl sm:text-3xl lg:text-4xl uppercase tracking-wider text-neutral-700">
+                Bodies</h1>
+            <div class="font-label-caps text-xs text-secondary sm:block">Archive 01 / 2026</div>
+        </div>
+
+        <!-- Responsive Catalog Grid Layout -->
+        <section class="w-full">
+            <!-- Evaluates to 2 column on mobile, 2 columns on tablet, 3 columns on standard desktops -->
+            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-x-gutter gap-y-8 md:gap-y-stack-md"
+                id="catalogContainer">
+                <p class="col-span-full text-center text-secondary font-body-md py-12">Loading products...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Area -->
+    <footer
+        class="w-full bg-surface-container-lowest dark:bg-tertiary-container border-t border-outline-variant transition-colors duration-300">
+        <div
+            class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop py-8 md:py-stack-md max-w-[1280px] mx-auto w-full gap-6 md:gap-0">
+            <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                <span class="font-headline-md text-2xl md:text-headline-md text-primary mb-1 md:mb-2">B.</span>
+                <p class="font-body-md text-sm md:text-body-md text-primary dark:text-on-tertiary-fixed tracking-tight">
+                    © 2026 B. ARCHITECTURAL APPAREL</p>
+            </div>
+            <div class="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2">
+                <a class="font-body-md text-sm md:text-body-md text-secondary hover:text-primary transition-colors"
+                    href="#">Inquiry</a>
+                <a class="font-body-md text-sm md:text-body-md text-secondary hover:text-primary transition-colors"
+                    href="#">Sustainability</a>
+                <a class="font-body-md text-sm md:text-body-md text-secondary hover:text-primary transition-colors"
+                    href="#">Archive</a>
+                <a class="font-body-md text-sm md:text-body-md text-secondary hover:text-primary transition-colors"
+                    href="#">Privacy</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Async Dynamic Catalog Loader & Interaction Script -->
     <script>
+        // Interactive Mobile Drawer Toggle
+        const menuBtn = document.getElementById('menuBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const mobileDrawer = document.getElementById('mobileDrawer');
+
+        menuBtn.addEventListener('click', () => {
+            mobileDrawer.classList.remove('translate-x-full');
+            document.body.classList.add('mobile-menu-open');
+        });
+
+        closeMenuBtn.addEventListener('click', () => {
+            mobileDrawer.classList.add('translate-x-full');
+            document.body.classList.remove('mobile-menu-open');
+        });
+
+        // Catalog Loader Logic
         async function loadStorefrontCatalog() {
             const container = document.getElementById('catalogContainer');
-            
+
             try {
-                // Fetch our array data from our new endpoint
                 const response = await fetch('/api/get-catalog');
                 const products = await response.json();
 
                 if (products.length === 0) {
-                    container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: gray;">No products available yet.</p>`;
+                    container.innerHTML = `<p class="col-span-full text-center text-secondary py-12">No products available yet.</p>`;
                     return;
                 }
 
-                // Clear out the "Loading..." text
                 container.innerHTML = '';
 
-                // Loop through every item in your json list and construct the HTML card
-                products.forEach(product => {
+                products.forEach((product) => {
                     const card = document.createElement('div');
-                    card.className = 'product-card';
-                    
+                    card.className = 'group cursor-pointer product-trigger';
+
                     card.innerHTML = `
-                        <!-- product.image points perfectly to your unique Vercel Blob suffix link -->
-                        <img src="${product.image}" class="product-image" alt="${product.name}">
-                        <div class="product-title">${product.name}</div>
-                        <div class="product-price">$${product.price.toFixed(2)}</div>
-                        <a href="#" class="buy-button">View Product</a>
+                        <!-- Unified aspect ratios scale neatly regardless of screen container widths -->
+                        <div class="relative overflow-hidden mb-3 md:mb-4 aspect-[3/4] bg-surface-container-low">
+                            <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover grayscale md:grayscale hover:grayscale-0 transition-all duration-700">
+                        </div>
+                        <div class="flex justify-between items-baseline border-t border-outline-variant pt-2 md:pt-3">
+                            <h4 class="font-label-caps text-xs md:text-label-caps uppercase text-primary tracking-wider truncate mr-2">${product.name}</h4>
+                            <span class="font-body-md text-sm md:text-body-md text-primary opacity-60 flex-shrink-0">$${product.price.toFixed(2)}</span>
+                        </div>
                     `;
-                    
+
                     container.appendChild(card);
                 });
 
             } catch (error) {
                 console.error('Error rendering catalog:', error);
-                container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: red;">Failed to load catalog.</p>`;
+                container.innerHTML = `<p class="col-span-full text-center text-error py-12">Failed to load catalog.</p>`;
             }
         }
 
-        // Run this function immediately when the page finishes loading
         window.addEventListener('DOMContentLoaded', loadStorefrontCatalog);
     </script>
 </body>
+
 </html>
