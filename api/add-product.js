@@ -1,4 +1,3 @@
-// api/add-product.js
 import { put, list } from '@vercel/blob';
 
 const CATALOG_BLOB_PATH = 'data/catalog.json';
