@@ -35,6 +35,7 @@ export default async function handler(request, response) {
     await put(CATALOG_BLOB_PATH, JSON.stringify(catalog, null, 2), {
       access: 'public',
       contentType: 'application/json',
+      addRandomSuffix: false
     });
 
     return response.status(200).json({ success: true, product: newProduct });
