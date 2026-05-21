@@ -1,6 +1,6 @@
 export default async function handler(request, response) {
   try {
-    // Drop the list() function completely! Fetch the permanent file link directly.
+    // Drop the list() function completely to fetch the permanent file link directly.
     // This turns an Advanced Operation ($5/M) into a basic web request covered by Data Transfer!
     const catalogUrl = 'https://xg6snmqaui2yqczf.public.blob.vercel-storage.com/data/catalog.json';
     

@@ -9,63 +9,220 @@
         .admin-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 14px; }
-        input[type="text"], input[type="number"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        input[type="text"], input[type="number"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         input[type="file"] { display: block; margin-top: 5px; }
-        button { background: #000; color: #fff; border: none; padding: 12px 20px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        
+        /* Dynamic variants layout styles */
+        .variant-container { background: #f0f0f0; padding: 15px; border-radius: 6px; margin-top: 10px; border-left: 4px solid #000; }
+        .dynamic-section-title { font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 10px; }
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+        .checkbox-label { display: flex; align-items: center; background: white; border: 1px solid #ccc; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: normal; }
+        .checkbox-label input { margin-right: 6px; }
+        
+        button { background: #000; color: #fff; border: none; padding: 12px 20px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         button:hover { background: #333; }
+        
     </style>
 </head>
 <body>
 
     <div class="admin-card">
-        <h2>Add New Catalog Item</h2>
+        <h2>Agregar producto</h2>
         <form id="catalogForm">
             <div class="form-group">
-                <label for="prodName">Product Name</label>
-                <input type="text" id="prodName" required placeholder="e.g., Mechanical Keyboard">
+                <label for="prodName">Nombre</label>
+                <input type="text" id="prodName" required placeholder="Nombre body">
             </div>
 
             <div class="form-group">
-                <label for="prodPrice">Price ($)</label>
+                <label for="prodPrice">Precio ($)</label>
                 <input type="number" id="prodPrice" step="0.01" required placeholder="0.00">
             </div>
 
             <div class="form-group">
-                <label for="prodImage">Product Image</label>
-                <!-- This native input creates the upload picker window -->
+                <label for="prodCategory">Categoría</label>
+                <select id="prodCategory" required>
+                    <option value="" disabled selected>Selecciona una categoría</option>
+                    <option value="body">Body</option>
+                    <option value="jean">Jean</option>
+                    <option value="top">Top</option>
+                </select>
+            </div>
+
+            <!-- Dynamic attributes injection container -->
+            <div id="dynamicAttributesContainer"></div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label for="prodImage">Imágen</label>
                 <input type="file" id="prodImage" accept="image/png, image/jpeg, image/webp" required>
             </div>
 
-            <button type="submit">Publish to Catalog</button>
+            <button type="submit">Publicar</button>
         </form>
     </div>
 
     <script type="module">
         import { upload } from 'https://esm.run/@vercel/blob/client';
 
+        const categorySelect = document.getElementById('prodCategory');
+        const dynamicContainer = document.getElementById('dynamicAttributesContainer');
+
+        // Listen for Category changes to swap available sizing templates
+        categorySelect.addEventListener('change', (e) => {
+            const category = e.target.value;
+            let htmlContent = '';
+
+            if (category === 'body') {
+                htmlContent = `
+                    <div class="variant-container">
+                        <div class="dynamic-section-title">Body Configuration</div>
+                        <div class="form-group">
+                            <label>Available Sizes</label>
+                            <div class="checkbox-group">
+                                ${['S', 'M', 'L', 'Unica'].map(size => `
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="bodySizes" value="${size}" ${size === 'Unica' ? 'checked' : ''}> ${size}
+                                    </label>
+                                `).join('')}
+                            </div>    
+                        </div>
+                        ${getColorAndStockFields()}
+                    </div>
+                `;
+            } else if (category === 'jean') {
+                htmlContent = `
+                    <div class="variant-container">
+                        <div class="dynamic-section-title">Jean Configuration</div>
+                        <div class="form-group">
+                            <label>Available Sizes</label>
+                            <div class="checkbox-group">
+                                ${['6', '7', '8', '9'].map(size => `
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="jeanSizes" value="${size}"> ${size}
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ${getColorAndStockFields()}
+                    </div>
+                `;
+            } else if (category === 'top') {
+                htmlContent = `
+                    <div class="variant-container">
+                        <div class="dynamic-section-title">Top Configuration</div>
+                        <div class="form-group">
+                            <label>Available Sizes</label>
+                            <div class="checkbox-group">
+                                ${['S', 'M', 'L', 'Unica'].map(size => `
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="topSizes" value="${size}" ${size === 'Unica' ? 'checked' : ''}> ${size}
+                                    </label>
+                                `).join('')}
+                            </div>   
+                        </div>
+                        ${getColorAndStockFields()}
+                    </div>
+                `;
+            }
+
+            dynamicContainer.innerHTML = htmlContent;
+
+            const addColorBtn = document.getElementById('addColorBtn');
+
+            if (addColorBtn) {
+                addColorBtn.addEventListener('click', () => {
+                    const container = document.getElementById('colorPickerContainer');
+
+                    const newRow = document.createElement('div');
+                    newRow.className = 'color-row';
+                    newRow.style = 'display:flex; gap:10px; margin-bottom:10px;';
+
+                    newRow.innerHTML = `
+                        <input type="color" class="color-picker" value="#000000">
+                        <button type="button" class="removeColorBtn" style="width:auto; padding:8px 12px;">✕</button>
+                    `;
+
+                    container.appendChild(newRow);
+
+                    newRow.querySelector('.removeColorBtn').addEventListener('click', () => {
+                        newRow.remove();
+                    });
+                });
+            }
+        });
+
+        // Helper function to avoid repeating color and stock inputs across categories
+        function getColorAndStockFields() {
+        return `
+            <div class="form-group">
+                <label>Available Colors</label>
+                
+                <div id="colorPickerContainer">
+                    <div class="color-row" style="display:flex; gap:10px; margin-bottom:10px;">
+                        <input type="color" class="color-picker" value="#000000">
+                        <button type="button" id="addColorBtn" style="width:auto; padding:8px 12px;">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="attrStock">Initial Manual Stock Count</label>
+                <input type="number" id="attrStock" min="0" required placeholder="0">
+            </div>
+        `;
+}
+
+        // Form submission and data construction
         document.getElementById('catalogForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const name = document.getElementById('prodName').value;
             const price = document.getElementById('prodPrice').value;
+            const category = categorySelect.value;
             const fileInput = document.getElementById('prodImage');
             const file = fileInput.files[0];
 
+            // 1. Gather dynamic form configuration variables
+            let computedSizes = [];
+            if (category === 'body') {
+                const checkedBodys = document.querySelectorAll('input[name="bodySizes"]:checked');
+                computedSizes = Array.from(checkedBodys).map(cb => cb.value);
+            } else if (category === 'jean') {
+                const checkedJeans = document.querySelectorAll('input[name="jeanSizes"]:checked');
+                computedSizes = Array.from(checkedJeans).map(cb => cb.value);
+            } else if (category === 'top') {
+                const checkedTops = document.querySelectorAll('input[name="topSizes"]:checked');
+                computedSizes = Array.from(checkedTops).map(cb => cb.value);
+            }
+
+            // Capture raw colors text string into trimmed array list
+            const colorPickers = document.querySelectorAll('.color-picker');
+            const colorsArray = [...new Set(
+                Array.from(colorPickers).map(picker => picker.value)
+            )];
+
+            const stockValue = parseInt(document.getElementById('attrStock').value, 10);
+
             try {
-                // 1. Upload the selected image directly to Vercel Blob Storage
+                // 2. Upload image asset to cloud storage origin
                 const blobResponse = await upload(file.name, file, {
                     access: 'public',
                     handleUploadUrl: '/api/upload',
                 });
 
-                // 2. Package everything neatly into an object
+                // 3. Assemble structured schema payload
                 const productData = {
                     name: name,
                     price: parseFloat(price),
-                    imageUrl: blobResponse.url // This is the link we just generated
+                    imageUrl: blobResponse.url,
+                    category: category,
+                    sizes: computedSizes,
+                    colors: colorsArray,
+                    stock: stockValue,
+                    inStock: stockValue > 0 // Sets standard fallback toggle rule automatically
                 };
 
-                // 3. Send this text payload to our catalog manager backend
+                // 4. Send clean object data payload upstream to overwrite catalog server list
                 const response = await fetch('/api/add-product', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -73,7 +230,9 @@
                 });
 
                 if (response.ok) {
+                    alert('Item published successfully!');
                     document.getElementById('catalogForm').reset();
+                    dynamicContainer.innerHTML = ''; // Clear out the dynamic layout fields
                 } else {
                     throw new Error("Failed to update catalog entry");
                 }
@@ -83,6 +242,8 @@
                 alert('Failed to publish item.');
             }
         });
+
+        
     </script>
 </body>
 </html>
