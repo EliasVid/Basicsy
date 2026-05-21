@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalog Admin Dashboard</title>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #f9f9f9; padding: 40px; }
+        .admin-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 14px; }
+        input[type="text"], input[type="number"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        input[type="file"] { display: block; margin-top: 5px; }
+        button { background: #000; color: #fff; border: none; padding: 12px 20px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #333; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-card">
+        <h2>Add New Catalog Item</h2>
+        <form id="catalogForm">
+            <div class="form-group">
+                <label for="prodName">Product Name</label>
+                <input type="text" id="prodName" required placeholder="e.g., Mechanical Keyboard">
+            </div>
+
+            <div class="form-group">
+                <label for="prodPrice">Price ($)</label>
+                <input type="number" id="prodPrice" step="0.01" required placeholder="0.00">
+            </div>
+
+            <div class="form-group">
+                <label for="prodImage">Product Image</label>
+                <!-- This native input creates the upload picker window -->
+                <input type="file" id="prodImage" accept="image/png, image/jpeg, image/webp" required>
+            </div>
+
+            <button type="submit">Publish to Catalog</button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { upload } from 'https://esm.run/@vercel/blob/client';
+
+        document.getElementById('catalogForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('prodName').value;
+            const price = document.getElementById('prodPrice').value;
+            const fileInput = document.getElementById('prodImage');
+            const file = fileInput.files[0];
+
+            try {
+                // 1. Upload the selected image directly to Vercel Blob Storage
+                const blobResponse = await upload(file.name, file, {
+                    access: 'public',
+                    handleUploadUrl: '/api/upload', 
+                });
+
+                // 2. Package everything neatly into an object
+                const productData = {
+                    name: name,
+                    price: parseFloat(price),
+                    imageUrl: cloudFile.url // This is the link we just generated
+                };
+
+                // 3. Send this text payload to our catalog manager backend
+                const response = await fetch('/api/add-product', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(productData)
+                });
+
+                if (response.ok) {
+                    document.getElementById('productForm').reset();
+                } else {
+                    throw new Error("Failed to update catalog entry");
+                }
+
+            } catch (error) {
+                console.error('Upload process failed:', error);
+                alert('Failed to publish item.');
+            }
+        });
+    </script>
+</body>
+</html>
