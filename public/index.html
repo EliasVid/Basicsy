@@ -1,287 +1,473 @@
 <!DOCTYPE html>
-<html class="light" lang="en">
-
+<html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Our Product Catalog</title>
-
-    <!-- Tailwind & Google Fonts -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet" />
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basicsy - Landing Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    
     <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+
+        @font-face {
+            font-family: 'Higuen';
+            src: url('fonts/HiguenSerif.otf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
         }
 
-        ::-webkit-scrollbar {
-            width: 4px;
+        /* --- RESET & GLOBAL STYLES --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        ::-webkit-scrollbar-track {
-            background: #f9f9f9;
+        body {
+            font-family: 'Didact Gothic', sans-serif;
+            color: #333;
+            background-color: #fff;
+            line-height: 1.6;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: #000;
+        a {
+            text-decoration: none;
+            color: inherit;
         }
 
-        .mobile-menu-open {
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* --- HEADER & NAVIGATION --- */
+        header {
+            width: 100%;
+            border-bottom: 1px solid #eaeaea;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 1000;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 40px;
+            font-size: 0.85rem;
+        }
+
+        .search-icon {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .icon-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Only WhatsApp */
+        .whatsapp-icon {
+            transform: scale(1.38);
+        }
+
+        .logo {
+            font-family: 'Higuen', serif;
+            font-size: 4.2rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .top-right-nav a {
+            margin-left: 20px;
+        }
+
+        .main-nav {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding-bottom: 15px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .main-nav a:hover {
+            color: #777;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            position: relative;
+            height: 70vh;
+            background: url('https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=1200') no-repeat center center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+        }
+
+        /* Dark overlay to replicate the mood */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 400;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .hero-btn {
+            display: inline-block;
+            border: 1px solid #fff;
+            padding: 10px 30px;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hero-btn:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        /* --- PRODUCT GRID SECTION --- */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            width: 100%;
+        }
+
+        .grid-item {
+            position: relative;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             overflow: hidden;
         }
-    </style>
 
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "tertiary-container": "#1a1c1c",
-                        "surface-bright": "#f9f9f9",
-                        "secondary-fixed-dim": "#c6c6c7",
-                        "tertiary-fixed": "#e2e2e2",
-                        "surface": "#f9f9f9",
-                        "on-surface": "#1a1c1c",
-                        "on-tertiary": "#ffffff",
-                        "surface-container-high": "#e8e8e8",
-                        "on-surface-variant": "#4c4546",
-                        "primary-fixed": "#e2e2e2",
-                        "surface-container-lowest": "#ffffff",
-                        "on-background": "#1a1c1c",
-                        "outline-variant": "#cfc4c5",
-                        "on-primary-fixed-variant": "#474747",
-                        "on-primary-fixed": "#1b1b1b",
-                        "surface-container-low": "#f4f3f3",
-                        "primary-fixed-dim": "#c6c6c6",
-                        "on-error": "#ffffff",
-                        "primary": "#000000",
-                        "inverse-primary": "#c6c6c6",
-                        "tertiary": "#000000",
-                        "on-tertiary-fixed-variant": "#454747",
-                        "inverse-surface": "#2f3131",
-                        "on-secondary-container": "#616363",
-                        "on-tertiary-fixed": "#1a1c1c",
-                        "on-secondary": "#ffffff",
-                        "surface-container-highest": "#e2e2e2",
-                        "secondary-fixed": "#e2e2e2",
-                        "on-secondary-fixed-variant": "#454747",
-                        "primary-container": "#1b1b1b",
-                        "outline": "#7e7576",
-                        "surface-tint": "#5e5e5e",
-                        "tertiary-fixed-dim": "#c6c6c7",
-                        "on-error-container": "#93000a",
-                        "secondary-container": "#dfe0e0",
-                        "error-container": "#ffdad6",
-                        "inverse-on-surface": "#f1f1f1",
-                        "on-primary-container": "#848484",
-                        "surface-dim": "#dadada",
-                        "secondary": "#5d5f5f",
-                        "on-primary": "#ffffff",
-                        "surface-variant": "#e2e2e2",
-                        "on-tertiary-container": "#838484",
-                        "on-secondary-fixed": "#1a1c1c",
-                        "surface-container": "#eeeeee",
-                        "error": "#ba1a1a",
-                        "background": "#f9f9f9"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "stack-lg": "80px",
-                        "stack-md": "40px",
-                        "gutter": "24px",
-                        "stack-xl": "120px",
-                        "margin-mobile": "20px",
-                        "margin-desktop": "64px",
-                        "stack-sm": "16px"
-                    },
-                    "fontFamily": {
-                        "headline-md": ["Bodoni Moda"],
-                        "headline-lg": ["Bodoni Moda"],
-                        "label-caps": ["Hanken Grotesk"],
-                        "body-md": ["Hanken Grotesk"],
-                        "body-lg": ["Hanken Grotesk"],
-                        "nav-link": ["Hanken Grotesk"],
-                        "headline-lg-mobile": ["Bodoni Moda"],
-                        "display-lg": ["Bodoni Moda"]
-                    },
-                    "fontSize": {
-                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "400" }],
-                        "headline-lg": ["48px", { "lineHeight": "56px", "fontWeight": "500" }],
-                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600" }],
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                        "nav-link": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
-                        "headline-lg-mobile": ["32px", { "lineHeight": "38px", "fontWeight": "500" }],
-                        "display-lg": ["80px", { "lineHeight": "88px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
-                    }
-                },
-            },
+        /* Specific background designs from layout */
+        .bg-light-blue {
+            background-color: #e8f4fd;
         }
-    </script>
+
+        .bg-dark-gray {
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+
+        .bg-image-1 {
+            background: url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800') no-repeat center center/cover;
+        }
+
+        /* Placeholder text style for "No product" / labels */
+        .no-product {
+            text-align: center;
+            color: #1a2a3a;
+        }
+
+        .no-product svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+            fill: #1a2a3a;
+        }
+
+        .grid-label {
+            font-size: 1.1rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            border-bottom: 2px solid currentcolor;
+            padding-bottom: 5px;
+            z-index: 2;
+        }
+
+        .grid-item.bg-image-1 .grid-label {
+            color: #fff;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        }
+
+        /* --- INSTAGRAM SECTION --- */
+        .instagram-section {
+            background-color: #faf7f2;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .instagram-section h2 {
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .instagram-section p {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            color: #777;
+            margin-bottom: 40px;
+        }
+
+        .instagram-gallery {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item img:hover {
+            transform: scale(1.05);
+        }
+
+        /* --- BRAND PILLARS / VALUE PROP --- */
+        .pillars {
+            background-color: #faf7f2;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            padding: 0 40px 60px 40px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pillar-item h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+
+        .pillar-item ::before {
+            content: '—';
+            display: block;
+            margin-bottom: 10px;
+            color: #999;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            border-top: 1px solid #eaeaea;
+            padding: 60px 40px;
+            background: #fff;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 500;
+        }
+
+        .footer-column h4 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+        }
+
+        .footer-column ul li a {
+            color: #666;
+            transition: color 0.2s;
+        }
+
+        .footer-column ul li a:hover {
+            color: #000;
+        }
+
+        /* --- RESPONSIVE BREAKPOINTS --- */
+        @media (max-width: 900px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            .grid-item {
+                height: 400px;
+            }
+            .instagram-gallery {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .pillars {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
+<body>
 
-<body class="bg-surface text-on-surface font-body-md antialiased transition-colors duration-300">
-
-    <!-- Top Navigation Bar -->
-    <header
-        class="w-full top-0 sticky bg-surface dark:bg-surface-container-lowest border-b border-outline-variant z-50 transition-all duration-300 ease-in-out">
-        <div
-            class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 md:py-6 max-w-[1280px] mx-auto w-full">
-            <div class="flex items-center gap-8">
-                <a class="font-headline-lg text-3xl md:text-headline-lg text-primary dark:text-on-surface"
-                    href="#">B.</a>
-                <!-- Hidden on mobile, flex on tablet and up -->
-                <nav class="hidden md:flex gap-6 lg:gap-8">
-                    <a class="font-nav-link text-nav-link uppercase tracking-widest text-secondary dark:text-on-secondary-container hover:opacity-70 transition-opacity"
-                        href="#">Collections</a>
-                    <a class="font-nav-link text-nav-link uppercase tracking-widest text-primary dark:text-on-surface border-b-2 border-primary hover:opacity-70 transition-opacity"
-                        href="#">Catalog</a>
-                    <a class="font-nav-link text-nav-link uppercase tracking-widest text-secondary dark:text-on-secondary-container hover:opacity-70 transition-opacity"
-                        href="https://api.whatsapp.com/message/2UMPMIKRZOBEA1">Whatsapp</a>
-                </nav>
+    <header>
+        <div class="top-bar">
+            <div class="search-icon">
+                <div class="icon-box">
+                    <a href="https://api.whatsapp.com/message/2UMPMIKRZOBEA1"><img src="img/whatsapp.png" class="whatsapp-icon" alt=""></a>
+                </div>
+                <div class="icon-box">
+                    <a href="https://www.instagram.com/basicsy.co?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="><img src="img/instagram.png" alt=""></a>
+                </div>
             </div>
-            <div class="flex items-center gap-4 md:gap-6">
-                <button
-                    class="material-symbols-outlined text-primary dark:text-on-surface hover:opacity-70 transition-opacity"
-                    data-icon="search">search</button>
-                <!-- Hamburger menu button visible on mobile/tablet -->
-                <button id="menuBtn"
-                    class="material-symbols-outlined md:hidden text-primary dark:text-on-surface hover:opacity-70 transition-opacity"
-                    data-icon="menu">menu</button>
+            <div class="logo">Basicsy</div>
+            <div class="top-right-nav">
+                <a href="#">Cart (0)</a>
             </div>
         </div>
-
-        <!-- Slide-out Mobile Navigation Drawer -->
-        <div id="mobileDrawer"
-            class="fixed inset-0 bg-surface z-50 flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out md:hidden p-margin-mobile">
-            <div class="flex justify-between items-center pb-6 border-b border-outline-variant">
-                <span class="font-headline-lg text-3xl text-primary">B.</span>
-                <button id="closeMenuBtn" class="material-symbols-outlined text-primary">close</button>
-            </div>
-            <nav class="flex flex-col gap-6 pt-8">
-                <a class="font-headline-md text-2xl uppercase text-secondary tracking-wide" href="#">Collections</a>
-                <a class="font-headline-md text-2xl uppercase text-primary tracking-wide font-medium"
-                    href="#">Catalog</a>
-                <a class="font-headline-md text-2xl uppercase text-secondary tracking-wide" href="#">Whatsapp</a>
-            </nav>
-        </div>
+        <nav class="main-nav">
+            <a href="#">Home</a>
+            <a href="catalog.html">Catálogo</a>
+            <a href="#">Contact</a>
+        </nav>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-6 md:py-stack-md min-h-screen">
+    <section class="hero">
+        <div class="hero-content">
+            <h1 style="font-family: 'Higuen', serif;" >¡Bienvenid@ a<br>Basicsy!</h1>
+            <a href="catalog.html" class="hero-btn">Comprar Aquí</a>
+        </div>
+    </section>
 
-        <!-- Responsive Header Block -->
-        <!-- Locate this block around line 112 and update the h1 class -->
-        <div
-            class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 md:mb-12 border-b border-outline-variant pb-4 md:pb-6 gap-2">
-            <!-- Changed font-headline-md to font-body-md and adjusted weight for softness -->
-            <h1 class="font-body-md font-light text-2xl sm:text-3xl lg:text-4xl uppercase tracking-wider text-neutral-700">
-                Bodies</h1>
-            <div class="font-label-caps text-xs text-secondary sm:block">Archive 01 / 2026</div>
+    <section class="product-grid">
+        <div class="grid-item bg-light-blue">
+            <div class="no-product">
+                <svg viewBox="0 0 24 24"><path d="M22 10v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V10h20zm-2 2H4v8h16v-8zm-5-8a3 3 0 0 1 3 3v2H6V7a3 3 0 0 1 3-3h6zm-2 2H9a1 1 0 0 0-1 1v1h4V7a1 1 0 0 0-1-1z"/></svg>
+                <p>No product</p>
+            </div>
+        </div>
+        <div class="grid-item bg-dark-gray">
+            <div class="grid-label">Bodys</div>
         </div>
 
-        <!-- Responsive Catalog Grid Layout -->
-        <section class="w-full">
-            <!-- Evaluates to 2 column on mobile, 2 columns on tablet, 3 columns on standard desktops -->
-            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-x-gutter gap-y-8 md:gap-y-stack-md"
-                id="catalogContainer">
-                <p class="col-span-full text-center text-secondary font-body-md py-12">Loading products...</p>
+        <div class="grid-item bg-image-1">
+            <div class="grid-label">Tops</div>
+        </div>
+        <div class="grid-item bg-light-blue">
+            <div class="no-product">
+                <svg viewBox="0 0 24 24"><path d="M22 10v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V10h20zm-2 2H4v8h16v-8zm-5-8a3 3 0 0 1 3 3v2H6V7a3 3 0 0 1 3-3h6zm-2 2H9a1 1 0 0 0-1 1v1h4V7a1 1 0 0 0-1-1z"/></svg>
+                <p>No product</p>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
 
-    <!-- Footer Area -->
-    <footer
-        class="w-full bg-surface-container-lowest dark:bg-tertiary-container border-t border-outline-variant transition-colors duration-300">
-        <div
-            class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop py-8 md:py-stack-md max-w-[1280px] mx-auto w-full gap-6 md:gap-0">
-            <div class="flex flex-col items-center md:items-start text-center md:text-left">
-                <span class="font-headline-md text-2xl md:text-headline-md text-primary mb-1 md:mb-2">B.</span>
-                <p class="font-body-md text-sm md:text-body-md text-primary dark:text-on-tertiary-fixed tracking-tight">
-                    © 2026 B. ARCHITECTURAL APPAREL</p>
+    <section class="instagram-section">
+        <h2>Síguenos en Instagram</h2>
+        <p>@basicsy.co</p>
+        
+        <div class="instagram-gallery">
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=300" alt="Insta 1"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=300" alt="Insta 2"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=300" alt="Insta 3"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=300" alt="Insta 4"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=300" alt="Insta 5"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?q=80&w=300" alt="Insta 6"></div>
+        </div>
+    </section>
+
+    <section class="pillars">
+        <div class="pillar-item">
+            <h3>Envíos a toda Colombia</h3>
+        </div>
+        <div class="pillar-item">
+            <h3>Diseños únicos y versátiles</h3>
+        </div>
+        <div class="pillar-item">
+            <h3>Calidad garantizada</h3>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">basicsy</div>
+            <div class="footer-column">
+                <h4>Menú</h4>
+                <ul>
+                    <li><a href="#">Comprar Todo</a></li>
+                    <li><a href="#">Devoluciones</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
             </div>
-            <div class="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2">
-                <a class="font-body-md text-sm md:text-body-md text-secondary hover:text-primary transition-colors"
-                    href="#">Inquiry</a>
-                <a class="font-body-md text-sm md:text-body-md text-secondary hover:text-primary transition-colors"
-                    href="#">Sustainability</a>
-                <a class="font-body-md text-sm md:text-body-md text-secondary hover:text-primary transition-colors"
-                    href="#">Archive</a>
-                <a class="font-body-md text-sm md:text-body-md text-secondary hover:text-primary transition-colors"
-                    href="#">Privacy</a>
+            <div class="footer-column">
+                <h4>Ayuda</h4>
+                <ul>
+                    <li><a href="#">Preguntas Frecuentes</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Redes</h4>
+                <ul>
+                    <li><a href="#">Tiktok</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">WhatsApp</a></li>
+                </ul>
             </div>
         </div>
     </footer>
 
-    <!-- Async Dynamic Catalog Loader & Interaction Script -->
-    <script>
-        // Interactive Mobile Drawer Toggle
-        const menuBtn = document.getElementById('menuBtn');
-        const closeMenuBtn = document.getElementById('closeMenuBtn');
-        const mobileDrawer = document.getElementById('mobileDrawer');
-
-        menuBtn.addEventListener('click', () => {
-            mobileDrawer.classList.remove('translate-x-full');
-            document.body.classList.add('mobile-menu-open');
-        });
-
-        closeMenuBtn.addEventListener('click', () => {
-            mobileDrawer.classList.add('translate-x-full');
-            document.body.classList.remove('mobile-menu-open');
-        });
-
-        // Catalog Loader Logic
-        async function loadStorefrontCatalog() {
-            const container = document.getElementById('catalogContainer');
-
-            try {
-                const response = await fetch('/api/get-catalog');
-                const products = await response.json();
-
-                if (products.length === 0) {
-                    container.innerHTML = `<p class="col-span-full text-center text-secondary py-12">No products available yet.</p>`;
-                    return;
-                }
-
-                container.innerHTML = '';
-
-                products.forEach((product) => {
-                    const card = document.createElement('div');
-                    card.className = 'group cursor-pointer product-trigger';
-
-                    card.innerHTML = `
-                        <!-- Unified aspect ratios scale neatly regardless of screen container widths -->
-                        <div class="relative overflow-hidden mb-3 md:mb-4 aspect-[3/4] bg-surface-container-low">
-                            <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover transition-all duration-700">
-                        </div>
-                        <div class="flex justify-between items-baseline border-t border-outline-variant pt-2 md:pt-3">
-                            <h4 class="font-label-caps text-xs md:text-label-caps uppercase text-primary tracking-wider truncate mr-2">${product.name}</h4>
-                            <span class="font-body-md text-sm md:text-body-md text-primary opacity-60 flex-shrink-0">$${product.price.toFixed(2)}</span>
-                        </div>
-                    `;
-
-                    container.appendChild(card);
-                });
-
-            } catch (error) {
-                console.error('Error rendering catalog:', error);
-                container.innerHTML = `<p class="col-span-full text-center text-error py-12">Failed to load catalog.</p>`;
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', loadStorefrontCatalog);
-    </script>
 </body>
-
 </html>

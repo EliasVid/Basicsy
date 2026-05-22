@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basicsy | All Products</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <style>
+        @font-face {
+            font-family: 'Higuen';
+            src: url('fonts/HiguenSerif.otf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        /* --- RESET & GLOBAL STYLES --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Didact Gothic', sans-serif;
+            color: #333;
+            background-color: #fff;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+
+        /* --- HEADER & NAVIGATION --- */
+        header {
+            width: 100%;
+            border-bottom: 1px solid #eaeaea;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 1000;
+        }
+
+        .top-bar {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 10px 40px;
+        }
+
+        .search-icon {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: flex-start;
+        }
+
+        .icon-box {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .icon-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .whatsapp-icon {
+            transform: scale(1.38);
+        }
+
+        .logo {
+            font-family: 'Higuen', serif;
+            font-size: 4.2rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .top-right-nav {
+            display: flex;
+            justify-content: flex-end;
+            font-size: 0.85rem;
+        }
+
+        .main-nav {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding-bottom: 15px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .main-nav a:hover {
+            color: #777;
+        }
+
+        .main-nav a.active {
+            font-weight: bold;
+            border-bottom: 2px solid #000;
+            padding-bottom: 2px;
+        }
+
+        /* --- CATALOG LAYOUT CONTAINER --- */
+        .catalog-layout {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 40px;
+            display: flex;
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* --- SIDEBAR FILTERS --- */
+        .filter-sidebar {
+            width: 240px;
+            flex-shrink: 0;
+        }
+
+        .filter-section {
+            margin-bottom: 30px;
+        }
+
+        .filter-section h3 {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-list {
+            list-style: none;
+        }
+
+        .filter-list li {
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+        }
+
+        .filter-list li a {
+            color: #555;
+            transition: color 0.2s;
+        }
+
+        .filter-list li a:hover, .filter-list li a.active {
+            color: #000;
+            font-weight: 500;
+        }
+
+        .filter-divider {
+            border: 0;
+            border-top: 1px solid #eaeaea;
+            margin: 25px 0;
+        }
+
+        /* Accordion style filters */
+        .accordion-item {
+            border-bottom: 1px solid #eaeaea;
+            padding: 15px 0;
+        }
+
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-transform: capitalize;
+        }
+
+        .price-range-container {
+            padding-top: 15px;
+        }
+
+        .price-slider {
+            width: 100%;
+            accent-color: #000;
+            height: 2px;
+            background: #e5e5e5;
+            cursor: pointer;
+        }
+
+        .price-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #767676;
+            margin-top: 8px;
+        }
+
+        /* --- MAIN CATALOG CONTENT --- */
+        .catalog-content {
+            flex-grow: 1;
+        }
+
+        .catalog-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 25px;
+        }
+
+        .catalog-title h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #111;
+        }
+
+        .catalog-title span {
+            font-size: 0.75rem;
+            color: #999;
+            display: block;
+            margin-top: 4px;
+        }
+
+        .sort-dropdown {
+            font-size: 0.75rem;
+            color: #555;
+            cursor: pointer;
+        }
+
+        .sort-dropdown strong {
+            color: #000;
+        }
+
+        /* --- PRODUCTS GRID --- */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px 20px;
+            width: 100%;
+        }
+
+        .product-card {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .product-image-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            background-color: #f5f5f5;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .product-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-image-wrapper img {
+            transform: scale(1.02);
+        }
+
+        .product-info {
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        .product-name {
+            font-size: 0.85rem;
+            font-weight: normal;
+            color: #333;
+            text-transform: lowercase;
+            letter-spacing: 0.5px;
+        }
+
+        .product-price {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .loading-text {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #767676;
+            padding: 40px 0;
+            font-size: 0.9rem;
+        }
+
+        /* --- PHONE RESPONSIVE BREAKPOINTS --- */
+        @media (max-width: 900px) {
+            .top-bar {
+                padding: 10px 20px;
+            }
+
+            .logo {
+                font-size: 2.8rem; /* Keeps custom Higuen clean without wrapping */
+            }
+
+            .catalog-layout {
+                flex-direction: column;
+                padding: 20px;
+                gap: 20px;
+            }
+
+            /* Transforms desktop sidebar into a clean horizontal swipe menu */
+            .filter-sidebar {
+                width: 100%;
+                border-bottom: 1px solid #eaeaea;
+                padding-bottom: 15px;
+            }
+
+            .filter-section h3 {
+                font-size: 0.9rem;
+                margin-bottom: 10px;
+            }
+
+            .filter-list {
+                display: flex;
+                overflow-x: auto;
+                gap: 15px;
+                padding-bottom: 8px;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Custom minimal scrollbar style for filters */
+            .filter-list::-webkit-scrollbar {
+                height: 3px;
+            }
+            .filter-list::-webkit-scrollbar-thumb {
+                background-color: #ddd;
+                border-radius: 10px;
+            }
+
+            .filter-list li {
+                margin-bottom: 0;
+            }
+
+            .filter-divider, .accordion-item, .price-range-container {
+                display: none; /* Simplifies filter view on mobile devices */
+            }
+
+            .catalog-header {
+                margin-bottom: 20px;
+                align-items: center;
+            }
+
+            .catalog-title h1 {
+                font-size: 1.4rem;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr); /* Two items per row looks best on small smartphone viewports */
+                gap: 20px 12px;
+            }
+
+            .product-image-wrapper {
+                border-radius: 14px; /* Slightly tighter curves for smaller grid boxes */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-bar {
+                padding: 10px 15px;
+            }
+            
+            .logo {
+                font-size: 2.3rem;
+            }
+
+            .main-nav {
+                gap: 15px;
+                font-size: 0.8rem;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr); /* Retains balanced 2-column shop display on narrow cellphones */
+                gap: 15px 10px;
+            }
+
+            .product-name {
+                font-size: 0.78rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="top-bar">
+            <div class="search-icon">
+                <div class="icon-box">
+                    <a href="https://api.whatsapp.com/message/2UMPMIKRZOBEA1" target="_blank"><img src="img/whatsapp.png" class="whatsapp-icon" alt="WhatsApp"></a>
+                </div>
+                <div class="icon-box">
+                    <a href="https://www.instagram.com/basicsy.co?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank"><img src="img/instagram.png" alt="Instagram"></a>
+                </div>
+            </div>
+            <div class="logo"><a href="index.html">Basicsy</a></div>
+            <div class="top-right-nav">
+                <a href="#">Cart (0)</a>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <a href="#">Home</a>
+            <a href="#" class="active">Catálogo</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
+
+    <main class="catalog-layout">
+        
+        <aside class="filter-sidebar">
+            <div class="filter-section">
+                <h3>Browse by</h3>
+                <ul class="filter-list">
+                    <li><a href="#" class="active">All Products</a></li>
+                    <li><a href="#">Bodys</a></li>
+                    <li><a href="#">Jeans</a></li>
+                    <li><a href="#">Tops</a></li>
+                </ul>
+            </div>
+            
+            <hr class="filter-divider">
+
+            <div class="filter-section">
+                <h3>Filter by</h3>
+                
+                <div class="accordion-item" style="border-bottom: none; padding-bottom: 0;">
+                    <div class="accordion-header">
+                        <span>Price</span>
+                        <span class="material-symbols-outlined">remove</span>
+                    </div>
+                    <div class="price-range-container">
+                        <input type="range" min="30000" max="38000" class="price-slider" />
+                        <div class="price-labels">
+                            <span>COP 30,000</span>
+                            <span>COP 38,000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <span>talla</span>
+                        <span class="material-symbols-outlined">add</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <section class="catalog-content">
+            <div class="catalog-header">
+                <div class="catalog-title">
+                    <h1>All Products</h1>
+                    <span>2 products</span>
+                </div>
+            </div>
+
+            <div class="products-grid" id="catalogContainer">
+                <p class="loading-text">Loading products...</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        async function loadStorefrontCatalog() {
+            const container = document.getElementById('catalogContainer');
+            if(!container) return;
+
+            try {
+                const response = await fetch('/api/get-catalog');
+                const products = await response.json();
+
+                if (!products || products.length === 0) {
+                    container.innerHTML = `<p class="loading-text">No products available yet.</p>`;
+                    return;
+                }
+
+                container.innerHTML = '';
+
+                products.forEach((product) => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+
+                    card.innerHTML = `
+                        <div class="product-image-wrapper">
+                            <img src="${product.image}" alt="${product.name}">
+                        </div>
+                        <div class="product-info">
+                            <h4 class="product-name">${product.name}</h4>
+                            <span class="product-price">$ ${product.price.toLocaleString('es-CO', { minimumFractionDigits: 2 })}</span>
+                        </div>
+                    `;
+
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error('Error rendering catalog:', error);
+                container.innerHTML = `<p class="loading-text" style="color: red;">Failed to load catalog view.</p>`;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadStorefrontCatalog);
+    </script>
+</body>
+</html>
