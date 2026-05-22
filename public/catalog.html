@@ -293,7 +293,7 @@
         }
 
         .product-name {
-            font-size: 0.85rem;
+            font-size: 1.2rem;
             font-weight: normal;
             color: #333;
             text-transform: lowercase;
@@ -301,9 +301,8 @@
         }
 
         .product-price {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 0.75rem;
+            font-weight: bold;
+            font-size: 0.9rem;
             color: #666;
             margin-top: 4px;
             display: block;
@@ -317,157 +316,242 @@
             font-size: 0.9rem;
         }
 
+        /* --- INTERACTIVE LIGHTBOX MODAL STYLES --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .product-modal {
+            background: #fff;
+            width: 90%;
+            max-width: 950px;
+            height: 85vh;
+            max-height: 620px;
+            border-radius: 4px;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.15);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .product-modal {
+            transform: translateY(0);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #111;
+            z-index: 10;
+            transition: transform 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .modal-left-visual {
+            width: 50%;
+            background: #111;
+            position: relative;
+        }
+
+        .modal-left-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-right-details {
+            width: 50%;
+            padding: 50px 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #767676;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 400;
+            line-height: 1.2;
+            color: #000;
+            margin-bottom: 8px;
+            text-transform: capitalize;
+        }
+
+        .modal-price {
+            font-size: 1.1rem;
+            color: #111;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .modal-description {
+            font-size: 0.88rem;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 25px;
+        }
+
+        .modal-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            color: #222;
+            margin-bottom: 12px;
+        }
+
+        /* Colors options dots component */
+        .modal-colors-wrapper {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .color-bubble {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        .color-bubble:hover, .color-bubble.selected {
+            transform: scale(1.15);
+            outline: 2px solid #000;
+            outline-offset: 2px;
+        }
+
+        /* Sizes layout boxes blueprint */
+        .modal-sizes-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 35px;
+        }
+
+        .size-box {
+            border: 1px solid #ccc;
+            padding: 8px 18px;
+            font-size: 0.8rem;
+            min-width: 50px;
+            text-align: center;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+
+        .size-box:hover, .size-box.selected {
+            background: #000;
+            color: #fff;
+            border-color: #000;
+        }
+
+        .add-to-bag-btn {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 16px;
+            width: 100%;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: auto;
+        }
+
+        .add-to-bag-btn:hover {
+            background: #333;
+        }
+
         /* --- TABLET (max 900px) --- */
         @media (max-width: 900px) {
-            .top-bar {
-                padding: 10px 20px;
-            }
-
-            .logo {
-                font-size: 2.8rem;
-            }
-
-            .catalog-layout {
-                flex-direction: column;
-                padding: 20px;
-                gap: 20px;
-            }
-
-            .filter-sidebar {
-                width: 100%;
-                border-bottom: 1px solid #eaeaea;
-                padding-bottom: 15px;
-            }
-
-            .filter-section h3 {
-                font-size: 0.9rem;
-                margin-bottom: 10px;
-            }
-
-            .filter-list {
-                display: flex;
-                overflow-x: auto;
-                gap: 15px;
-                padding-bottom: 8px;
-                white-space: nowrap;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .filter-list::-webkit-scrollbar {
-                height: 3px;
-            }
-            .filter-list::-webkit-scrollbar-thumb {
-                background-color: #ddd;
-                border-radius: 10px;
-            }
-
-            .filter-list li {
-                margin-bottom: 0;
-            }
-
-            .filter-divider, .accordion-item, .price-range-container {
-                display: none;
-            }
-
-            .catalog-header {
-                margin-bottom: 20px;
-                align-items: center;
-            }
-
-            .catalog-title h1 {
-                font-size: 1.4rem;
-            }
-
-            .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px 12px;
-            }
-
-            .product-image-wrapper {
-                border-radius: 14px;
-            }
+            .top-bar { padding: 10px 20px; }
+            .logo { font-size: 2.8rem; }
+            .catalog-layout { flex-direction: column; padding: 20px; gap: 20px; }
+            .filter-sidebar { width: 100%; border-bottom: 1px solid #eaeaea; padding-bottom: 15px; }
+            .filter-section h3 { font-size: 0.9rem; margin-bottom: 10px; }
+            .filter-list { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 8px; white-space: nowrap; }
+            .filter-divider, .accordion-item, .price-range-container { display: none; }
+            .catalog-header { margin-bottom: 20px; align-items: center; }
+            .catalog-title h1 { font-size: 1.4rem; }
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 20px 12px; }
+            .product-image-wrapper { border-radius: 14px; }
+            
+            /* Responsive modal */
+            .product-modal { flex-direction: column; height: 90vh; max-height: none; }
+            .modal-left-visual { width: 100%; height: 40%; }
+            .modal-right-details { width: 100%; height: 60%; padding: 25px 20px; }
+            .modal-title { font-size: 1.6rem; }
+            .modal-price { margin-bottom: 15px; }
+            .modal-description { margin-bottom: 15px; padding-bottom: 15px; }
         }
 
         /* --- MOBILE (max 600px) --- */
         @media (max-width: 600px) {
-            .top-bar {
-                padding: 8px 16px;
-            }
-
-            .logo {
-                font-size: 2.4rem;
-                letter-spacing: 0.5px;
-            }
-
-            .icon-box {
-                width: 24px;
-                height: 24px;
-            }
-
-            .search-icon {
-                gap: 6px;
-            }
-
-            .top-right-nav {
-                font-size: 0.8rem;
-            }
-
-            .main-nav {
-                gap: 16px;
-                font-size: 0.75rem;
-                padding-bottom: 10px;
-            }
-
-            .catalog-layout {
-                padding: 16px;
-                gap: 16px;
-            }
-
-            .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px 10px;
-            }
-
-            .product-image-wrapper {
-                border-radius: 12px;
-            }
-
-            .product-name {
-                font-size: 0.78rem;
-            }
-
-            .product-price {
-                font-size: 0.72rem;
-            }
-
-            .catalog-title h1 {
-                font-size: 1.2rem;
-            }
+            .top-bar { padding: 8px 16px; }
+            .logo { font-size: 2.4rem; letter-spacing: 0.5px; }
+            .icon-box { width: 24px; height: 24px; }
+            .search-icon { gap: 6px; }
+            .top-right-nav { font-size: 0.8rem; }
+            .main-nav { gap: 16px; font-size: 0.75rem; padding-bottom: 10px; }
+            .catalog-layout { padding: 16px; gap: 16px; }
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 15px 10px; }
+            .product-image-wrapper { border-radius: 12px; }
+            .product-name { font-size: 0.78rem; }
+            .product-price { font-size: 0.72rem; }
+            .catalog-title h1 { font-size: 1.2rem; }
         }
 
         /* --- VERY SMALL (max 380px) --- */
         @media (max-width: 380px) {
-            .logo {
-                font-size: 2rem;
-            }
-
-            .icon-box {
-                width: 20px;
-                height: 20px;
-            }
-
-            .main-nav {
-                gap: 12px;
-                font-size: 0.7rem;
-            }
-
-            .products-grid {
-                gap: 12px 8px;
-            }
-
-            .product-name {
-                font-size: 0.72rem;
-            }
+            .logo { font-size: 2rem; }
+            .icon-box { width: 20px; height: 20px; }
+            .main-nav { gap: 12px; font-size: 0.7rem; }
+            .products-grid { gap: 12px 8px; }
+            .product-name { font-size: 0.72rem; }
         }
     </style>
 </head>
@@ -496,7 +580,6 @@
     </header>
 
     <main class="catalog-layout">
-        
         <aside class="filter-sidebar">
             <div class="filter-section">
                 <h3>Browse by</h3>
@@ -507,12 +590,9 @@
                     <li><a href="#">Tops</a></li>
                 </ul>
             </div>
-            
             <hr class="filter-divider">
-
             <div class="filter-section">
                 <h3>Filter by</h3>
-                
                 <div class="accordion-item" style="border-bottom: none; padding-bottom: 0;">
                     <div class="accordion-header">
                         <span>Price</span>
@@ -526,7 +606,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="accordion-item">
                     <div class="accordion-header">
                         <span>talla</span>
@@ -540,35 +619,66 @@
             <div class="catalog-header">
                 <div class="catalog-title">
                     <h1>All Products</h1>
-                    <span>2 products</span>
                 </div>
             </div>
-
             <div class="products-grid" id="catalogContainer">
                 <p class="loading-text">Loading products...</p>
             </div>
         </section>
     </main>
 
+    <div class="modal-overlay" id="productModalOverlay">
+        <div class="product-modal">
+            <button class="modal-close-btn" id="modalCloseBtn">✕</button>
+            
+            <div class="modal-left-visual">
+                <img id="modalProductImg" src="" alt="">
+            </div>
+            
+            <div class="modal-right-details">
+                <div class="modal-tag" id="modalProductCategory">CORE COLLECTION</div>
+                <h2 class="modal-title" id="modalProductName">Product Title</h2>
+                <div class="modal-price" id="modalProductPrice">$ 0.00</div>
+                
+                <p class="modal-description" id="modalProductDescription">
+                    No description available.
+                </p>
+                
+                <div class="modal-section-title">Color Palette</div>
+                <div class="modal-colors-wrapper" id="modalColorsContainer"></div>
+                
+                <div class="modal-section-title">Select Size</div>
+                <div class="modal-sizes-wrapper" id="modalSizesContainer"></div>
+                
+                <button class="add-to-bag-btn">Add To Bag</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Store raw items array globally to access object maps inside click events
+        let globalProductsList = [];
+
         async function loadStorefrontCatalog() {
             const container = document.getElementById('catalogContainer');
             if(!container) return;
 
             try {
                 const response = await fetch('/api/get-catalog');
-                const products = await response.json();
+                globalProductsList = await response.json();
 
-                if (!products || products.length === 0) {
+                if (!globalProductsList || globalProductsList.length === 0) {
                     container.innerHTML = `<p class="loading-text">No products available yet.</p>`;
                     return;
                 }
 
                 container.innerHTML = '';
 
-                products.forEach((product) => {
+                globalProductsList.forEach((product, index) => {
                     const card = document.createElement('div');
                     card.className = 'product-card';
+                    // Attach the specific global index position onto the element's data attribute
+                    card.setAttribute('data-product-index', index);
 
                     card.innerHTML = `
                         <div class="product-image-wrapper">
@@ -580,6 +690,11 @@
                         </div>
                     `;
 
+                    // Handle card click to open up data profile window
+                    card.addEventListener('click', () => {
+                        openProductQuickView(product);
+                    });
+
                     container.appendChild(card);
                 });
 
@@ -588,6 +703,74 @@
                 container.innerHTML = `<p class="loading-text" style="color: red;">Failed to load catalog view.</p>`;
             }
         }
+
+        // Logic to construct and project data into the popup layout 
+        function openProductQuickView(product) {
+            const overlay = document.getElementById('productModalOverlay');
+            
+            // Map plain values
+            document.getElementById('modalProductImg').src = product.image;
+            document.getElementById('modalProductImg').alt = product.name;
+            document.getElementById('modalProductCategory').innerText = `${product.category || 'Collection'}`;
+            document.getElementById('modalProductName').innerText = product.name;
+            document.getElementById('modalProductPrice').innerText = `$ ${product.price.toLocaleString('es-CO', { minimumFractionDigits: 2 })}`;
+            
+            // Map the description field (safely handling fallback text if empty)
+            document.getElementById('modalProductDescription').innerText = product.description || "Esta prenda clásica ha sido confeccionada con materiales seleccionados para brindarte la mayor comodidad, adaptabilidad y durabilidad en tu día a día.";
+
+            // Render Colors Palette Bubbles dynamically
+            const colorsContainer = document.getElementById('modalColorsContainer');
+            colorsContainer.innerHTML = '';
+            if (product.colors && product.colors.length > 0) {
+                product.colors.forEach((colorHex, idx) => {
+                    const bubble = document.createElement('div');
+                    bubble.className = `color-bubble ${idx === 0 ? 'selected' : ''}`;
+                    bubble.style.backgroundColor = colorHex;
+                    
+                    bubble.addEventListener('click', () => {
+                        document.querySelectorAll('.color-bubble').forEach(b => b.classList.remove('selected'));
+                        bubble.classList.add('selected');
+                    });
+                    colorsContainer.appendChild(bubble);
+                });
+            } else {
+                colorsContainer.innerHTML = '<span style="font-size:0.8rem; color:#767676;">Color único</span>';
+            }
+
+            // Render Sizes Box Blocks dynamically
+            const sizesContainer = document.getElementById('modalSizesContainer');
+            sizesContainer.innerHTML = '';
+            if (product.sizes && product.sizes.length > 0) {
+                product.sizes.forEach((sizeLabel, idx) => {
+                    const box = document.createElement('div');
+                    box.className = `size-box ${idx === 0 ? 'selected' : ''}`;
+                    box.innerText = sizeLabel;
+                    
+                    box.addEventListener('click', () => {
+                        document.querySelectorAll('.size-box').forEach(s => s.classList.remove('selected'));
+                        box.classList.add('selected');
+                    });
+                    sizesContainer.appendChild(box);
+                });
+            } else {
+                sizesContainer.innerHTML = '<span style="font-size:0.8rem; color:#767676;">Talla única</span>';
+            }
+
+            // Launch visualization entry animation toggle
+            overlay.classList.add('active');
+        }
+
+        // Close handling triggers
+        document.getElementById('modalCloseBtn').addEventListener('click', () => {
+            document.getElementById('productModalOverlay').classList.remove('active');
+        });
+
+        // Close on clicking outside the modal layout frame box
+        document.getElementById('productModalOverlay').addEventListener('click', (e) => {
+            if (e.target.id === 'productModalOverlay') {
+                document.getElementById('productModalOverlay').classList.remove('active');
+            }
+        });
 
         window.addEventListener('DOMContentLoaded', loadStorefrontCatalog);
     </script>
