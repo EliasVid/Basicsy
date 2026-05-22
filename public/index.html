@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
     
     <style>
-
         @font-face {
             font-family: 'Higuen';
             src: url('fonts/HiguenSerif.otf') format('truetype');
@@ -60,10 +59,10 @@
             font-size: 0.85rem;
         }
 
-        .search-icon {
+        .social-icons {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
 
         .icon-box {
@@ -83,7 +82,6 @@
             display: block;
         }
 
-        /* Only WhatsApp */
         .whatsapp-icon {
             transform: scale(1.38);
         }
@@ -144,12 +142,13 @@
         }
 
         .hero-content h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
+            font-family: 'Higuen', serif;
+            font-size: 3.5rem;
             font-weight: 400;
-            letter-spacing: 4px;
+            letter-spacing: 2px;
             margin-bottom: 20px;
             text-transform: uppercase;
+            line-height: 1.2;
         }
 
         .hero-btn {
@@ -182,20 +181,11 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            text-decoration: none;
         }
 
-        /* Makes the third item stretch full width on PC & tablets */
         .grid-item.full-width {
             grid-column: span 2;
-        }
-
-        .bg-light-blue {
-            background-color: #e8f4fd;
-        }
-
-        .bg-dark-gray {
-            background-color: #1a1a1a;
-            color: #fff;
         }
 
         .bg-image-1 {
@@ -210,41 +200,21 @@
             background: url("img/jeans.png") no-repeat center center/cover;
         }
 
-        .no-product {
-            text-align: center;
-            color: #1a2a3a;
-        }
-
-        .no-product svg {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 10px;
-            fill: #1a2a3a;
-        }
-
         .grid-label {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: bold;
             letter-spacing: 3px;
             text-transform: uppercase;
-            border-bottom: 2px solid currentcolor;
+            border-bottom: 2px solid #fff;
             padding-bottom: 5px;
             z-index: 2;
-        }
-
-        .grid-item.bg-image-1 .grid-label {
             color: #fff;
             text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease;
         }
 
-        .grid-item.bg-image-2 .grid-label {
-            color: #fff;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
-        }
-
-        .grid-item.bg-image-3 .grid-label {
-            color: #fff;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        .grid-item:hover .grid-label {
+            transform: scale(1.05);
         }
 
         /* --- INSTAGRAM SECTION --- */
@@ -292,7 +262,7 @@
             transform: scale(1.05);
         }
 
-        /* --- BRAND PILLARS / VALUE PROP --- */
+        /* --- BRAND PILLARS --- */
         .pillars {
             background-color: #faf7f2;
             display: grid;
@@ -301,16 +271,17 @@
             text-align: center;
             max-width: 1200px;
             margin: 0 auto;
+            gap: 20px;
         }
 
         .pillar-item h3 {
             font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 400;
             margin-bottom: 10px;
         }
 
-        .pillar-item ::before {
+        .pillar-item::before {
             content: '—';
             display: block;
             margin-bottom: 10px;
@@ -329,12 +300,13 @@
             grid-template-columns: 2fr repeat(3, 1fr);
             max-width: 1200px;
             margin: 0 auto;
+            gap: 20px;
         }
 
         .footer-logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            font-weight: 500;
+            font-family: 'Higuen', serif;
+            font-size: 2.2rem;
+            text-transform: lowercase;
         }
 
         .footer-column h4 {
@@ -363,9 +335,8 @@
             color: #000;
         }
 
-        /* --- TABLET (max 900px) --- */
+        /* --- RESPONSIVE DESIGN --- */
         @media (max-width: 900px) {
-            /* Keeps the horizontal layout intact for tablets per request */
             .product-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -386,10 +357,7 @@
             }
         }
 
-        /* --- MOBILE (max 600px) --- */
         @media (max-width: 600px) {
-
-            /* Header */
             .top-bar {
                 padding: 8px 16px;
             }
@@ -404,15 +372,6 @@
                 height: 24px;
             }
 
-            .search-icon {
-                gap: 6px;
-            }
-
-            .top-right-nav a {
-                margin-left: 0;
-                font-size: 0.8rem;
-            }
-
             .main-nav {
                 gap: 16px;
                 font-size: 0.75rem;
@@ -422,24 +381,15 @@
                 padding-right: 16px;
             }
 
-            /* Hero */
             .hero {
                 height: 55vh;
                 min-height: 280px;
             }
 
             .hero-content h1 {
-                font-size: 1.8rem;
-                letter-spacing: 2px;
+                font-size: 2.2rem;
             }
 
-            .hero-btn {
-                padding: 8px 22px;
-                font-size: 0.75rem;
-                letter-spacing: 1.5px;
-            }
-
-            /* Product grid - Stacks elements evenly on mobile */
             .product-grid {
                 grid-template-columns: 1fr;
             }
@@ -449,17 +399,7 @@
             }
 
             .grid-item.full-width {
-                grid-column: span 1; /* Normalizes layout sizing on phones */
-            }
-
-            .no-product svg {
-                width: 50px;
-                height: 50px;
-            }
-
-            /* Instagram */
-            .instagram-section {
-                padding: 40px 16px;
+                grid-column: span 1;
             }
 
             .instagram-gallery {
@@ -467,45 +407,19 @@
                 gap: 8px;
             }
 
-            /* Pillars */
-            .pillars {
-                padding: 0 20px 40px 20px;
-                gap: 20px;
-            }
-
-            .pillar-item h3 {
-                font-size: 1.4rem;
-            }
-
-            /* Footer */
-            footer {
-                padding: 40px 20px;
-            }
-
             .footer-container {
                 grid-template-columns: 1fr;
                 gap: 28px;
                 text-align: center;
             }
-
-            .footer-logo {
-                font-size: 1.4rem;
-            }
         }
 
-        /* --- VERY SMALL (max 380px) --- */
         @media (max-width: 380px) {
             .logo {
                 font-size: 2rem;
             }
-
-            .icon-box {
-                width: 20px;
-                height: 20px;
-            }
-
             .hero-content h1 {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
             }
         }
     </style>
@@ -514,12 +428,16 @@
 
     <header>
         <div class="top-bar">
-            <div class="search-icon">
+            <div class="social-icons">
                 <div class="icon-box">
-                    <a href="https://api.whatsapp.com/message/2UMPMIKRZOBEA1"><img src="img/whatsapp.png" class="whatsapp-icon" alt="WhatsApp"></a>
+                    <a href="https://api.whatsapp.com/message/2UMPMIKRZOBEA1" target="_blank" rel="noopener noreferrer">
+                        <img src="img/whatsapp.png" class="whatsapp-icon" alt="WhatsApp">
+                    </a>
                 </div>
                 <div class="icon-box">
-                    <a href="https://www.instagram.com/basicsy.co?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="><img src="img/instagram.png" alt="Instagram"></a>
+                    <a href="https://www.instagram.com/basicsy.co?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer">
+                        <img src="img/instagram.png" alt="Instagram">
+                    </a>
                 </div>
             </div>
             <div class="logo">Basicsy</div>
@@ -536,22 +454,21 @@
 
     <section class="hero">
         <div class="hero-content">
-            <h1 style="font-family: 'Higuen', serif;">¡Bienvenid@ a<br>Basicsy!</h1>
+            <h1>¡Bienvenid@ a<br>Basicsy!</h1>
             <a href="catalog.html" class="hero-btn">Comprar Aquí</a>
         </div>
     </section>
 
     <section class="product-grid">
-        <div class="grid-item bg-image-1">
+        <a href="catalog.html?category=body" class="grid-item bg-image-1">
             <div class="grid-label">Bodys</div>
-        </div>
-        <div class="grid-item bg-image-2">
+        </a>
+        <a href="catalog.html?category=top" class="grid-item bg-image-2">
             <div class="grid-label">Tops</div>
-        </div>
-
-        <div class="grid-item bg-image-3 full-width">
+        </a>
+        <a href="catalog.html?category=jean" class="grid-item bg-image-3 full-width">
             <div class="grid-label">Jeans</div>
-        </div>
+        </a>
     </section>
 
     <section class="instagram-section">
@@ -586,23 +503,17 @@
             <div class="footer-column">
                 <h4>Menú</h4>
                 <ul>
-                    <li><a href="#">Comprar Todo</a></li>
+                    <li><a href="catalog.html">Comprar Todo</a></li>
                     <li><a href="#">Devoluciones</a></li>
                     <li><a href="#">Contacto</a></li>
                 </ul>
             </div>
             <div class="footer-column">
-                <h4>Ayuda</h4>
-                <ul>
-                    <li><a href="#">Preguntas Frecuentes</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
                 <h4>Redes</h4>
                 <ul>
-                    <li><a href="#">Tiktok</a></li>
-                    <li><a href="#">Instagram</a></li>
-                    <li><a href="#">WhatsApp</a></li>
+                    <li><a href="https://www.tiktok.com/@basicsy.co?is_from_webapp=1&sender_device=pc">Tiktok</a></li>
+                    <li><a href="https://www.instagram.com/basicsy.co" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+                    <li><a href="https://api.whatsapp.com/message/2UMPMIKRZOBEA1" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
                 </ul>
             </div>
         </div>

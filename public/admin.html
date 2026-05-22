@@ -1,30 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catalog Admin Dashboard</title>
     <style>
-        body { font-family: system-ui, sans-serif; background: #f9f9f9; padding: 40px; }
-        .admin-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 14px; }
-        input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        textarea { resize: vertical; font-family: inherit; }
-        input[type="file"] { display: block; margin-top: 5px; }
-        
+        body {
+            font-family: system-ui, sans-serif;
+            background: #f9f9f9;
+            padding: 40px;
+        }
+
+        .admin-card {
+            background: white;
+            max-width: 550px;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin-top: 5px;
+        }
+
         /* Dynamic variants layout styles */
-        .variant-container { background: #f0f0f0; padding: 15px; border-radius: 6px; margin-top: 10px; border-left: 4px solid #000; }
-        .dynamic-section-title { font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 10px; }
-        .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
-        .checkbox-label { display: flex; align-items: center; background: white; border: 1px solid #ccc; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: normal; }
-        .checkbox-label input { margin-right: 6px; }
-        
-        button { background: #000; color: #fff; border: none; padding: 12px 20px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        button:hover { background: #333; }
-        
+        .variant-container {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            border-left: 4px solid #000;
+        }
+
+        .dynamic-section-title {
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #555;
+            margin-bottom: 12px;
+        }
+
+        /* Variant Picker Controls */
+        .picker-row {
+            display: grid;
+            grid-template-columns: 1.2fr 2fr 1.5fr auto;
+            gap: 10px;
+            align-items: end;
+            margin-bottom: 15px;
+        }
+
+        .picker-row label {
+            margin-bottom: 4px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .color-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 4px 8px;
+            height: 38px;
+            box-sizing: border-box;
+        }
+
+        .color-input-wrapper input[type="color"] {
+            border: none;
+            width: 30px;
+            height: 100%;
+            padding: 0;
+            background: none;
+            cursor: pointer;
+        }
+
+        /* Matrix List Table Layout */
+        .matrix-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            margin-top: 15px;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .matrix-table th {
+            background: #fafafa;
+            font-weight: bold;
+            color: #555;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .color-preview {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        /* Action Utility Buttons */
+        .btn-secondary {
+            background: #555;
+            color: white;
+            padding: 10px;
+            height: 38px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-secondary:hover {
+            background: #333;
+        }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #cc0000;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0 5px;
+        }
+
+        .btn-delete:hover {
+            color: #ff0000;
+        }
+
+        button[type="submit"] {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            width: 100%;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button[type="submit"]:hover {
+            background: #333;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="admin-card">
@@ -52,14 +229,15 @@
 
             <div class="form-group">
                 <label for="prodDescription">Descripción</label>
-                <textarea id="prodDescription" rows="3" placeholder="Escribe los detalles o material de la prenda..."></textarea>
+                <textarea id="prodDescription" rows="3"
+                    placeholder="Escribe los detalles o material de la prenda..."></textarea>
             </div>
 
             <div id="dynamicAttributesContainer"></div>
 
             <div class="form-group" style="margin-top: 20px;">
                 <label for="prodImage">Imágen</label>
-                <input type="file" id="prodImage" accept="image/png, image/jpeg, image/webp" required>
+                <input type="file" id="prodImage" accept="image/png, image/jpeg, image/webp" multiple required>
             </div>
 
             <button type="submit">Publicar</button>
@@ -72,166 +250,209 @@
         const categorySelect = document.getElementById('prodCategory');
         const dynamicContainer = document.getElementById('dynamicAttributesContainer');
 
-        // Listen for Category changes to swap available sizing templates
+        // This state array saves structural elements explicitly chosen by user
+        let activeVariants = [];
+
+        // Dynamic category templates mapping targeted logic sizing definitions
+        const sizeTemplates = {
+            body: ['Unica', 'S', 'M', 'L'],
+            jean: ['6', '7', '8', '9'],
+            top: ['Unica', 'S', 'M', 'L']
+        };
+
         categorySelect.addEventListener('change', (e) => {
             const category = e.target.value;
-            let htmlContent = '';
-
-            if (category === 'body') {
-                htmlContent = `
-                    <div class="variant-container">
-                        <div class="dynamic-section-title">Body Configuration</div>
-                        <div class="form-group">
-                            <label>Available Sizes</label>
-                            <div class="checkbox-group">
-                                ${['S', 'M', 'L', 'Unica'].map(size => `
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" name="bodySizes" value="${size}" ${size === 'Unica' ? 'checked' : ''}> ${size}
-                                    </label>
-                                `).join('')}
-                            </div>    
-                        </div>
-                        ${getColorAndStockFields()}
-                    </div>
-                `;
-            } else if (category === 'jean') {
-                htmlContent = `
-                    <div class="variant-container">
-                        <div class="dynamic-section-title">Jean Configuration</div>
-                        <div class="form-group">
-                            <label>Available Sizes</label>
-                            <div class="checkbox-group">
-                                ${['6', '7', '8', '9'].map(size => `
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" name="jeanSizes" value="${size}"> ${size}
-                                    </label>
-                                `).join('')}
-                            </div>
-                        </div>
-                        ${getColorAndStockFields()}
-                    </div>
-                `;
-            } else if (category === 'top') {
-                htmlContent = `
-                    <div class="variant-container">
-                        <div class="dynamic-section-title">Top Configuration</div>
-                        <div class="form-group">
-                            <label>Available Sizes</label>
-                            <div class="checkbox-group">
-                                ${['S', 'M', 'L', 'Unica'].map(size => `
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" name="topSizes" value="${size}" ${size === 'Unica' ? 'checked' : ''}> ${size}
-                                    </label>
-                                `).join('')}
-                            </div>   
-                        </div>
-                        ${getColorAndStockFields()}
-                    </div>
-                `;
-            }
-
-            dynamicContainer.innerHTML = htmlContent;
-
-            // Handle color dynamically inside templates
-            setupColorPickerLogic();
+            activeVariants = []; // Reset list structure context changes completely
+            renderDynamicSection(category);
         });
 
-        // Helper function to avoid repeating color and stock inputs across categories
-        function getColorAndStockFields() {
-            return `
-                <div class="form-group">
-                    <label>Available Colors</label>
-                    <div id="colorPickerContainer">
-                        <div class="color-row" style="display:flex; gap:10px; margin-bottom:10px;">
-                            <input type="color" class="color-picker" value="#000000">
-                            <button type="button" id="addColorBtn" style="width:auto; padding:8px 12px;">+</button>
+        function renderDynamicSection(category) {
+            const titleLabel = category.charAt(0).toUpperCase() + category.slice(1);
+            const sizes = sizeTemplates[category] || [];
+
+            dynamicContainer.innerHTML = `
+                <div class="variant-container">
+                    <div class="dynamic-section-title">${titleLabel} Configuration</div>
+                    
+                    <div class="picker-row">
+                        <div>
+                            <label>Color</label>
+                            <div class="color-input-wrapper">
+                                <input type="color" id="varColor" value="#000000">
+                            </div>
+                        </div>
+                        <div>
+                            <label>Size</label>
+                            <select id="varSize">
+                                ${sizes.map(sz => `<option value="${sz}">${sz}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label>Stock Quantity</label>
+                            <input type="number" id="varStock" min="1" value="1">
+                        </div>
+                        <div>
+                            <button type="button" id="addVariantBtn" class="btn-secondary">Add</button>
                         </div>
                     </div>
-                </div>
 
-                <div class="form-group" style="margin-bottom: 0;">
-                    <label for="attrStock">Initial Manual Stock Count</label>
-                    <input type="number" id="attrStock" min="0" required placeholder="0">
+                    <div class="matrix-title">Variantes Agregadas</div>
+                    <table class="matrix-table">
+                        <thead>
+                            <tr>
+                                <th>Color</th>
+                                <th>Talla</th>
+                                <th>Cantidad</th>
+                                <th style="width: 40px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrixTableBody">
+                            <tr>
+                                <td colspan="4" style="text-align:center; color:#999; font-size:13px;">No variants added yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             `;
+
+            setupPickerActions();
         }
 
-        // Encapsulated setup color logic to work inside dynamically assigned layouts
-        function setupColorPickerLogic() {
-            const addColorBtn = document.getElementById('addColorBtn');
-            if (!addColorBtn) return;
+        function setupPickerActions() {
+            const addBtn = document.getElementById('addVariantBtn');
+            if (!addBtn) return;
 
-            addColorBtn.addEventListener('click', () => {
-                const container = document.getElementById('colorPickerContainer');
-                const newRow = document.createElement('div');
-                newRow.className = 'color-row';
-                newRow.style = 'display:flex; gap:10px; margin-bottom:10px;';
+            addBtn.addEventListener('click', () => {
+                const colorInput = document.getElementById('varColor');
+                const sizeSelect = document.getElementById('varSize');
+                const stockInput = document.getElementById('varStock');
 
-                newRow.innerHTML = `
-                    <input type="color" class="color-picker" value="#000000">
-                    <button type="button" class="removeColorBtn" style="width:auto; padding:8px 12px;">✕</button>
+                const selectedColor = colorInput.value.toLowerCase();
+                const selectedSize = sizeSelect.value;
+                const stockVal = parseInt(stockInput.value, 10) || 0;
+
+                if (stockVal <= 0) {
+                    alert('Please enter a valid stock quantity.');
+                    return;
+                }
+
+                // Check if matching combination coordinates already exist inside runtime tracking list
+                const duplicateIndex = activeVariants.findIndex(v => v.color === selectedColor && v.size === selectedSize);
+
+                if (duplicateIndex > -1) {
+                    // Update matching element context instead of pushing duplicating rows completely
+                    activeVariants[duplicateIndex].stock += stockVal;
+                } else {
+                    activeVariants.push({
+                        color: selectedColor,
+                        size: selectedSize,
+                        stock: stockVal
+                    });
+                }
+
+                // Refresh DOM implementation mappings lists view layout
+                updateMatrixTable();
+
+                // Reset stock display number default values safely back down to 1
+                stockInput.value = '1';
+            });
+        }
+
+        function updateMatrixTable() {
+            const tbody = document.getElementById('matrixTableBody');
+            if (!tbody) return;
+
+            if (activeVariants.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align:center; color:#999; font-size:13px;">No variants added yet.</td>
+                    </tr>
                 `;
+                return;
+            }
 
-                container.appendChild(newRow);
+            tbody.innerHTML = activeVariants.map((item, index) => `
+                <tr>
+                    <td>
+                        <span class="color-preview" style="background-color: ${item.color};"></span>
+                        <span style="font-family: monospace;">${item.color}</span>
+                    </td>
+                    <td style="font-weight: bold;">${item.size}</td>
+                    <td>${item.stock}</td>
+                    <td style="text-align: center;">
+                        <button type="button" class="btn-delete" data-index="${index}">✕</button>
+                    </td>
+                </tr>
+            `).join('');
 
-                newRow.querySelector('.removeColorBtn').addEventListener('click', () => {
-                    newRow.remove();
+            // Hook up specific removal logic dynamically targeting indexed records elements
+            tbody.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const indexToRemove = parseInt(e.currentTarget.dataset.index, 10);
+                    activeVariants.splice(indexToRemove, 1);
+                    updateMatrixTable();
                 });
             });
         }
 
-        // Form submission and data construction
+        // Handle submission sequence actions pipeline operations maps out upstream endpoints properly
+        // Handle submission sequence actions pipeline operations
         document.getElementById('catalogForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
+            if (activeVariants.length === 0) {
+                alert('Please add at least one item variant combination before publishing.');
+                return;
+            }
+
             const name = document.getElementById('prodName').value;
             const price = document.getElementById('prodPrice').value;
             const category = categorySelect.value;
-            const description = document.getElementById('prodDescription').value; // Captured Description Value
-            const fileInput = document.getElementById('prodImage');
-            const file = fileInput.files[0];
+            const description = document.getElementById('prodDescription').value;
 
-            // 1. Gather dynamic form configuration variables
-            let computedSizes = [];
-            if (category === 'body') {
-                const checkedBodys = document.querySelectorAll('input[name="bodySizes"]:checked');
-                computedSizes = Array.from(checkedBodys).map(cb => cb.value);
-            } else if (category === 'jean') {
-                const checkedJeans = document.querySelectorAll('input[name="jeanSizes"]:checked');
-                computedSizes = Array.from(checkedJeans).map(cb => cb.value);
-            } else if (category === 'top') {
-                const checkedTops = document.querySelectorAll('input[name="topSizes"]:checked');
-                computedSizes = Array.from(checkedTops).map(cb => cb.value);
+            // 1. Grab all files from the input array
+            const fileInput = document.getElementById('prodImage');
+            const files = Array.from(fileInput.files);
+
+            if (files.length === 0) {
+                alert('Please select at least one image.');
+                return;
             }
 
-            // Capture raw colors text string into trimmed array list
-            const colorPickers = document.querySelectorAll('.color-picker');
-            const colorsArray = [...new Set(
-                Array.from(colorPickers).map(picker => picker.value)
-            )];
-
-            const stockValue = parseInt(document.getElementById('attrStock').value, 10);
+            // Prepare arrays for legacy mapping fields if needed upstream
+            const explicitSizesSet = [...new Set(activeVariants.map(v => v.size))];
+            const explicitColorsSet = [...new Set(activeVariants.map(v => v.color))];
 
             try {
-                // 2. Upload image asset to cloud storage origin
-                const blobResponse = await upload(file.name, file, {
-                    access: 'public',
-                    handleUploadUrl: '/api/upload',
+                // 2. Upload all files to Vercel Blob concurrently using Promise.all
+                const uploadPromises = files.map(file => {
+                    return upload(file.name, file, {
+                        access: 'public',
+                        handleUploadUrl: '/api/upload',
+                    });
                 });
 
-                // 3. Assemble structured schema payload (with description added)
+                const blobResponses = await Promise.all(uploadPromises);
+
+                // 3. Extract the clean URLs from all uploaded file responses
+                const uploadedImageUrls = blobResponses.map(res => res.url);
+
+                // 4. Construct the updated product payload object parameters
                 const productData = {
                     name: name,
                     price: parseFloat(price),
-                    description: description, // Appended successfully into object JSON schema
-                    imageUrl: blobResponse.url,
+                    description: description,
                     category: category,
-                    sizes: computedSizes,
-                    colors: colorsArray,
-                    stock: stockValue
+                    sizes: explicitSizesSet,
+                    colors: explicitColorsSet,
+                    variants: activeVariants,
+
+                    // Set the first image as the primary cover, and store the full gallery array
+                    imageUrl: uploadedImageUrls[0],
+                    images: uploadedImageUrls
                 };
 
-                // 4. Send clean object data payload upstream to overwrite catalog server list
+                // 5. POST the structured product payload over to your server API endpoint
                 const response = await fetch('/api/add-product', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -239,9 +460,10 @@
                 });
 
                 if (response.ok) {
-                    alert('Item published successfully!');
+                    alert('Item published successfully with all images!');
                     document.getElementById('catalogForm').reset();
-                    dynamicContainer.innerHTML = ''; // Clear out the dynamic layout fields
+                    dynamicContainer.innerHTML = '';
+                    activeVariants = [];
                 } else {
                     throw new Error("Failed to update catalog entry");
                 }
@@ -253,4 +475,5 @@
         });
     </script>
 </body>
+
 </html>

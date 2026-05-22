@@ -8,7 +8,8 @@ export default async function handler(request, response) {
   }
 
   try {
-    const { name, price, description, imageUrl, category, sizes, colors, stock} = request.body;
+    // Added "images" to the destructured body parameters
+    const { name, price, description, imageUrl, category, sizes, colors, variants, images } = request.body;
 
     // 1. DOWNLOAD: Look inside your cloud storage locker to see if catalog.json exists
     let catalog = [];
@@ -20,22 +21,22 @@ export default async function handler(request, response) {
       catalog = await currentFileResponse.json();
     }
 
-    // 2. MODIFY: Build your new item package and push it into the array list
+    // 2. MODIFY: Build your new item package containing the variant inventory matrix
     const newProduct = {
       id: Date.now().toString(),
       name,
-      price,
+      price: parseFloat(price),
       description: description || "",
-      image: imageUrl,
+      image: imageUrl, // Your main grid image
+      images: images || (imageUrl ? [imageUrl] : []), // Safely stores the full gallery array, falling back to main image if empty
       category,
       sizes: sizes || [],
       colors: colors || [],
-      stock: stock || 0
+      variants: variants || [] 
     };
     catalog.push(newProduct);
 
     // 3. OVERWRITE: Send the updated array string right back up to Vercel Blob storage
-    // This safely overwrites the old JSON file with your brand new list!
     await put(CATALOG_BLOB_PATH, JSON.stringify(catalog, null, 2), {
       access: 'public',
       contentType: 'application/json',
