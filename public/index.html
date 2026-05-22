@@ -63,16 +63,17 @@
         .search-icon {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .icon-box {
-            width: 50px;
-            height: 50px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         .icon-box img {
@@ -92,10 +93,12 @@
             font-size: 4.2rem;
             font-weight: 500;
             letter-spacing: 1px;
+            white-space: nowrap;
         }
 
         .top-right-nav a {
             margin-left: 20px;
+            white-space: nowrap;
         }
 
         .main-nav {
@@ -116,7 +119,7 @@
         .hero {
             position: relative;
             height: 70vh;
-            background: url('https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=1200') no-repeat center center/cover;
+            background: url("img/landing.png") no-repeat center center/cover;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -124,7 +127,6 @@
             color: #fff;
         }
 
-        /* Dark overlay to replicate the mood */
         .hero::before {
             content: '';
             position: absolute;
@@ -138,6 +140,7 @@
         .hero-content {
             position: relative;
             z-index: 1;
+            padding: 0 20px;
         }
 
         .hero-content h1 {
@@ -181,7 +184,11 @@
             overflow: hidden;
         }
 
-        /* Specific background designs from layout */
+        /* Makes the third item stretch full width on PC & tablets */
+        .grid-item.full-width {
+            grid-column: span 2;
+        }
+
         .bg-light-blue {
             background-color: #e8f4fd;
         }
@@ -192,10 +199,17 @@
         }
 
         .bg-image-1 {
-            background: url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800') no-repeat center center/cover;
+            background: url("img/bodys.jpg") no-repeat center center/cover;
         }
 
-        /* Placeholder text style for "No product" / labels */
+        .bg-image-2 {
+            background: url("img/top.avif") no-repeat center center/cover;
+        }
+
+        .bg-image-3 {
+            background: url("img/jeans.png") no-repeat center center/cover;
+        }
+
         .no-product {
             text-align: center;
             color: #1a2a3a;
@@ -219,6 +233,16 @@
         }
 
         .grid-item.bg-image-1 .grid-label {
+            color: #fff;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        }
+
+        .grid-item.bg-image-2 .grid-label {
+            color: #fff;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        }
+
+        .grid-item.bg-image-3 .grid-label {
             color: #fff;
             text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
         }
@@ -339,13 +363,14 @@
             color: #000;
         }
 
-        /* --- RESPONSIVE BREAKPOINTS --- */
+        /* --- TABLET (max 900px) --- */
         @media (max-width: 900px) {
+            /* Keeps the horizontal layout intact for tablets per request */
             .product-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
             }
-            .grid-item {
-                height: 400px;
+            .grid-item.full-width {
+                grid-column: span 2;
             }
             .instagram-gallery {
                 grid-template-columns: repeat(3, 1fr);
@@ -355,9 +380,132 @@
                 gap: 30px;
             }
             .footer-container {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
                 gap: 40px;
                 text-align: center;
+            }
+        }
+
+        /* --- MOBILE (max 600px) --- */
+        @media (max-width: 600px) {
+
+            /* Header */
+            .top-bar {
+                padding: 8px 16px;
+            }
+
+            .logo {
+                font-size: 2.4rem;
+                letter-spacing: 0.5px;
+            }
+
+            .icon-box {
+                width: 24px;
+                height: 24px;
+            }
+
+            .search-icon {
+                gap: 6px;
+            }
+
+            .top-right-nav a {
+                margin-left: 0;
+                font-size: 0.8rem;
+            }
+
+            .main-nav {
+                gap: 16px;
+                font-size: 0.75rem;
+                padding-bottom: 10px;
+                flex-wrap: wrap;
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            /* Hero */
+            .hero {
+                height: 55vh;
+                min-height: 280px;
+            }
+
+            .hero-content h1 {
+                font-size: 1.8rem;
+                letter-spacing: 2px;
+            }
+
+            .hero-btn {
+                padding: 8px 22px;
+                font-size: 0.75rem;
+                letter-spacing: 1.5px;
+            }
+
+            /* Product grid - Stacks elements evenly on mobile */
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-item {
+                height: 280px;
+            }
+
+            .grid-item.full-width {
+                grid-column: span 1; /* Normalizes layout sizing on phones */
+            }
+
+            .no-product svg {
+                width: 50px;
+                height: 50px;
+            }
+
+            /* Instagram */
+            .instagram-section {
+                padding: 40px 16px;
+            }
+
+            .instagram-gallery {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            /* Pillars */
+            .pillars {
+                padding: 0 20px 40px 20px;
+                gap: 20px;
+            }
+
+            .pillar-item h3 {
+                font-size: 1.4rem;
+            }
+
+            /* Footer */
+            footer {
+                padding: 40px 20px;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 28px;
+                text-align: center;
+            }
+
+            .footer-logo {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* --- VERY SMALL (max 380px) --- */
+        @media (max-width: 380px) {
+            .logo {
+                font-size: 2rem;
+            }
+
+            .icon-box {
+                width: 20px;
+                height: 20px;
+            }
+
+            .hero-content h1 {
+                font-size: 1.5rem;
             }
         }
     </style>
@@ -368,10 +516,10 @@
         <div class="top-bar">
             <div class="search-icon">
                 <div class="icon-box">
-                    <a href="https://api.whatsapp.com/message/2UMPMIKRZOBEA1"><img src="img/whatsapp.png" class="whatsapp-icon" alt=""></a>
+                    <a href="https://api.whatsapp.com/message/2UMPMIKRZOBEA1"><img src="img/whatsapp.png" class="whatsapp-icon" alt="WhatsApp"></a>
                 </div>
                 <div class="icon-box">
-                    <a href="https://www.instagram.com/basicsy.co?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="><img src="img/instagram.png" alt=""></a>
+                    <a href="https://www.instagram.com/basicsy.co?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="><img src="img/instagram.png" alt="Instagram"></a>
                 </div>
             </div>
             <div class="logo">Basicsy</div>
@@ -388,30 +536,21 @@
 
     <section class="hero">
         <div class="hero-content">
-            <h1 style="font-family: 'Higuen', serif;" >¡Bienvenid@ a<br>Basicsy!</h1>
+            <h1 style="font-family: 'Higuen', serif;">¡Bienvenid@ a<br>Basicsy!</h1>
             <a href="catalog.html" class="hero-btn">Comprar Aquí</a>
         </div>
     </section>
 
     <section class="product-grid">
-        <div class="grid-item bg-light-blue">
-            <div class="no-product">
-                <svg viewBox="0 0 24 24"><path d="M22 10v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V10h20zm-2 2H4v8h16v-8zm-5-8a3 3 0 0 1 3 3v2H6V7a3 3 0 0 1 3-3h6zm-2 2H9a1 1 0 0 0-1 1v1h4V7a1 1 0 0 0-1-1z"/></svg>
-                <p>No product</p>
-            </div>
-        </div>
-        <div class="grid-item bg-dark-gray">
+        <div class="grid-item bg-image-1">
             <div class="grid-label">Bodys</div>
         </div>
-
-        <div class="grid-item bg-image-1">
+        <div class="grid-item bg-image-2">
             <div class="grid-label">Tops</div>
         </div>
-        <div class="grid-item bg-light-blue">
-            <div class="no-product">
-                <svg viewBox="0 0 24 24"><path d="M22 10v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V10h20zm-2 2H4v8h16v-8zm-5-8a3 3 0 0 1 3 3v2H6V7a3 3 0 0 1 3-3h6zm-2 2H9a1 1 0 0 0-1 1v1h4V7a1 1 0 0 0-1-1z"/></svg>
-                <p>No product</p>
-            </div>
+
+        <div class="grid-item bg-image-3 full-width">
+            <div class="grid-label">Jeans</div>
         </div>
     </section>
 

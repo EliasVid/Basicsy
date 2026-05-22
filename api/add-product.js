@@ -8,7 +8,7 @@ export default async function handler(request, response) {
   }
 
   try {
-    const { name, price, imageUrl, category, sizes, colors, stock, } = request.body;
+    const { name, price, description, imageUrl, category, sizes, colors, stock} = request.body;
 
     // 1. DOWNLOAD: Look inside your cloud storage locker to see if catalog.json exists
     let catalog = [];
@@ -25,6 +25,7 @@ export default async function handler(request, response) {
       id: Date.now().toString(),
       name,
       price,
+      description: description || "",
       image: imageUrl,
       category,
       sizes: sizes || [],

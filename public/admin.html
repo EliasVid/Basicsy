@@ -9,7 +9,8 @@
         .admin-card { background: white; max-width: 450px; margin: 0 auto; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 14px; }
-        input[type="text"], input[type="number"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        textarea { resize: vertical; font-family: inherit; }
         input[type="file"] { display: block; margin-top: 5px; }
         
         /* Dynamic variants layout styles */
@@ -49,7 +50,11 @@
                 </select>
             </div>
 
-            <!-- Dynamic attributes injection container -->
+            <div class="form-group">
+                <label for="prodDescription">Descripción</label>
+                <textarea id="prodDescription" rows="3" placeholder="Escribe los detalles o material de la prenda..."></textarea>
+            </div>
+
             <div id="dynamicAttributesContainer"></div>
 
             <div class="form-group" style="margin-top: 20px;">
@@ -127,50 +132,53 @@
 
             dynamicContainer.innerHTML = htmlContent;
 
-            const addColorBtn = document.getElementById('addColorBtn');
-
-            if (addColorBtn) {
-                addColorBtn.addEventListener('click', () => {
-                    const container = document.getElementById('colorPickerContainer');
-
-                    const newRow = document.createElement('div');
-                    newRow.className = 'color-row';
-                    newRow.style = 'display:flex; gap:10px; margin-bottom:10px;';
-
-                    newRow.innerHTML = `
-                        <input type="color" class="color-picker" value="#000000">
-                        <button type="button" class="removeColorBtn" style="width:auto; padding:8px 12px;">✕</button>
-                    `;
-
-                    container.appendChild(newRow);
-
-                    newRow.querySelector('.removeColorBtn').addEventListener('click', () => {
-                        newRow.remove();
-                    });
-                });
-            }
+            // Handle color dynamically inside templates
+            setupColorPickerLogic();
         });
 
         // Helper function to avoid repeating color and stock inputs across categories
         function getColorAndStockFields() {
-        return `
-            <div class="form-group">
-                <label>Available Colors</label>
-                
-                <div id="colorPickerContainer">
-                    <div class="color-row" style="display:flex; gap:10px; margin-bottom:10px;">
-                        <input type="color" class="color-picker" value="#000000">
-                        <button type="button" id="addColorBtn" style="width:auto; padding:8px 12px;">+</button>
+            return `
+                <div class="form-group">
+                    <label>Available Colors</label>
+                    <div id="colorPickerContainer">
+                        <div class="color-row" style="display:flex; gap:10px; margin-bottom:10px;">
+                            <input type="color" class="color-picker" value="#000000">
+                            <button type="button" id="addColorBtn" style="width:auto; padding:8px 12px;">+</button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="form-group" style="margin-bottom: 0;">
-                <label for="attrStock">Initial Manual Stock Count</label>
-                <input type="number" id="attrStock" min="0" required placeholder="0">
-            </div>
-        `;
-}
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="attrStock">Initial Manual Stock Count</label>
+                    <input type="number" id="attrStock" min="0" required placeholder="0">
+                </div>
+            `;
+        }
+
+        // Encapsulated setup color logic to work inside dynamically assigned layouts
+        function setupColorPickerLogic() {
+            const addColorBtn = document.getElementById('addColorBtn');
+            if (!addColorBtn) return;
+
+            addColorBtn.addEventListener('click', () => {
+                const container = document.getElementById('colorPickerContainer');
+                const newRow = document.createElement('div');
+                newRow.className = 'color-row';
+                newRow.style = 'display:flex; gap:10px; margin-bottom:10px;';
+
+                newRow.innerHTML = `
+                    <input type="color" class="color-picker" value="#000000">
+                    <button type="button" class="removeColorBtn" style="width:auto; padding:8px 12px;">✕</button>
+                `;
+
+                container.appendChild(newRow);
+
+                newRow.querySelector('.removeColorBtn').addEventListener('click', () => {
+                    newRow.remove();
+                });
+            });
+        }
 
         // Form submission and data construction
         document.getElementById('catalogForm').addEventListener('submit', async (e) => {
@@ -179,6 +187,7 @@
             const name = document.getElementById('prodName').value;
             const price = document.getElementById('prodPrice').value;
             const category = categorySelect.value;
+            const description = document.getElementById('prodDescription').value; // Captured Description Value
             const fileInput = document.getElementById('prodImage');
             const file = fileInput.files[0];
 
@@ -210,16 +219,16 @@
                     handleUploadUrl: '/api/upload',
                 });
 
-                // 3. Assemble structured schema payload
+                // 3. Assemble structured schema payload (with description added)
                 const productData = {
                     name: name,
                     price: parseFloat(price),
+                    description: description, // Appended successfully into object JSON schema
                     imageUrl: blobResponse.url,
                     category: category,
                     sizes: computedSizes,
                     colors: colorsArray,
-                    stock: stockValue,
-                    inStock: stockValue > 0 // Sets standard fallback toggle rule automatically
+                    stock: stockValue
                 };
 
                 // 4. Send clean object data payload upstream to overwrite catalog server list
@@ -242,8 +251,6 @@
                 alert('Failed to publish item.');
             }
         });
-
-        
     </script>
 </body>
 </html>
