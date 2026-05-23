@@ -1,479 +1,558 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catalog Admin Dashboard</title>
     <style>
-        body {
-            font-family: system-ui, sans-serif;
-            background: #f9f9f9;
-            padding: 40px;
+        :root {
+            --sidebar-width: 240px;
+            --accent-color: #000000;
+            --bg-light: #f9f9f9;
+            --border-color: #dddddd;
+            --danger-color: #cc0000;
+            --danger-hover: #aa0000;
         }
 
-        .admin-card {
-            background: white;
-            max-width: 550px;
-            margin: 0 auto;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, sans-serif; background: var(--bg-light); color: #333; display: flex; height: 100vh; overflow: hidden; }
 
-        .form-group {
-            margin-bottom: 20px;
+        /* --- DASHBOARD SIDEBAR PANEL --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #111111;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px 0;
+            flex-shrink: 0;
         }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: bold;
+        .sidebar-brand { padding: 10px 25px 25px; font-size: 18px; font-weight: bold; border-bottom: 1px solid #222; letter-spacing: 0.5px; }
+        .sidebar-menu { list-style: none; margin-top: 20px; }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 14px 25px;
+            color: #b3b3b3;
+            text-decoration: none;
             font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
         }
+        .sidebar-link:hover, .sidebar-link.active { color: #ffffff; background: #222222; }
+        .sidebar-link.active { border-left: 4px solid #ffffff; padding-left: 21px; }
 
-        input[type="text"],
-        input[type="number"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
+        /* --- APPNATION DISPLAY WINDOW WORKSPACE --- */
+        .main-workspace { flex-grow: 1; display: flex; flex-direction: column; height: 100%; overflow-y: auto; background: var(--bg-light); }
+        .content-header { padding: 30px 40px 10px; display: flex; justify-content: space-between; align-items: center; }
+        .content-body { padding: 20px 40px 40px; }
+        .tab-content-panel { display: none; }
+        .tab-content-panel.active { display: block; }
 
-        textarea {
-            resize: vertical;
-            font-family: inherit;
-        }
-
-        input[type="file"] {
-            display: block;
-            margin-top: 5px;
-        }
+        /* --- UI COMPONENTS & FORMS --- */
+        .admin-card { background: white; max-width: 650px; padding: 35px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-color); }
+        .form-title { margin-bottom: 25px; font-size: 22px; font-weight: 800; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 14px; }
+        input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        textarea { resize: vertical; font-family: inherit; }
+        input[type="file"] { display: block; margin-top: 5px; }
 
         /* Dynamic variants layout styles */
-        .variant-container {
-            background: #f0f0f0;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 10px;
-            border-left: 4px solid #000;
-        }
-
-        .dynamic-section-title {
-            font-size: 13px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #555;
-            margin-bottom: 12px;
-        }
-
-        /* Variant Picker Controls */
-        .picker-row {
-            display: grid;
-            grid-template-columns: 1.2fr 2fr 1.5fr auto;
-            gap: 10px;
-            align-items: end;
-            margin-bottom: 15px;
-        }
-
-        .picker-row label {
-            margin-bottom: 4px;
-            font-size: 12px;
-            color: #666;
-        }
-
-        .color-input-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 4px 8px;
-            height: 38px;
-            box-sizing: border-box;
-        }
-
-        .color-input-wrapper input[type="color"] {
-            border: none;
-            width: 30px;
-            height: 100%;
-            padding: 0;
-            background: none;
-            cursor: pointer;
-        }
+        .variant-container { background: #f5f5f5; padding: 18px; border-radius: 6px; margin-top: 10px; border-left: 4px solid var(--accent-color); }
+        .dynamic-section-title { font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 12px; }
+        .picker-row { display: grid; grid-template-columns: 1fr 1.5fr 1.2fr auto; gap: 10px; align-items: end; margin-bottom: 15px; }
+        .picker-row label { margin-bottom: 4px; font-size: 12px; color: #666; }
+        .color-input-wrapper { display: flex; align-items: center; gap: 6px; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 4px 8px; height: 38px; }
+        .color-input-wrapper input[type="color"] { border: none; width: 30px; height: 100%; padding: 0; background: none; cursor: pointer; }
 
         /* Matrix List Table Layout */
-        .matrix-title {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            margin-top: 15px;
-            border-top: 1px solid #ddd;
-            padding-top: 15px;
-        }
+        .matrix-title { font-size: 13px; font-weight: bold; margin-bottom: 8px; margin-top: 15px; text-transform: uppercase; color: #444; }
+        .matrix-table { width: 100%; border-collapse: collapse; background: white; border-radius: 4px; overflow: hidden; border: 1px solid #ddd; }
+        .matrix-table th, .matrix-table td { padding: 10px; text-align: left; font-size: 13px; border-bottom: 1px solid #ddd; }
+        .matrix-table th { background: #fafafa; font-weight: bold; color: #555; text-transform: uppercase; font-size: 11px; }
+        .color-preview { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 1px solid #ccc; vertical-align: middle; margin-right: 6px; }
 
-        .matrix-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid #ddd;
-        }
+        /* Buttons styles */
+        .btn-primary { background: var(--accent-color); color: #fff; border: none; padding: 12px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        .btn-primary:hover { background: #333; }
+        .btn-secondary { background: #555; color: white; padding: 10px; height: 38px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-secondary:hover { background: #333; }
+        .btn-delete { background: none; border: none; color: var(--danger-color); cursor: pointer; font-size: 16px; padding: 0 5px; }
+        
+        /* Action buttons layout wrappers */
+        .modal-actions-row { display: flex; gap: 12px; margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 20px; }
+        .btn-danger-outline { background: transparent; color: var(--danger-color); border: 1px solid var(--danger-color); padding: 12px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+        .btn-danger-outline:hover { background: var(--danger-color); color: white; }
+        .btn-danger-filled { background: var(--danger-color); color: white; border: none; padding: 12px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .btn-danger-filled:hover { background: var(--danger-hover); }
 
-        .matrix-table th,
-        .matrix-table td {
-            padding: 10px;
-            text-align: left;
-            font-size: 14px;
-            border-bottom: 1px solid #ddd;
-        }
+        /* --- PRODUCT MANAGEMENT GRID TABLE --- */
+        .inventory-table-wrapper { background: white; border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .inventory-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .inventory-table th, .inventory-table td { padding: 16px 20px; border-bottom: 1px solid var(--border-color); font-size: 14px; }
+        .inventory-table th { background: #fcfcfc; font-weight: bold; color: #666; font-size: 12px; text-transform: uppercase; }
+        .inventory-table tbody tr:hover { background: #fafafa; cursor: pointer; }
+        .prod-thumb { width: 44px; height: 54px; object-fit: cover; border-radius: 4px; background: #eee; display: block; }
+        .badge { display: inline-block; padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; text-transform: uppercase; background: #eee; }
+        .badge.body { background: #e3f2fd; color: #0d47a1; }
+        .badge.jean { background: #f3e5f5; color: #4a148c; }
+        .badge.top { background: #e8f5e9; color: #1b5e20; }
 
-        .matrix-table th {
-            background: #fafafa;
-            font-weight: bold;
-            color: #555;
-            font-size: 12px;
-            text-transform: uppercase;
-        }
+        /* --- EDIT PRODUCT INTERACTIVE MODAL OVERLAYS --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-body-scroller { background: white; width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto; border-radius: 8px; padding: 30px; position: relative; }
+        
+        /* Confirmation Alert Overlay */
+        .confirm-modal-body { background: white; width: 100%; max-width: 400px; padding: 25px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: 1px solid var(--border-color); text-align: center; }
+        .confirm-title { font-size: 18px; font-weight: bold; margin-bottom: 12px; color: #111; }
+        .confirm-text { font-size: 14px; color: #555; margin-bottom: 20px; line-height: 1.4; }
 
-        .color-preview {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            border: 1px solid #ccc;
-            vertical-align: middle;
-            margin-right: 6px;
-        }
-
-        /* Action Utility Buttons */
-        .btn-secondary {
-            background: #555;
-            color: white;
-            padding: 10px;
-            height: 38px;
-            border: none;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-secondary:hover {
-            background: #333;
-        }
-
-        .btn-delete {
-            background: none;
-            border: none;
-            color: #cc0000;
-            cursor: pointer;
-            font-size: 16px;
-            padding: 0 5px;
-        }
-
-        .btn-delete:hover {
-            color: #ff0000;
-        }
-
-        button[type="submit"] {
-            background: #000;
-            color: #fff;
-            border: none;
-            padding: 12px 20px;
-            width: 100%;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-
-        button[type="submit"]:hover {
-            background: #333;
-        }
+        .modal-close-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 22px; cursor: pointer; color: #999; }
+        .modal-close-btn:hover { color: #000; }
     </style>
 </head>
-
 <body>
 
-    <div class="admin-card">
-        <h2>Agregar producto</h2>
-        <form id="catalogForm">
-            <div class="form-group">
-                <label for="prodName">Nombre</label>
-                <input type="text" id="prodName" required placeholder="Nombre body">
+    <aside class="sidebar">
+        <div>
+            <div class="sidebar-brand">BASICSY ADMIN</div>
+            <ul class="sidebar-menu">
+                <li><a class="sidebar-link active" data-target="productsTab">📦 Productos</a></li>
+                <li><a class="sidebar-link" data-target="addProductTab">➕ Agregar Producto</a></li>
+                <li><a class="sidebar-link" data-target="salesTab">💰 Registrar Ventas (Próximamente)</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="main-workspace">
+        
+        <section id="productsTab" class="tab-content-panel active">
+            <div class="content-header">
+                <h2>Inventario de Productos</h2>
+                <p style="font-size: 13px; color: #666;">Haz clic en cualquier fila para editar los detalles del artículo.</p>
             </div>
-
-            <div class="form-group">
-                <label for="prodPrice">Precio ($)</label>
-                <input type="number" id="prodPrice" step="0.01" required placeholder="0.00">
+            <div class="content-body">
+                <div class="inventory-table-wrapper">
+                    <table class="inventory-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 70px;">Imagen</th>
+                                <th>Nombre</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Variantes / Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: #999; padding: 40px;">Cargando catálogo...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+        </section>
 
-            <div class="form-group">
-                <label for="prodCategory">Categoría</label>
-                <select id="prodCategory" required>
-                    <option value="" disabled selected>Selecciona una categoría</option>
-                    <option value="body">Body</option>
-                    <option value="jean">Jean</option>
-                    <option value="top">Top</option>
-                </select>
+        <section id="addProductTab" class="tab-content-panel">
+            <div class="content-header">
+                <h2>Nuevo Artículo</h2>
             </div>
+            <div class="content-body">
+                <div class="admin-card">
+                    <form id="catalogForm">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" class="prodNameField" required placeholder="Ej: Body Anahí">
+                        </div>
+                        <div class="form-group">
+                            <label>Precio ($)</label>
+                            <input type="number" class="prodPriceField" step="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Categoría</label>
+                            <select class="prodCategoryField" required>
+                                <option value="" disabled selected>Selecciona una categoría</option>
+                                <option value="body">Body</option>
+                                <option value="jean">Jean</option>
+                                <option value="top">Top</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <textarea class="prodDescriptionField" rows="3" placeholder="Detalles de la prenda..."></textarea>
+                        </div>
 
-            <div class="form-group">
-                <label for="prodDescription">Descripción</label>
-                <textarea id="prodDescription" rows="3"
-                    placeholder="Escribe los detalles o material de la prenda..."></textarea>
+                        <div class="dynamicAttributesContainer"></div>
+
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label>Imágenes del Producto</label>
+                            <input type="file" class="prodImageField" accept="image/png, image/jpeg, image/webp" multiple required>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width:100%; margin-top:15px;">Publicar Producto</button>
+                    </form>
+                </div>
             </div>
+        </section>
 
-            <div id="dynamicAttributesContainer"></div>
+        <section id="salesTab" class="tab-content-panel">
+            <div class="content-header"><h2>Registrar Ventas</h2></div>
+            <div class="content-body"><p style="color: #666;">Panel de control financiero en desarrollo.</p></div>
+        </section>
+    </main>
 
-            <div class="form-group" style="margin-top: 20px;">
-                <label for="prodImage">Imágen</label>
-                <input type="file" id="prodImage" accept="image/png, image/jpeg, image/webp" multiple required>
+    <div class="modal-overlay" id="editModalOverlay">
+        <div class="modal-body-scroller">
+            <button class="modal-close-btn" id="closeModalBtn">✕</button>
+            <h3 class="form-title" style="margin-bottom:15px;">Editar Producto</h3>
+            <form id="editFormInstance">
+                <input type="hidden" id="editProductId">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" class="prodNameField" id="editProdName" required>
+                </div>
+                <div class="form-group">
+                    <label>Precio ($)</label>
+                    <input type="number" class="prodPriceField" id="editProdPrice" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select class="prodCategoryField" id="editProdCategory" required>
+                        <option value="body">Body</option>
+                        <option value="jean">Jean</option>
+                        <option value="top">Top</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea class="prodDescriptionField" id="editProdDescription" rows="3"></textarea>
+                </div>
+
+                <div class="dynamicAttributesContainer" id="editDynamicAttributesContainer"></div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Reemplazar Imágenes (Dejar vacío para conservar actuales)</label>
+                    <input type="file" class="prodImageField" id="editProdImage" accept="image/png, image/jpeg, image/webp" multiple>
+                </div>
+
+                <div class="modal-actions-row">
+                    <button type="button" class="btn-danger-outline" id="triggerDeleteModalBtn" style="flex: 1;">Eliminar Producto</button>
+                    <button type="submit" class="btn-primary" style="flex: 2;">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="confirmDeleteModalOverlay" style="z-index: 1100;">
+        <div class="confirm-modal-body">
+            <div class="confirm-title">¿Eliminar este producto?</div>
+            <div class="confirm-text">Esta acción es irreversible. Se borrará permanentemente el producto del inventario de la tienda.</div>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button type="button" class="btn-secondary" id="cancelDeleteBtn" style="flex: 1; height: 42px;">Cancelar</button>
+                <button type="button" class="btn-danger-filled" id="executeDeleteBtn" style="flex: 1; height: 42px;">Eliminar</button>
             </div>
-
-            <button type="submit">Publicar</button>
-        </form>
+        </div>
     </div>
 
     <script type="module">
         import { upload } from 'https://esm.run/@vercel/blob/client';
 
-        const categorySelect = document.getElementById('prodCategory');
-        const dynamicContainer = document.getElementById('dynamicAttributesContainer');
-
-        // This state array saves structural elements explicitly chosen by user
+        let loadedCatalogData = [];
         let activeVariants = [];
 
-        // Dynamic category templates mapping targeted logic sizing definitions
         const sizeTemplates = {
             body: ['Unica', 'S', 'M', 'L'],
             jean: ['6', '7', '8', '9'],
             top: ['Unica', 'S', 'M', 'L']
         };
 
-        categorySelect.addEventListener('change', (e) => {
-            const category = e.target.value;
-            activeVariants = []; // Reset list structure context changes completely
-            renderDynamicSection(category);
+        // --- DASHBOARD ROUTER TABS SHIFTING CONTROLS ---
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                document.querySelectorAll('.tab-content-panel').forEach(p => p.classList.remove('active'));
+                
+                link.classList.add('active');
+                const blockTarget = link.dataset.target;
+                document.getElementById(blockTarget).classList.add('active');
+
+                if(blockTarget === 'productsTab') {
+                    fetchInventoryCatalog();
+                }
+            });
         });
 
-        function renderDynamicSection(category) {
-            const titleLabel = category.charAt(0).toUpperCase() + category.slice(1);
+        // --- FETCH & RENDER INVENTORY SYSTEM VIEW ---
+        async function fetchInventoryCatalog() {
+            const tbody = document.getElementById('inventoryTableBody');
+            try {
+                const response = await fetch('/api/get-catalog');
+                loadedCatalogData = await response.json();
+
+                if(loadedCatalogData.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px; color:#999;">No hay productos en tu catálogo.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = loadedCatalogData.map(product => {
+                    const totalStock = (product.variants || []).reduce((acc, curr) => acc + curr.stock, 0);
+                    const sampleImage = product.image || (product.images && product.images.length > 0 ? product.images[0] : '');
+
+                    return `
+                        <tr data-id="${product.id}">
+                            <td><img src="${sampleImage}" class="prod-thumb" alt="Preview"></td>
+                            <td style="font-weight:bold;">${product.name}</td>
+                            <td><span class="badge ${product.category}">${product.category}</span></td>
+                            <td>$ ${product.price.toLocaleString('es-CO')}</td>
+                            <td><strong>${totalStock}</strong> unidades (${(product.variants || []).length} variantes)</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                tbody.querySelectorAll('tr').forEach(row => {
+                    row.addEventListener('click', () => {
+                        const targetedId = row.dataset.id;
+                        const productMatch = loadedCatalogData.find(p => p.id === targetedId);
+                        if(productMatch) openEditModalWindow(productMatch);
+                    });
+                });
+
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red; padding:20px;">Error leyendo inventario.</td></tr>`;
+            }
+        }
+
+        // --- INITIALIZE CREATION MATRIX LISTENERS ---
+        const creationCategorySelect = document.querySelector('#addProductTab .prodCategoryField');
+        const creationDynamicContainer = document.querySelector('#addProductTab .dynamicAttributesContainer');
+        
+        creationCategorySelect.addEventListener('change', (e) => {
+            activeVariants = [];
+            renderVariantControlEngine(e.target.value, creationDynamicContainer);
+        });
+
+        // --- UNIVERSAL VARIANT CONTROL RENDERING ENGINE ---
+        function renderVariantControlEngine(category, containerNode) {
+            const labelTitle = category.charAt(0).toUpperCase() + category.slice(1);
             const sizes = sizeTemplates[category] || [];
 
-            dynamicContainer.innerHTML = `
+            containerNode.innerHTML = `
                 <div class="variant-container">
-                    <div class="dynamic-section-title">${titleLabel} Configuration</div>
-                    
+                    <div class="dynamic-section-title">Configuración de Variantes (${labelTitle})</div>
                     <div class="picker-row">
                         <div>
                             <label>Color</label>
-                            <div class="color-input-wrapper">
-                                <input type="color" id="varColor" value="#000000">
-                            </div>
+                            <div class="color-input-wrapper"><input type="color" class="varColorPicker" value="#000000"></div>
                         </div>
                         <div>
-                            <label>Size</label>
-                            <select id="varSize">
+                            <label>Talla</label>
+                            <select class="varSizePicker">
                                 ${sizes.map(sz => `<option value="${sz}">${sz}</option>`).join('')}
                             </select>
                         </div>
                         <div>
-                            <label>Stock Quantity</label>
-                            <input type="number" id="varStock" min="1" value="1">
+                            <label>Cantidad Stock</label>
+                            <input type="number" class="varStockField" min="1" value="1">
                         </div>
                         <div>
-                            <button type="button" id="addVariantBtn" class="btn-secondary">Add</button>
+                            <button type="button" class="btn-secondary addVariantBtnInstance">Agregar</button>
                         </div>
                     </div>
-
-                    <div class="matrix-title">Variantes Agregadas</div>
+                    <div class="matrix-title">Variantes Registradas</div>
                     <table class="matrix-table">
                         <thead>
-                            <tr>
-                                <th>Color</th>
-                                <th>Talla</th>
-                                <th>Cantidad</th>
-                                <th style="width: 40px;"></th>
-                            </tr>
+                            <tr><th>Color</th><th>Talla</th><th>Cantidad</th><th style="width:40px;"></th></tr>
                         </thead>
-                        <tbody id="matrixTableBody">
-                            <tr>
-                                <td colspan="4" style="text-align:center; color:#999; font-size:13px;">No variants added yet.</td>
-                            </tr>
-                        </tbody>
+                        <tbody class="matrixTableBodyInstance"></tbody>
                     </table>
                 </div>
             `;
 
-            setupPickerActions();
+            bindVariantPickerActions(containerNode);
+            refreshVariantMatrixDisplay(containerNode);
         }
 
-        function setupPickerActions() {
-            const addBtn = document.getElementById('addVariantBtn');
-            if (!addBtn) return;
-
+        function bindVariantPickerActions(containerNode) {
+            const addBtn = containerNode.querySelector('.addVariantBtnInstance');
             addBtn.addEventListener('click', () => {
-                const colorInput = document.getElementById('varColor');
-                const sizeSelect = document.getElementById('varSize');
-                const stockInput = document.getElementById('varStock');
+                const colorVal = containerNode.querySelector('.varColorPicker').value.toLowerCase();
+                const sizeVal = containerNode.querySelector('.varSizePicker').value;
+                const stockVal = parseInt(containerNode.querySelector('.varStockField').value, 10) || 0;
 
-                const selectedColor = colorInput.value.toLowerCase();
-                const selectedSize = sizeSelect.value;
-                const stockVal = parseInt(stockInput.value, 10) || 0;
+                if(stockVal <= 0) return alert('Ingresa una cantidad válida.');
 
-                if (stockVal <= 0) {
-                    alert('Please enter a valid stock quantity.');
-                    return;
-                }
-
-                // Check if matching combination coordinates already exist inside runtime tracking list
-                const duplicateIndex = activeVariants.findIndex(v => v.color === selectedColor && v.size === selectedSize);
-
+                const duplicateIndex = activeVariants.findIndex(v => v.color === colorVal && v.size === sizeVal);
                 if (duplicateIndex > -1) {
-                    // Update matching element context instead of pushing duplicating rows completely
                     activeVariants[duplicateIndex].stock += stockVal;
                 } else {
-                    activeVariants.push({
-                        color: selectedColor,
-                        size: selectedSize,
-                        stock: stockVal
-                    });
+                    activeVariants.push({ color: colorVal, size: sizeVal, stock: stockVal });
                 }
 
-                // Refresh DOM implementation mappings lists view layout
-                updateMatrixTable();
-
-                // Reset stock display number default values safely back down to 1
-                stockInput.value = '1';
+                refreshVariantMatrixDisplay(containerNode);
+                containerNode.querySelector('.varStockField').value = '1';
             });
         }
 
-        function updateMatrixTable() {
-            const tbody = document.getElementById('matrixTableBody');
-            if (!tbody) return;
-
-            if (activeVariants.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="4" style="text-align:center; color:#999; font-size:13px;">No variants added yet.</td>
-                    </tr>
-                `;
+        function refreshVariantMatrixDisplay(containerNode) {
+            const tbody = containerNode.querySelector('.matrixTableBodyInstance');
+            if(activeVariants.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; font-size:12px; padding:12px;">Sin variantes agregadas.</td></tr>`;
                 return;
             }
 
-            tbody.innerHTML = activeVariants.map((item, index) => `
+            tbody.innerHTML = activeVariants.map((item, idx) => `
                 <tr>
-                    <td>
-                        <span class="color-preview" style="background-color: ${item.color};"></span>
-                        <span style="font-family: monospace;">${item.color}</span>
-                    </td>
-                    <td style="font-weight: bold;">${item.size}</td>
+                    <td><span class="color-preview" style="background-color:${item.color};"></span><code>${item.color}</code></td>
+                    <td style="font-weight:bold;">${item.size}</td>
                     <td>${item.stock}</td>
-                    <td style="text-align: center;">
-                        <button type="button" class="btn-delete" data-index="${index}">✕</button>
-                    </td>
+                    <td><button type="button" class="btn-delete" data-idx="${idx}">✕</button></td>
                 </tr>
             `).join('');
 
-            // Hook up specific removal logic dynamically targeting indexed records elements
             tbody.querySelectorAll('.btn-delete').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const indexToRemove = parseInt(e.currentTarget.dataset.index, 10);
-                    activeVariants.splice(indexToRemove, 1);
-                    updateMatrixTable();
+                    activeVariants.splice(parseInt(e.target.dataset.idx, 10), 1);
+                    refreshVariantMatrixDisplay(containerNode);
                 });
             });
         }
 
-        // Handle submission sequence actions pipeline operations maps out upstream endpoints properly
-        // Handle submission sequence actions pipeline operations
-        document.getElementById('catalogForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        // --- POPUP EDIT SYSTEM WINDOW FORM LOGIC ---
+        const editModalOverlay = document.getElementById('editModalOverlay');
+        const editDynamicContainer = document.getElementById('editDynamicAttributesContainer');
+        const editCategorySelect = document.getElementById('editProdCategory');
+        const confirmDeleteModalOverlay = document.getElementById('confirmDeleteModalOverlay');
 
-            if (activeVariants.length === 0) {
-                alert('Please add at least one item variant combination before publishing.');
-                return;
-            }
+        function openEditModalWindow(product) {
+            document.getElementById('editProductId').value = product.id;
+            document.getElementById('editProdName').value = product.name;
+            document.getElementById('editProdPrice').value = product.price;
+            document.getElementById('editProdDescription').value = product.description || '';
+            editCategorySelect.value = product.category;
 
-            const name = document.getElementById('prodName').value;
-            const price = document.getElementById('prodPrice').value;
-            const category = categorySelect.value;
-            const description = document.getElementById('prodDescription').value;
+            activeVariants = JSON.parse(JSON.stringify(product.variants || []));
+            
+            renderVariantControlEngine(product.category, editDynamicContainer);
+            editModalOverlay.classList.add('active');
+        }
 
-            // 1. Grab all files from the input array
-            const fileInput = document.getElementById('prodImage');
-            const files = Array.from(fileInput.files);
+        editCategorySelect.addEventListener('change', (e) => {
+            activeVariants = []; 
+            renderVariantControlEngine(e.target.value, editDynamicContainer);
+        });
 
-            if (files.length === 0) {
-                alert('Please select at least one image.');
-                return;
-            }
+        document.getElementById('closeModalBtn').addEventListener('click', () => editModalOverlay.classList.remove('active'));
 
-            // Prepare arrays for legacy mapping fields if needed upstream
-            const explicitSizesSet = [...new Set(activeVariants.map(v => v.size))];
-            const explicitColorsSet = [...new Set(activeVariants.map(v => v.color))];
+        // --- INTERACTIVE CONFIRMATION MODAL TOGGLES ---
+        document.getElementById('triggerDeleteModalBtn').addEventListener('click', () => {
+            confirmDeleteModalOverlay.classList.add('active');
+        });
+        document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
+            confirmDeleteModalOverlay.classList.remove('active');
+        });
 
+        // --- EXECUTE DELETION TRANSACTION PIPELINE ---
+        document.getElementById('executeDeleteBtn').addEventListener('click', async () => {
+            const targetedProductId = document.getElementById('editProductId').value;
+            
             try {
-                // 2. Upload all files to Vercel Blob concurrently using Promise.all
-                const uploadPromises = files.map(file => {
-                    return upload(file.name, file, {
-                        access: 'public',
-                        handleUploadUrl: '/api/upload',
-                    });
-                });
-
-                const blobResponses = await Promise.all(uploadPromises);
-
-                // 3. Extract the clean URLs from all uploaded file responses
-                const uploadedImageUrls = blobResponses.map(res => res.url);
-
-                // 4. Construct the updated product payload object parameters
-                const productData = {
-                    name: name,
-                    price: parseFloat(price),
-                    description: description,
-                    category: category,
-                    sizes: explicitSizesSet,
-                    colors: explicitColorsSet,
-                    variants: activeVariants,
-
-                    // Set the first image as the primary cover, and store the full gallery array
-                    imageUrl: uploadedImageUrls[0],
-                    images: uploadedImageUrls
-                };
-
-                // 5. POST the structured product payload over to your server API endpoint
-                const response = await fetch('/api/add-product', {
+                const response = await fetch('/api/delete-product', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(productData)
+                    body: JSON.stringify({ id: targetedProductId })
                 });
 
                 if (response.ok) {
-                    alert('Item published successfully with all images!');
-                    document.getElementById('catalogForm').reset();
-                    dynamicContainer.innerHTML = '';
-                    activeVariants = [];
+                    alert('¡Producto eliminado correctamente!');
+                    confirmDeleteModalOverlay.classList.remove('active');
+                    editModalOverlay.classList.remove('active');
+                    fetchInventoryCatalog(); // Refresh data table list grid
                 } else {
-                    throw new Error("Failed to update catalog entry");
+                    throw new Error('Server deletion pipeline failure');
                 }
-
-            } catch (error) {
-                console.error('Upload process failed:', error);
-                alert('Failed to publish item.');
+            } catch (err) {
+                alert('Error al intentar eliminar el producto.');
             }
         });
+
+        // --- SUBMIT: ADD PRODUCT PIPELINE ---
+        document.getElementById('catalogForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(activeVariants.length === 0) return alert('Agrega al menos una variante.');
+
+            const form = e.target;
+            const files = Array.from(form.querySelector('.prodImageField').files);
+            if(files.length === 0) return alert('Selecciona una imagen.');
+
+            try {
+                const uploadPromises = files.map(f => upload(f.name, f, { access: 'public', handleUploadUrl: '/api/upload' }));
+                const blobResponses = await Promise.all(uploadPromises);
+                const urls = blobResponses.map(r => r.url);
+
+                const payload = {
+                    name: form.querySelector('.prodNameField').value,
+                    price: parseFloat(form.querySelector('.prodPriceField').value),
+                    description: form.querySelector('.prodDescriptionField').value,
+                    category: creationCategorySelect.value,
+                    sizes: [...new Set(activeVariants.map(v => v.size))],
+                    colors: [...new Set(activeVariants.map(v => v.color))],
+                    variants: activeVariants,
+                    imageUrl: urls[0],
+                    images: urls
+                };
+
+                const res = await fetch('/api/add-product', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if(res.ok) {
+                    alert('¡Producto creado con éxito!');
+                    form.reset();
+                    creationDynamicContainer.innerHTML = '';
+                    activeVariants = [];
+                }
+            } catch (err) { alert('Error al publicar producto.'); }
+        });
+
+        // --- SUBMIT: EDIT PRODUCT OVERWRITE PIPELINE ---
+        document.getElementById('editFormInstance').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(activeVariants.length === 0) return alert('El producto debe tener al menos una variante.');
+
+            const form = e.target;
+            const files = Array.from(document.getElementById('editProdImage').files);
+            
+            try {
+                let urls = [];
+                if(files.length > 0) {
+                    const uploadPromises = files.map(f => upload(f.name, f, { access: 'public', handleUploadUrl: '/api/upload' }));
+                    const blobResponses = await Promise.all(uploadPromises);
+                    urls = blobResponses.map(r => r.url);
+                }
+
+                const payload = {
+                    id: document.getElementById('editProductId').value,
+                    name: document.getElementById('editProdName').value,
+                    price: parseFloat(document.getElementById('editProdPrice').value),
+                    description: document.getElementById('editProdDescription').value,
+                    category: editCategorySelect.value,
+                    sizes: [...new Set(activeVariants.map(v => v.size))],
+                    colors: [...new Set(activeVariants.map(v => v.color))],
+                    variants: activeVariants,
+                    imageUrl: urls.length > 0 ? urls[0] : null,
+                    images: urls.length > 0 ? urls : null
+                };
+
+                const res = await fetch('/api/edit-product', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if(res.ok) {
+                    alert('¡Cambios guardados correctamente!');
+                    editModalOverlay.classList.remove('active');
+                    fetchInventoryCatalog(); 
+                }
+            } catch (err) { alert('Error al actualizar el producto.'); }
+        });
+
+        fetchInventoryCatalog();
     </script>
 </body>
-
 </html>
