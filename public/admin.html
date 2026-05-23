@@ -961,7 +961,6 @@ async function initSalesTabEngine() {
             `;
 
             // Bind the instantaneous live-action click triggers down onto redis operations pipelines
-            // Bind the instantaneous live-action click triggers down onto redis operations pipelines
             actionPanel.querySelectorAll('.btn-sale-trigger').forEach(btn => {
                 btn.addEventListener('click', async () => {
                     const { pid, color, size, price, pname } = btn.dataset;
@@ -976,7 +975,9 @@ async function initSalesTabEngine() {
                             body: JSON.stringify({
                                 productId: pid, // <-- Matches your backend 'productId' variable
                                 color: color,
-                                size: size
+                                size: size,
+                                price: price,          
+                                productName: pname
                             })
                         });
 
