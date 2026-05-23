@@ -1,5 +1,6 @@
 import { put } from '@vercel/blob';
-import { getRedisClient } from './_redis.js'; // Ensure your Redis connector helper path is correct
+import { getRedisClient } from './_redis.js';
+import { verifyAdmin } from './_auth.js';
 
 const CATALOG_URL = 'https://xg6snmqaui2yqczf.public.blob.vercel-storage.com/data/catalog.json';
 const CATALOG_BLOB_PATH = 'data/catalog.json';
@@ -9,10 +10,16 @@ export default async function handler(request, response) {
     return response.status(405).json({ error: 'Method not allowed' });
   }
 
+  // ADMIN CHECK
+  try {
+    verifyAdmin(request);
+  } catch {
+    return response.status(401).json({ error: "Unauthorized" });
+  }
+
   try {
     const { id, name, price, description, imageUrl, category, sizes, colors, variants, images } = request.body;
 
-    // 1. DOWNLOAD DIRECTLY: Direct fetch optimization
     const currentFileResponse = await fetch(CATALOG_URL);
     if (!currentFileResponse.ok) {
       return response.status(404).json({ error: 'Catalog file not found' });
@@ -25,11 +32,11 @@ export default async function handler(request, response) {
       return response.status(404).json({ error: 'Product not found' });
     }
 
-    // Retain old images if none were uploaded
     const finalImageUrl = imageUrl || catalog[productIndex].image;
-    const finalImagesArray = (images && images.length > 0) ? images : catalog[productIndex].images;
+    const finalImagesArray = (images && images.length > 0)
+      ? images
+      : catalog[productIndex].images;
 
-    // 2. MODIFY BLOBS DATA CATALOGUE
     catalog[productIndex] = {
       ...catalog[productIndex],
       name,
@@ -40,36 +47,35 @@ export default async function handler(request, response) {
       category,
       sizes: sizes || [],
       colors: colors || [],
-      variants: variants || [] // This keeps the definition references matching
+      variants: variants || []
     };
 
-    // 3. OVERWRITE THE CORE METADATA FILE IN VERCEL BLOB
     await put(CATALOG_BLOB_PATH, JSON.stringify(catalog, null, 2), {
       access: 'public',
       contentType: 'application/json',
       addRandomSuffix: false
     });
 
-    // 4. SYNCHRONIZE VARIANTS STOCK DIRECTLY TO VERCEL KV (REDIS)
     if (variants && Array.isArray(variants)) {
       const redis = getRedisClient();
-      
-      // Use an atomic pipeline operation to write all variant inventory records quickly
       const pipeline = redis.multi();
-      
+
       variants.forEach(variant => {
         if (variant.color && variant.size) {
           const redisKey = `stock:${id}:${variant.color.toLowerCase()}:${variant.size}`;
           const stockValue = parseInt(variant.stock, 10) || 0;
-          
+
           pipeline.set(redisKey, stockValue);
         }
       });
-      
+
       await pipeline.exec();
     }
 
-    return response.status(200).json({ success: true, product: catalog[productIndex] });
+    return response.status(200).json({
+      success: true,
+      product: catalog[productIndex]
+    });
 
   } catch (error) {
     console.error("Error executing edit-product sync pipeline:", error);

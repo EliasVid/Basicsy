@@ -1,5 +1,6 @@
 import { put } from '@vercel/blob';
 import { getRedisClient } from './_redis.js';
+import { verifyAdmin } from './_auth.js';
 
 const CATALOG_URL = 'https://xg6snmqaui2yqczf.public.blob.vercel-storage.com/data/catalog.json';
 const CATALOG_BLOB_PATH = 'data/catalog.json';
@@ -7,6 +8,13 @@ const CATALOG_BLOB_PATH = 'data/catalog.json';
 export default async function handler(request, response) {
   if (request.method !== 'POST') {
     return response.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // ADMIN CHECK
+  try {
+    verifyAdmin(request);
+  } catch {
+    return response.status(401).json({ error: "Unauthorized" });
   }
 
   try {
@@ -21,7 +29,6 @@ export default async function handler(request, response) {
     const newProductId = Date.now().toString();
     const redis = getRedisClient();
 
-    // ioredis pipelines are created with .pipeline()
     const pipeline = redis.pipeline();
     variants.forEach(v => {
       const redisKey = `stock:${newProductId}:${v.color.toLowerCase()}:${v.size}`;
