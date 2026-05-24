@@ -14,6 +14,7 @@
             --danger-color: #cc0000;
             --danger-hover: #aa0000;
             --success-color: #1b5e20;
+            --header-height: 56px;
         }
 
         * {
@@ -31,7 +32,7 @@
             overflow: hidden;
         }
 
-        /* --- DASHBOARD SIDEBAR PANEL --- */
+        /* ===================== SIDEBAR ===================== */
         .sidebar {
             width: var(--sidebar-width);
             background: #111111;
@@ -41,6 +42,8 @@
             justify-content: space-between;
             padding: 20px 0;
             flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 200;
         }
 
         .sidebar-brand {
@@ -79,7 +82,54 @@
             padding-left: 21px;
         }
 
-        /* --- APPNATION DISPLAY WINDOW WORKSPACE --- */
+        /* ===================== MOBILE HEADER ===================== */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: #111;
+            color: #fff;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            z-index: 300;
+        }
+
+        .mobile-header-brand {
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .hamburger-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px 8px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Mobile sidebar overlay */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 190;
+        }
+
+        .sidebar-backdrop.active {
+            display: block;
+        }
+
+        /* ===================== MAIN WORKSPACE ===================== */
         .main-workspace {
             flex-grow: 1;
             display: flex;
@@ -108,13 +158,13 @@
             display: block;
         }
 
-        /* --- UI COMPONENTS & FORMS --- */
+        /* ===================== UI COMPONENTS ===================== */
         .admin-card {
             background: white;
             max-width: 650px;
             padding: 35px;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
             border: 1px solid var(--border-color);
         }
 
@@ -156,7 +206,7 @@
             margin-top: 5px;
         }
 
-        /* Dynamic variants layout styles */
+        /* ===================== VARIANTS ===================== */
         .variant-container {
             background: #f5f5f5;
             padding: 18px;
@@ -208,7 +258,7 @@
             cursor: pointer;
         }
 
-        /* Matrix List Table Layout */
+        /* ===================== MATRIX TABLE ===================== */
         .matrix-title {
             font-size: 13px;
             font-weight: bold;
@@ -253,7 +303,7 @@
             margin-right: 6px;
         }
 
-        /* Buttons styles */
+        /* ===================== BUTTONS ===================== */
         .btn-primary {
             background: var(--accent-color);
             color: #fff;
@@ -265,9 +315,7 @@
             transition: background 0.2s;
         }
 
-        .btn-primary:hover {
-            background: #333;
-        }
+        .btn-primary:hover { background: #333; }
 
         .btn-secondary {
             background: #555;
@@ -283,9 +331,7 @@
             justify-content: center;
         }
 
-        .btn-secondary:hover {
-            background: #333;
-        }
+        .btn-secondary:hover { background: #333; }
 
         .btn-delete {
             background: none;
@@ -296,13 +342,13 @@
             padding: 0 5px;
         }
 
-        /* Action buttons layout wrappers */
         .modal-actions-row {
             display: flex;
             gap: 12px;
             margin-top: 25px;
             border-top: 1px solid var(--border-color);
             padding-top: 20px;
+            flex-wrap: wrap;
         }
 
         .btn-danger-outline {
@@ -331,23 +377,23 @@
             cursor: pointer;
         }
 
-        .btn-danger-filled:hover {
-            background: var(--danger-hover);
-        }
+        .btn-danger-filled:hover { background: var(--danger-hover); }
 
-        /* --- PRODUCT MANAGEMENT GRID TABLE --- */
+        /* ===================== INVENTORY TABLE ===================== */
         .inventory-table-wrapper {
             background: white;
             border-radius: 8px;
             border: 1px solid var(--border-color);
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            overflow-x: auto;
         }
 
         .inventory-table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
+            min-width: 480px;
         }
 
         .inventory-table th,
@@ -389,22 +435,11 @@
             background: #eee;
         }
 
-        .badge.body {
-            background: #e3f2fd;
-            color: #0d47a1;
-        }
+        .badge.body { background: #e3f2fd; color: #0d47a1; }
+        .badge.jean { background: #f3e5f5; color: #4a148c; }
+        .badge.top  { background: #e8f5e9; color: #1b5e20; }
 
-        .badge.jean {
-            background: #f3e5f5;
-            color: #4a148c;
-        }
-
-        .badge.top {
-            background: #e8f5e9;
-            color: #1b5e20;
-        }
-
-        /* --- SALES TAB LAYOUT --- */
+        /* ===================== SALES TAB ===================== */
         .sales-workspace-layout {
             display: grid;
             grid-template-columns: 1fr 340px;
@@ -435,7 +470,7 @@
         .sales-product-card:hover,
         .sales-product-card.selected {
             border-color: var(--accent-color);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
         .sales-product-card.selected {
@@ -488,17 +523,17 @@
             justify-content: space-between;
             padding: 10px 0;
             border-bottom: 1px solid #eee;
+            gap: 8px;
         }
 
-        .sales-variant-row:last-child {
-            border-bottom: none;
-        }
+        .sales-variant-row:last-child { border-bottom: none; }
 
         .sales-variant-info {
             display: flex;
             align-items: center;
             gap: 8px;
             font-size: 13px;
+            flex-wrap: wrap;
         }
 
         .btn-sale-trigger {
@@ -510,25 +545,25 @@
             font-size: 11px;
             font-weight: bold;
             cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
-        .btn-sale-trigger:hover {
-            background: #333;
-        }
+        .btn-sale-trigger:hover { background: #333; }
 
         .btn-sale-trigger:disabled {
             background: #ccc;
             cursor: not-allowed;
         }
 
-        /* --- EDIT PRODUCT INTERACTIVE MODAL OVERLAYS --- */
+        /* ===================== MODALS ===================== */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0,0,0,0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -536,6 +571,7 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.2s ease;
+            padding: 16px;
         }
 
         .modal-overlay.active {
@@ -547,21 +583,20 @@
             background: white;
             width: 100%;
             max-width: 600px;
-            max-height: 85vh;
+            max-height: 90vh;
             overflow-y: auto;
             border-radius: 8px;
             padding: 30px;
             position: relative;
         }
 
-        /* Confirmation Alert Overlay */
         .confirm-modal-body {
             background: white;
             width: 100%;
             max-width: 400px;
             padding: 25px;
             border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             border: 1px solid var(--border-color);
             text-align: center;
         }
@@ -591,15 +626,207 @@
             color: #999;
         }
 
-        .modal-close-btn:hover {
-            color: #000;
+        .modal-close-btn:hover { color: #000; }
+
+        /* ===================== RESPONSIVE ===================== */
+        @media (max-width: 768px) {
+
+            /* Show mobile header, hide sidebar by default */
+            .mobile-header {
+                display: flex;
+            }
+
+            body {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+                overflow: auto;
+            }
+
+            /* Sidebar becomes a slide-in drawer */
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100%;
+                transform: translateX(-100%);
+                padding-top: var(--header-height);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            /* Main workspace fills full width, offset for fixed header */
+            .main-workspace {
+                margin-top: var(--header-height);
+                height: auto;
+                min-height: calc(100vh - var(--header-height));
+                overflow-y: visible;
+            }
+
+            .content-header {
+                padding: 20px 16px 10px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+
+            .content-header h2 {
+                font-size: 20px;
+            }
+
+            .content-body {
+                padding: 16px 16px 40px;
+            }
+
+            /* Admin card full width on mobile */
+            .admin-card {
+                max-width: 100%;
+                padding: 20px;
+            }
+
+            /* Variant picker row becomes 2-col grid on mobile */
+            .picker-row {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto auto;
+            }
+
+            .picker-row > div:nth-child(3) {
+                grid-column: 1;
+            }
+
+            .picker-row > div:nth-child(4) {
+                grid-column: 2;
+                align-self: end;
+            }
+
+            /* Sales layout stacks vertically on mobile */
+            .sales-workspace-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sales-grid {
+                max-height: 280px;
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            }
+
+            .sales-action-panel {
+                min-height: auto;
+            }
+
+            .sales-action-placeholder {
+                padding-top: 24px;
+                padding-bottom: 24px;
+            }
+
+            /* Inventory table scrollable on small screens */
+            .inventory-table th,
+            .inventory-table td {
+                padding: 12px 14px;
+                font-size: 13px;
+            }
+
+            /* Modal full screen on mobile */
+            .modal-overlay {
+                padding: 0;
+                align-items: flex-end;
+            }
+
+            .modal-body-scroller {
+                max-height: 92vh;
+                border-radius: 12px 12px 0 0;
+                padding: 24px 20px;
+            }
+
+            .modal-actions-row {
+                flex-direction: column;
+            }
+
+            .modal-actions-row .btn-danger-outline,
+            .modal-actions-row .btn-primary {
+                flex: none;
+                width: 100%;
+                text-align: center;
+            }
+
+            .confirm-modal-body {
+                max-width: 100%;
+                margin: 16px;
+            }
+
+            /* Make buttons easier to tap */
+            .btn-primary,
+            .btn-danger-outline,
+            .btn-danger-filled,
+            .btn-secondary {
+                min-height: 44px;
+            }
+
+            .sidebar-link {
+                padding: 16px 25px;
+                font-size: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sales-grid {
+                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+                gap: 10px;
+            }
+
+            .sales-product-card img {
+                height: 85px;
+            }
+
+            .sales-variant-info {
+                font-size: 12px;
+            }
+
+            .matrix-table th,
+            .matrix-table td {
+                padding: 8px 6px;
+                font-size: 12px;
+            }
+        }
+
+        /* Tablet: sidebar visible but workspace doesn't overflow */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            :root {
+                --sidebar-width: 200px;
+            }
+
+            .content-header {
+                padding: 24px 24px 10px;
+            }
+
+            .content-body {
+                padding: 16px 24px 32px;
+            }
+
+            .admin-card {
+                max-width: 100%;
+            }
+
+            .sales-workspace-layout {
+                grid-template-columns: 1fr 280px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <aside class="sidebar">
+    <!-- Mobile-only top bar -->
+    <header class="mobile-header">
+        <span class="mobile-header-brand">BASICSY ADMIN</span>
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="Abrir menú">&#9776;</button>
+    </header>
+
+    <!-- Backdrop for mobile sidebar -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <aside class="sidebar" id="mainSidebar">
         <div>
             <div class="sidebar-brand">BASICSY ADMIN</div>
             <ul class="sidebar-menu">
@@ -615,8 +842,7 @@
         <section id="productsTab" class="tab-content-panel active">
             <div class="content-header">
                 <h2>Inventario de Productos</h2>
-                <p style="font-size: 13px; color: #666;">Haz clic en cualquier fila para editar los detalles del
-                    artículo.</p>
+                <p style="font-size: 13px; color: #666;">Haz clic en cualquier fila para editar los detalles del artículo.</p>
             </div>
             <div class="content-body">
                 <div class="inventory-table-wrapper">
@@ -632,8 +858,7 @@
                         </thead>
                         <tbody id="inventoryTableBody">
                             <tr>
-                                <td colspan="5" style="text-align: center; color: #999; padding: 40px;">Cargando
-                                    catálogo...</td>
+                                <td colspan="5" style="text-align: center; color: #999; padding: 40px;">Cargando catálogo...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -667,19 +892,16 @@
                         </div>
                         <div class="form-group">
                             <label>Descripción</label>
-                            <textarea class="prodDescriptionField" rows="3"
-                                placeholder="Detalles de la prenda..."></textarea>
+                            <textarea class="prodDescriptionField" rows="3" placeholder="Detalles de la prenda..."></textarea>
                         </div>
 
                         <div class="dynamicAttributesContainer"></div>
 
                         <div class="form-group" style="margin-top: 20px;">
                             <label>Imágenes del Producto</label>
-                            <input type="file" class="prodImageField" accept="image/png, image/jpeg, image/webp"
-                                multiple required>
+                            <input type="file" class="prodImageField" accept="image/png, image/jpeg, image/webp" multiple required>
                         </div>
-                        <button type="submit" class="btn-primary" style="width:100%; margin-top:15px;">Publicar
-                            Producto</button>
+                        <button type="submit" class="btn-primary" style="width:100%; margin-top:15px;">Publicar Producto</button>
                     </form>
                 </div>
             </div>
@@ -688,14 +910,11 @@
         <section id="salesTab" class="tab-content-panel">
             <div class="content-header">
                 <h2>Registrar Ventas</h2>
-                <p style="font-size: 13px; color: #666;">Selecciona un artículo para desplegar y reducir sus variantes
-                    de inventario.</p>
+                <p style="font-size: 13px; color: #666;">Selecciona un artículo para desplegar y reducir sus variantes de inventario.</p>
             </div>
             <div class="content-body">
                 <div class="sales-workspace-layout">
-                    <div class="sales-grid" id="salesGridContainer">
-                    </div>
-
+                    <div class="sales-grid" id="salesGridContainer"></div>
                     <div class="sales-action-panel" id="salesActionPanel">
                         <div class="sales-action-placeholder">
                             Selecciona un artículo de la cuadrícula para ver variaciones de stock disponibles.
@@ -716,8 +935,7 @@
                         </thead>
                         <tbody id="salesLedgerTableBody">
                             <tr>
-                                <td colspan="4" style="text-align: center; color: #999; padding: 25px;">No se registran
-                                    ventas en este periodo.</td>
+                                <td colspan="4" style="text-align: center; color: #999; padding: 25px;">No se registran ventas en este periodo.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -726,6 +944,7 @@
         </section>
     </main>
 
+    <!-- Edit Product Modal -->
     <div class="modal-overlay" id="editModalOverlay">
         <div class="modal-body-scroller">
             <button class="modal-close-btn" id="closeModalBtn">✕</button>
@@ -757,29 +976,25 @@
 
                 <div class="form-group" style="margin-top: 20px;">
                     <label>Reemplazar Imágenes (Dejar vacío para conservar actuales)</label>
-                    <input type="file" class="prodImageField" id="editProdImage"
-                        accept="image/png, image/jpeg, image/webp" multiple>
+                    <input type="file" class="prodImageField" id="editProdImage" accept="image/png, image/jpeg, image/webp" multiple>
                 </div>
 
                 <div class="modal-actions-row">
-                    <button type="button" class="btn-danger-outline" id="triggerDeleteModalBtn"
-                        style="flex: 1;">Eliminar Producto</button>
+                    <button type="button" class="btn-danger-outline" id="triggerDeleteModalBtn" style="flex: 1;">Eliminar Producto</button>
                     <button type="submit" class="btn-primary" style="flex: 2;">Guardar Cambios</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Confirm Delete Modal -->
     <div class="modal-overlay" id="confirmDeleteModalOverlay" style="z-index: 1100;">
         <div class="confirm-modal-body">
             <div class="confirm-title">¿Eliminar este producto?</div>
-            <div class="confirm-text">Esta acción es irreversible. Se borrará permanentemente el producto del inventario
-                de la tienda.</div>
+            <div class="confirm-text">Esta acción es irreversible. Se borrará permanentemente el producto del inventario de la tienda.</div>
             <div style="display: flex; gap: 10px; justify-content: center;">
-                <button type="button" class="btn-secondary" id="cancelDeleteBtn"
-                    style="flex: 1; height: 42px;">Cancelar</button>
-                <button type="button" class="btn-danger-filled" id="executeDeleteBtn"
-                    style="flex: 1; height: 42px;">Eliminar</button>
+                <button type="button" class="btn-secondary" id="cancelDeleteBtn" style="flex: 1; height: 42px;">Cancelar</button>
+                <button type="button" class="btn-danger-filled" id="executeDeleteBtn" style="flex: 1; height: 42px;">Eliminar</button>
             </div>
         </div>
     </div>
@@ -797,15 +1012,40 @@
             top: ['Unica', 'S', 'M', 'L']
         };
 
-        // --- DASHBOARD ROUTER TABS SHIFTING CONTROLS ---
+        // ===================== MOBILE SIDEBAR TOGGLE =====================
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mainSidebar  = document.getElementById('mainSidebar');
+        const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+        function openSidebar() {
+            mainSidebar.classList.add('open');
+            sidebarBackdrop.classList.add('active');
+            hamburgerBtn.setAttribute('aria-expanded', 'true');
+        }
+
+        function closeSidebar() {
+            mainSidebar.classList.remove('open');
+            sidebarBackdrop.classList.remove('active');
+            hamburgerBtn.setAttribute('aria-expanded', 'false');
+        }
+
+        hamburgerBtn.addEventListener('click', () => {
+            mainSidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+        });
+
+        sidebarBackdrop.addEventListener('click', closeSidebar);
+
+        // ===================== TAB ROUTER =====================
         document.querySelectorAll('.sidebar-link').forEach(link => {
-            link.addEventListener('click', (e) => {
+            link.addEventListener('click', () => {
                 document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
                 document.querySelectorAll('.tab-content-panel').forEach(p => p.classList.remove('active'));
 
                 link.classList.add('active');
                 const blockTarget = link.dataset.target;
                 document.getElementById(blockTarget).classList.add('active');
+
+                closeSidebar(); // auto-close on mobile after nav
 
                 if (blockTarget === 'productsTab') {
                     fetchInventoryCatalog();
@@ -815,7 +1055,7 @@
             });
         });
 
-        // --- FETCH & RENDER INVENTORY SYSTEM VIEW ---
+        // ===================== INVENTORY =====================
         async function fetchInventoryCatalog() {
             const tbody = document.getElementById('inventoryTableBody');
             try {
@@ -830,22 +1070,20 @@
                 tbody.innerHTML = loadedCatalogData.map(product => {
                     const totalStock = (product.variants || []).reduce((acc, curr) => acc + curr.stock, 0);
                     const sampleImage = product.image || (product.images && product.images.length > 0 ? product.images[0] : '');
-
                     return `
                         <tr data-id="${product.id}">
                             <td><img src="${sampleImage}" class="prod-thumb" alt="Preview"></td>
                             <td style="font-weight:bold;">${product.name}</td>
                             <td><span class="badge ${product.category}">${product.category}</span></td>
                             <td>$ ${product.price.toLocaleString('es-CO')}</td>
-                            <td><strong>${totalStock}</strong> unidades (${(product.variants || []).length} variantes)</td>
+                            <td><strong>${totalStock}</strong> uds (${(product.variants || []).length} var.)</td>
                         </tr>
                     `;
                 }).join('');
 
                 tbody.querySelectorAll('tr').forEach(row => {
                     row.addEventListener('click', () => {
-                        const targetedId = row.dataset.id;
-                        const productMatch = loadedCatalogData.find(p => p.id === targetedId);
+                        const productMatch = loadedCatalogData.find(p => p.id === row.dataset.id);
                         if (productMatch) openEditModalWindow(productMatch);
                     });
                 });
@@ -855,72 +1093,56 @@
             }
         }
 
-        // --- SALES ACTION TAB SYSTEM ENGINE ---
-        // --- SALES ACTION TAB SYSTEM ENGINE ---
-async function initSalesTabEngine() {
-    const gridContainer = document.getElementById('salesGridContainer');
-    const actionPanel = document.getElementById('salesActionPanel');
-    
-    // Clear prior panel state back to contextual instructions
-    actionPanel.innerHTML = `<div class="sales-action-placeholder">Selecciona un artículo de la cuadrícula para ver variaciones de stock disponibles.</div>`;
+        // ===================== SALES TAB =====================
+        async function initSalesTabEngine() {
+            const gridContainer = document.getElementById('salesGridContainer');
+            const actionPanel   = document.getElementById('salesActionPanel');
 
-    // 1. Safely handle the Catalog Fetch
-    try {
-        const catalogRes = await fetch('/api/get-catalog');
-        loadedCatalogData = await catalogRes.json();
-    } catch (catErr) {
-        console.error("Error breaking catalog fetch:", catErr);
-        gridContainer.innerHTML = `<p style="color:red; padding:20px;">Error cargando catálogo de ventas.</p>`;
-        return; // Stop here if we can't even get products
-    }
+            actionPanel.innerHTML = `<div class="sales-action-placeholder">Selecciona un artículo de la cuadrícula para ver variaciones de stock disponibles.</div>`;
 
-    // 2. Safely handle the Sales History Fetch (Isolated so it won't break the grid)
-    try {
-        const salesRes = await fetch('/api/get-sales-history');
-        if (salesRes.ok) {
-            recentSalesLogs = await salesRes.json();
-        } else {
-            console.warn("El endpoint /api/get-sales-history devolvió un error (¿Ya creaste el archivo?).");
-            recentSalesLogs = [];
+            try {
+                const catalogRes = await fetch('/api/get-catalog');
+                loadedCatalogData = await catalogRes.json();
+            } catch (catErr) {
+                gridContainer.innerHTML = `<p style="color:red; padding:20px;">Error cargando catálogo de ventas.</p>`;
+                return;
+            }
+
+            try {
+                const salesRes = await fetch('/api/get-sales-history');
+                recentSalesLogs = salesRes.ok ? await salesRes.json() : [];
+            } catch {
+                recentSalesLogs = [];
+            }
+
+            renderSalesLedgerHistoryTable();
+
+            if (loadedCatalogData.length === 0) {
+                gridContainer.innerHTML = `<p style="color:#999; padding:20px;">No hay productos disponibles para venta.</p>`;
+                return;
+            }
+
+            gridContainer.innerHTML = loadedCatalogData.map(product => {
+                const sampleImage = product.image || (product.images && product.images.length > 0 ? product.images[0] : '');
+                return `
+                    <div class="sales-product-card" data-id="${product.id}">
+                        <img src="${sampleImage}" alt="${product.name}">
+                        <div class="sales-product-name">${product.name}</div>
+                        <div class="sales-product-price">$ ${product.price.toLocaleString('es-CO')}</div>
+                    </div>
+                `;
+            }).join('');
+
+            gridContainer.querySelectorAll('.sales-product-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    gridContainer.querySelectorAll('.sales-product-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    const selectedProduct = loadedCatalogData.find(p => p.id === card.dataset.id);
+                    if (selectedProduct) renderProductSalesPickerRow(selectedProduct);
+                });
+            });
         }
-    } catch (salesErr) {
-        console.error("Error parsing sales history endpoint:", salesErr);
-        recentSalesLogs = []; // Fallback to empty array gracefully
-    }
 
-    // 3. Render the views securely
-    renderSalesLedgerHistoryTable();
-
-    if (loadedCatalogData.length === 0) {
-        gridContainer.innerHTML = `<p style="color:#999; padding:20px;">No hay productos disponibles para venta.</p>`;
-        return;
-    }
-
-    // Render visual product selector matrix cards
-    gridContainer.innerHTML = loadedCatalogData.map(product => {
-        const sampleImage = product.image || (product.images && product.images.length > 0 ? product.images[0] : '');
-        return `
-            <div class="sales-product-card" data-id="${product.id}">
-                <img src="${sampleImage}" alt="${product.name}">
-                <div class="sales-product-name">${product.name}</div>
-                <div class="sales-product-price">$ ${product.price.toLocaleString('es-CO')}</div>
-            </div>
-        `;
-    }).join('');
-
-    // Map target click selectors down to dynamic inline action generation
-    gridContainer.querySelectorAll('.sales-product-card').forEach(card => {
-        card.addEventListener('click', () => {
-            gridContainer.querySelectorAll('.sales-product-card').forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
-            
-            const selectedProduct = loadedCatalogData.find(p => p.id === card.dataset.id);
-            if (selectedProduct) renderProductSalesPickerRow(selectedProduct);
-        });
-    });
-}
-
-        // Render dynamic inline variants selection logic list directly on side-panel
         function renderProductSalesPickerRow(product) {
             const actionPanel = document.getElementById('salesActionPanel');
 
@@ -936,18 +1158,18 @@ async function initSalesTabEngine() {
                 <h4 style="font-size:15px; font-weight:800; margin-bottom:4px; text-transform:uppercase;">${product.name}</h4>
                 <p style="font-size:12px; color:#666; margin-bottom:15px;">Precio base: $ ${product.price.toLocaleString('es-CO')}</p>
                 <div style="max-height:280px; overflow-y:auto; padding-right:4px;">
-                    ${product.variants.map((variant, index) => {
-                const isOutOfStock = variant.stock <= 0;
-                return `
+                    ${product.variants.map((variant) => {
+                        const isOutOfStock = variant.stock <= 0;
+                        return `
                             <div class="sales-variant-row">
                                 <div class="sales-variant-info">
-                                    <span class="color-preview" style="background-color:${variant.color}; margin-right:2px;"></span>
+                                    <span class="color-preview" style="background-color:${variant.color};"></span>
                                     <span>Talla <strong>${variant.size}</strong></span>
                                     <span style="color:#888;">(${variant.stock} uds)</span>
                                 </div>
-                                <button type="button" class="btn-sale-trigger" 
-                                    data-pid="${product.id}" 
-                                    data-color="${variant.color}" 
+                                <button type="button" class="btn-sale-trigger"
+                                    data-pid="${product.id}"
+                                    data-color="${variant.color}"
                                     data-size="${variant.size}"
                                     data-price="${product.price}"
                                     data-pname="${product.name}"
@@ -956,33 +1178,24 @@ async function initSalesTabEngine() {
                                 </button>
                             </div>
                         `;
-            }).join('')}
+                    }).join('')}
                 </div>
             `;
 
-            // Bind the instantaneous live-action click triggers down onto redis operations pipelines
             actionPanel.querySelectorAll('.btn-sale-trigger').forEach(btn => {
                 btn.addEventListener('click', async () => {
                     const { pid, color, size, price, pname } = btn.dataset;
-
                     btn.disabled = true;
                     btn.innerText = 'Procesando...';
 
                     try {
-                        const response = await fetch('/api/register-sale', { // <-- Point to your correct file name
+                        const response = await fetch('/api/register-sale', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                productId: pid, // <-- Matches your backend 'productId' variable
-                                color: color,
-                                size: size,
-                                price: price,          
-                                productName: pname
-                            })
+                            body: JSON.stringify({ productId: pid, color, size, price, productName: pname })
                         });
 
                         if (response.ok) {
-                            // Append explicit records layout to localized logging audit structure
                             recentSalesLogs.unshift({
                                 timestamp: new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                                 name: pname,
@@ -990,13 +1203,10 @@ async function initSalesTabEngine() {
                                 finalPrice: parseFloat(price)
                             });
 
-                            // Instant live re-render and background propagation cycle
                             const updatedResponse = await fetch('/api/get-catalog');
                             loadedCatalogData = await updatedResponse.json();
-
                             const matchedFreshProduct = loadedCatalogData.find(p => p.id === pid);
                             if (matchedFreshProduct) renderProductSalesPickerRow(matchedFreshProduct);
-
                             renderSalesLedgerHistoryTable();
                         } else {
                             const errorData = await response.json();
@@ -1011,41 +1221,36 @@ async function initSalesTabEngine() {
             });
         }
 
-        // Render the localized temporal tracking table
-        // Render the localized permanent tracking table safely
-function renderSalesLedgerHistoryTable() {
-    const ledgerBody = document.getElementById('salesLedgerTableBody');
-    
-    if (!recentSalesLogs || recentSalesLogs.length === 0) {
-        ledgerBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #999; padding: 25px;">No se registran ventas en este periodo.</td></tr>`;
-        return;
-    }
+        function renderSalesLedgerHistoryTable() {
+            const ledgerBody = document.getElementById('salesLedgerTableBody');
 
-    ledgerBody.innerHTML = recentSalesLogs.map(log => {
-        // Fallback to log.price if finalPrice is missing, defaulting to 0
-        const displayPrice = log.finalPrice !== undefined ? log.finalPrice : (log.price !== undefined ? log.price : 0);
+            if (!recentSalesLogs || recentSalesLogs.length === 0) {
+                ledgerBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #999; padding: 25px;">No se registran ventas en este periodo.</td></tr>`;
+                return;
+            }
 
-        return `
-            <tr>
-                <td style="color:#666; font-size:13px;">${log.timestamp || ''}</td>
-                <td style="font-weight:bold;">${log.name || 'Prenda Básica'}</td>
-                <td><code style="background:#f5f5f5; padding:2px 6px; border-radius:4px; font-size:12px;">${log.variantStr || ''}</code></td>
-                <td style="color:var(--success-color); font-weight:bold;">$ ${Number(displayPrice).toLocaleString('es-CO')}</td>
-            </tr>
-        `;
-    }).join('');
-}
+            ledgerBody.innerHTML = recentSalesLogs.map(log => {
+                const displayPrice = log.finalPrice !== undefined ? log.finalPrice : (log.price !== undefined ? log.price : 0);
+                return `
+                    <tr>
+                        <td style="color:#666; font-size:13px;">${log.timestamp || ''}</td>
+                        <td style="font-weight:bold;">${log.name || 'Prenda Básica'}</td>
+                        <td><code style="background:#f5f5f5; padding:2px 6px; border-radius:4px; font-size:12px;">${log.variantStr || ''}</code></td>
+                        <td style="color:var(--success-color); font-weight:bold;">$ ${Number(displayPrice).toLocaleString('es-CO')}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
 
-        // --- INITIALIZE CREATION MATRIX LISTENERS ---
-        const creationCategorySelect = document.querySelector('#addProductTab .prodCategoryField');
-        const creationDynamicContainer = document.querySelector('#addProductTab .dynamicAttributesContainer');
+        // ===================== VARIANT ENGINE =====================
+        const creationCategorySelect    = document.querySelector('#addProductTab .prodCategoryField');
+        const creationDynamicContainer  = document.querySelector('#addProductTab .dynamicAttributesContainer');
 
         creationCategorySelect.addEventListener('change', (e) => {
             activeVariants = [];
             renderVariantControlEngine(e.target.value, creationDynamicContainer);
         });
 
-        // --- UNIVERSAL VARIANT CONTROL RENDERING ENGINE ---
         function renderVariantControlEngine(category, containerNode) {
             const labelTitle = category.charAt(0).toUpperCase() + category.slice(1);
             const sizes = sizeTemplates[category] || [];
@@ -1087,17 +1292,16 @@ function renderSalesLedgerHistoryTable() {
         }
 
         function bindVariantPickerActions(containerNode) {
-            const addBtn = containerNode.querySelector('.addVariantBtnInstance');
-            addBtn.addEventListener('click', () => {
+            containerNode.querySelector('.addVariantBtnInstance').addEventListener('click', () => {
                 const colorVal = containerNode.querySelector('.varColorPicker').value.toLowerCase();
-                const sizeVal = containerNode.querySelector('.varSizePicker').value;
+                const sizeVal  = containerNode.querySelector('.varSizePicker').value;
                 const stockVal = parseInt(containerNode.querySelector('.varStockField').value, 10) || 0;
 
                 if (stockVal <= 0) return alert('Ingresa una cantidad válida.');
 
-                const duplicateIndex = activeVariants.findIndex(v => v.color === colorVal && v.size === sizeVal);
-                if (duplicateIndex > -1) {
-                    activeVariants[duplicateIndex].stock += stockVal;
+                const dupIdx = activeVariants.findIndex(v => v.color === colorVal && v.size === sizeVal);
+                if (dupIdx > -1) {
+                    activeVariants[dupIdx].stock += stockVal;
                 } else {
                     activeVariants.push({ color: colorVal, size: sizeVal, stock: stockVal });
                 }
@@ -1131,21 +1335,20 @@ function renderSalesLedgerHistoryTable() {
             });
         }
 
-        // --- POPUP EDIT SYSTEM WINDOW FORM LOGIC ---
-        const editModalOverlay = document.getElementById('editModalOverlay');
-        const editDynamicContainer = document.getElementById('editDynamicAttributesContainer');
-        const editCategorySelect = document.getElementById('editProdCategory');
+        // ===================== EDIT MODAL =====================
+        const editModalOverlay          = document.getElementById('editModalOverlay');
+        const editDynamicContainer      = document.getElementById('editDynamicAttributesContainer');
+        const editCategorySelect        = document.getElementById('editProdCategory');
         const confirmDeleteModalOverlay = document.getElementById('confirmDeleteModalOverlay');
 
         function openEditModalWindow(product) {
-            document.getElementById('editProductId').value = product.id;
-            document.getElementById('editProdName').value = product.name;
-            document.getElementById('editProdPrice').value = product.price;
+            document.getElementById('editProductId').value       = product.id;
+            document.getElementById('editProdName').value        = product.name;
+            document.getElementById('editProdPrice').value       = product.price;
             document.getElementById('editProdDescription').value = product.description || '';
             editCategorySelect.value = product.category;
 
             activeVariants = JSON.parse(JSON.stringify(product.variants || []));
-
             renderVariantControlEngine(product.category, editDynamicContainer);
             editModalOverlay.classList.add('active');
         }
@@ -1157,18 +1360,26 @@ function renderSalesLedgerHistoryTable() {
 
         document.getElementById('closeModalBtn').addEventListener('click', () => editModalOverlay.classList.remove('active'));
 
-        // --- INTERACTIVE CONFIRMATION MODAL TOGGLES ---
+        // Close modals on backdrop click
+        editModalOverlay.addEventListener('click', (e) => {
+            if (e.target === editModalOverlay) editModalOverlay.classList.remove('active');
+        });
+
+        confirmDeleteModalOverlay.addEventListener('click', (e) => {
+            if (e.target === confirmDeleteModalOverlay) confirmDeleteModalOverlay.classList.remove('active');
+        });
+
         document.getElementById('triggerDeleteModalBtn').addEventListener('click', () => {
             confirmDeleteModalOverlay.classList.add('active');
         });
+
         document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
-            confirmDeleteModalOverlay.remove('active');
+            confirmDeleteModalOverlay.classList.remove('active');
         });
 
-        // --- EXECUTE DELETION TRANSACTION PIPELINE ---
+        // ===================== DELETE =====================
         document.getElementById('executeDeleteBtn').addEventListener('click', async () => {
             const targetedProductId = document.getElementById('editProductId').value;
-
             try {
                 const response = await fetch('/api/delete-product', {
                     method: 'POST',
@@ -1180,39 +1391,38 @@ function renderSalesLedgerHistoryTable() {
                     alert('¡Producto eliminado correctamente!');
                     confirmDeleteModalOverlay.classList.remove('active');
                     editModalOverlay.classList.remove('active');
-                    fetchInventoryCatalog(); // Refresh data table list grid
+                    fetchInventoryCatalog();
                 } else {
                     throw new Error('Server deletion pipeline failure');
                 }
-            } catch (err) {
+            } catch {
                 alert('Error al intentar eliminar el producto.');
             }
         });
 
-        // --- SUBMIT: ADD PRODUCT PIPELINE ---
+        // ===================== ADD PRODUCT =====================
         document.getElementById('catalogForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             if (activeVariants.length === 0) return alert('Agrega al menos una variante.');
 
-            const form = e.target;
+            const form  = e.target;
             const files = Array.from(form.querySelector('.prodImageField').files);
             if (files.length === 0) return alert('Selecciona una imagen.');
 
             try {
-                const uploadPromises = files.map(f => upload(f.name, f, { access: 'public', handleUploadUrl: '/api/upload' }));
-                const blobResponses = await Promise.all(uploadPromises);
+                const blobResponses = await Promise.all(files.map(f => upload(f.name, f, { access: 'public', handleUploadUrl: '/api/upload' })));
                 const urls = blobResponses.map(r => r.url);
 
                 const payload = {
-                    name: form.querySelector('.prodNameField').value,
-                    price: parseFloat(form.querySelector('.prodPriceField').value),
+                    name:        form.querySelector('.prodNameField').value,
+                    price:       parseFloat(form.querySelector('.prodPriceField').value),
                     description: form.querySelector('.prodDescriptionField').value,
-                    category: creationCategorySelect.value,
-                    sizes: [...new Set(activeVariants.map(v => v.size))],
-                    colors: [...new Set(activeVariants.map(v => v.color))],
-                    variants: activeVariants,
-                    imageUrl: urls[0],
-                    images: urls
+                    category:    creationCategorySelect.value,
+                    sizes:       [...new Set(activeVariants.map(v => v.size))],
+                    colors:      [...new Set(activeVariants.map(v => v.color))],
+                    variants:    activeVariants,
+                    imageUrl:    urls[0],
+                    images:      urls
                 };
 
                 const res = await fetch('/api/add-product', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -1222,36 +1432,34 @@ function renderSalesLedgerHistoryTable() {
                     creationDynamicContainer.innerHTML = '';
                     activeVariants = [];
                 }
-            } catch (err) { alert('Error al publicar producto.'); }
+            } catch { alert('Error al publicar producto.'); }
         });
 
-        // --- SUBMIT: EDIT PRODUCT OVERWRITE PIPELINE ---
+        // ===================== EDIT PRODUCT =====================
         document.getElementById('editFormInstance').addEventListener('submit', async (e) => {
             e.preventDefault();
             if (activeVariants.length === 0) return alert('El producto debe tener al menos una variante.');
 
-            const form = e.target;
             const files = Array.from(document.getElementById('editProdImage').files);
 
             try {
                 let urls = [];
                 if (files.length > 0) {
-                    const uploadPromises = files.map(f => upload(f.name, f, { access: 'public', handleUploadUrl: '/api/upload' }));
-                    const blobResponses = await Promise.all(uploadPromises);
+                    const blobResponses = await Promise.all(files.map(f => upload(f.name, f, { access: 'public', handleUploadUrl: '/api/upload' })));
                     urls = blobResponses.map(r => r.url);
                 }
 
                 const payload = {
-                    id: document.getElementById('editProductId').value,
-                    name: document.getElementById('editProdName').value,
-                    price: parseFloat(document.getElementById('editProdPrice').value),
+                    id:          document.getElementById('editProductId').value,
+                    name:        document.getElementById('editProdName').value,
+                    price:       parseFloat(document.getElementById('editProdPrice').value),
                     description: document.getElementById('editProdDescription').value,
-                    category: editCategorySelect.value,
-                    sizes: [...new Set(activeVariants.map(v => v.size))],
-                    colors: [...new Set(activeVariants.map(v => v.color))],
-                    variants: activeVariants,
-                    imageUrl: urls.length > 0 ? urls[0] : null,
-                    images: urls.length > 0 ? urls : null
+                    category:    editCategorySelect.value,
+                    sizes:       [...new Set(activeVariants.map(v => v.size))],
+                    colors:      [...new Set(activeVariants.map(v => v.color))],
+                    variants:    activeVariants,
+                    imageUrl:    urls.length > 0 ? urls[0] : null,
+                    images:      urls.length > 0 ? urls : null
                 };
 
                 const res = await fetch('/api/edit-product', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -1260,11 +1468,10 @@ function renderSalesLedgerHistoryTable() {
                     editModalOverlay.classList.remove('active');
                     fetchInventoryCatalog();
                 }
-            } catch (err) { alert('Error al actualizar el producto.'); }
+            } catch { alert('Error al actualizar el producto.'); }
         });
 
         fetchInventoryCatalog();
     </script>
 </body>
-
 </html>
