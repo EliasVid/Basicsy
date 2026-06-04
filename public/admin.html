@@ -1543,39 +1543,108 @@
 
         // ===================== EDIT PRODUCT =====================
         document.getElementById('editFormInstance').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (activeVariants.length === 0) return alert('El producto debe tener al menos una variante.');
+    e.preventDefault();
+    const form = e.target;
+    
+    // Find the save changes button dynamically inside the form
+    const submitBtn = form.querySelector('button[type="submit"]') || form.querySelector('.btn-primary');
 
-            const files = Array.from(document.getElementById('editProdImage').files);
+    // 1. Core Validation
+    const name = document.getElementById('editProdName').value.trim();
+    const priceRaw = document.getElementById('editProdPrice').value;
+    const price = parseFloat(priceRaw);
+    const category = editCategorySelect.value;
+    const id = document.getElementById('editProductId').value;
 
-            try {
-                let urls = [];
-                if (files.length > 0) {
-                    const blobResponses = await Promise.all(files.map(f => upload(f.name, f, { access: 'public', handleUploadUrl: '/api/upload' })));
-                    urls = blobResponses.map(r => r.url);
-                }
+    if (!id) return alert('Error interno: Falta el ID del producto.');
+    if (!name) return alert('El nombre del producto es obligatorio.');
+    if (isNaN(price) || price <= 0) return alert('Por favor, ingresa un precio válido mayor a 0.');
+    if (!category) return alert('Debes seleccionar una categoría.');
+    if (!activeVariants || activeVariants.length === 0) {
+        return alert('El producto debe tener al menos una variante.');
+    }
 
-                const payload = {
-                    id: document.getElementById('editProductId').value,
-                    name: document.getElementById('editProdName').value,
-                    price: parseFloat(document.getElementById('editProdPrice').value),
-                    description: document.getElementById('editProdDescription').value,
-                    category: editCategorySelect.value,
-                    sizes: [...new Set(activeVariants.map(v => v.size))],
-                    colors: [...new Set(activeVariants.map(v => v.color))],
-                    variants: activeVariants,
-                    imageUrl: urls.length > 0 ? urls[0] : null,
-                    images: urls.length > 0 ? urls : null
-                };
+    const invalidVariant = activeVariants.some(v => !v.size || !v.color || isNaN(parseInt(v.stock, 10)));
+    if (invalidVariant) {
+        return alert('Todas las variantes deben tener talla, color y una cantidad de stock válida.');
+    }
 
-                const res = await fetch('/api/edit-product', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (res.ok) {
-                    alert('¡Cambios guardados correctamente!');
-                    editModalOverlay.classList.remove('active');
-                    fetchInventoryCatalog();
-                }
-            } catch { alert('Error al actualizar el producto.'); }
+    const files = Array.from(document.getElementById('editProdImage').files);
+
+    // ==========================================
+    // UI LOCK & LOADING STATUS (EDIT)
+    // ==========================================
+    const originalBtnText = submitBtn.innerHTML;
+    
+    // Freeze button state instantly
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.6';
+    submitBtn.style.cursor = 'not-allowed';
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando cambios...';
+
+    // Create the floating temporary notification
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.id = 'edit-loading-overlay';
+    loadingOverlay.style = 'position: fixed; top: 20px; right: 20px; background: #2b6cb0; color: #fff; padding: 15px 25px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: bold;';
+    loadingOverlay.innerText = '⏳ Actualizando archivos y guardando cambios...';
+    document.body.appendChild(loadingOverlay);
+
+    try {
+        let urls = [];
+        // Only trigger asset uploads if the admin actually selected new images
+        if (files.length > 0) {
+            const blobResponses = await Promise.all(
+                files.map(f => upload(f.name, f, { access: 'public', handleUploadUrl: '/api/upload' }))
+            );
+            urls = blobResponses.map(r => r.url);
+        }
+
+        const payload = {
+            id,
+            name,
+            price,
+            description: document.getElementById('editProdDescription').value.trim(),
+            category,
+            sizes:    [...new Set(activeVariants.map(v => v.size))],
+            colors:   [...new Set(activeVariants.map(v => v.color.toLowerCase()))],
+            variants: activeVariants,
+            imageUrl: urls.length > 0 ? urls[0] : null,
+            images:   urls.length > 0 ? urls : null
+        };
+
+        const res = await fetch('/api/edit-product', { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify(payload) 
         });
+
+        // Pull the notification overlay off the screen
+        loadingOverlay.remove();
+
+        if (res.ok) {
+            alert('¡Cambios guardados correctamente!');
+            editModalOverlay.classList.remove('active');
+            fetchInventoryCatalog();
+        } else {
+            const errData = await res.json().catch(() => ({}));
+            alert(`Error al actualizar: ${errData.error || 'No se pudo guardar la información.'}`);
+        }
+    } catch (err) { 
+        console.error(err);
+        alert('Error de red al actualizar el producto.'); 
+        if (document.getElementById('edit-loading-overlay')) {
+            document.getElementById('edit-loading-overlay').remove();
+        }
+    } finally {
+        // ==========================================
+        // UI UNLOCK GUARANTEE
+        // ==========================================
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.style.cursor = 'pointer';
+        submitBtn.innerHTML = originalBtnText;
+    }
+});
 
         fetchInventoryCatalog();
     </script>
