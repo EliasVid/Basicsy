@@ -121,7 +121,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 190;
         }
 
@@ -164,7 +164,7 @@
             max-width: 650px;
             padding: 35px;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
             border: 1px solid var(--border-color);
         }
 
@@ -315,7 +315,9 @@
             transition: background 0.2s;
         }
 
-        .btn-primary:hover { background: #333; }
+        .btn-primary:hover {
+            background: #333;
+        }
 
         .btn-secondary {
             background: #555;
@@ -331,7 +333,9 @@
             justify-content: center;
         }
 
-        .btn-secondary:hover { background: #333; }
+        .btn-secondary:hover {
+            background: #333;
+        }
 
         .btn-delete {
             background: none;
@@ -377,7 +381,9 @@
             cursor: pointer;
         }
 
-        .btn-danger-filled:hover { background: var(--danger-hover); }
+        .btn-danger-filled:hover {
+            background: var(--danger-hover);
+        }
 
         /* ===================== INVENTORY TABLE ===================== */
         .inventory-table-wrapper {
@@ -385,7 +391,7 @@
             border-radius: 8px;
             border: 1px solid var(--border-color);
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
             overflow-x: auto;
         }
 
@@ -435,9 +441,20 @@
             background: #eee;
         }
 
-        .badge.body { background: #e3f2fd; color: #0d47a1; }
-        .badge.jean { background: #f3e5f5; color: #4a148c; }
-        .badge.top  { background: #e8f5e9; color: #1b5e20; }
+        .badge.body {
+            background: #e3f2fd;
+            color: #0d47a1;
+        }
+
+        .badge.jean {
+            background: #f3e5f5;
+            color: #4a148c;
+        }
+
+        .badge.top {
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
 
         /* ===================== SALES TAB ===================== */
         .sales-workspace-layout {
@@ -470,7 +487,7 @@
         .sales-product-card:hover,
         .sales-product-card.selected {
             border-color: var(--accent-color);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
         .sales-product-card.selected {
@@ -526,7 +543,9 @@
             gap: 8px;
         }
 
-        .sales-variant-row:last-child { border-bottom: none; }
+        .sales-variant-row:last-child {
+            border-bottom: none;
+        }
 
         .sales-variant-info {
             display: flex;
@@ -549,7 +568,9 @@
             flex-shrink: 0;
         }
 
-        .btn-sale-trigger:hover { background: #333; }
+        .btn-sale-trigger:hover {
+            background: #333;
+        }
 
         .btn-sale-trigger:disabled {
             background: #ccc;
@@ -563,7 +584,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0, 0, 0, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -596,7 +617,7 @@
             max-width: 400px;
             padding: 25px;
             border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
             border: 1px solid var(--border-color);
             text-align: center;
         }
@@ -626,7 +647,9 @@
             color: #999;
         }
 
-        .modal-close-btn:hover { color: #000; }
+        .modal-close-btn:hover {
+            color: #000;
+        }
 
         /* ===================== RESPONSIVE ===================== */
         @media (max-width: 768px) {
@@ -692,11 +715,11 @@
                 grid-template-rows: auto auto;
             }
 
-            .picker-row > div:nth-child(3) {
+            .picker-row>div:nth-child(3) {
                 grid-column: 1;
             }
 
-            .picker-row > div:nth-child(4) {
+            .picker-row>div:nth-child(4) {
                 grid-column: 2;
                 align-self: end;
             }
@@ -842,7 +865,8 @@
         <section id="productsTab" class="tab-content-panel active">
             <div class="content-header">
                 <h2>Inventario de Productos</h2>
-                <p style="font-size: 13px; color: #666;">Haz clic en cualquier fila para editar los detalles del artículo.</p>
+                <p style="font-size: 13px; color: #666;">Haz clic en cualquier fila para editar los detalles del
+                    artículo.</p>
             </div>
             <div class="content-body">
                 <div class="inventory-table-wrapper">
@@ -858,7 +882,8 @@
                         </thead>
                         <tbody id="inventoryTableBody">
                             <tr>
-                                <td colspan="5" style="text-align: center; color: #999; padding: 40px;">Cargando catálogo...</td>
+                                <td colspan="5" style="text-align: center; color: #999; padding: 40px;">Cargando
+                                    catálogo...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -892,16 +917,19 @@
                         </div>
                         <div class="form-group">
                             <label>Descripción</label>
-                            <textarea class="prodDescriptionField" rows="3" placeholder="Detalles de la prenda..."></textarea>
+                            <textarea class="prodDescriptionField" rows="3"
+                                placeholder="Detalles de la prenda..."></textarea>
                         </div>
 
                         <div class="dynamicAttributesContainer"></div>
 
                         <div class="form-group" style="margin-top: 20px;">
                             <label>Imágenes del Producto</label>
-                            <input type="file" class="prodImageField" accept="image/png, image/jpeg, image/webp" multiple required>
+                            <input type="file" class="prodImageField" accept="image/png, image/jpeg, image/webp"
+                                multiple required>
                         </div>
-                        <button type="submit" class="btn-primary" style="width:100%; margin-top:15px;">Publicar Producto</button>
+                        <button type="submit" class="btn-primary" style="width:100%; margin-top:15px;">Publicar
+                            Producto</button>
                     </form>
                 </div>
             </div>
@@ -910,7 +938,8 @@
         <section id="salesTab" class="tab-content-panel">
             <div class="content-header">
                 <h2>Registrar Ventas</h2>
-                <p style="font-size: 13px; color: #666;">Selecciona un artículo para desplegar y reducir sus variantes de inventario.</p>
+                <p style="font-size: 13px; color: #666;">Selecciona un artículo para desplegar y reducir sus variantes
+                    de inventario.</p>
             </div>
             <div class="content-body">
                 <div class="sales-workspace-layout">
@@ -935,7 +964,8 @@
                         </thead>
                         <tbody id="salesLedgerTableBody">
                             <tr>
-                                <td colspan="4" style="text-align: center; color: #999; padding: 25px;">No se registran ventas en este periodo.</td>
+                                <td colspan="4" style="text-align: center; color: #999; padding: 25px;">No se registran
+                                    ventas en este periodo.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -976,11 +1006,13 @@
 
                 <div class="form-group" style="margin-top: 20px;">
                     <label>Reemplazar Imágenes (Dejar vacío para conservar actuales)</label>
-                    <input type="file" class="prodImageField" id="editProdImage" accept="image/png, image/jpeg, image/webp" multiple>
+                    <input type="file" class="prodImageField" id="editProdImage"
+                        accept="image/png, image/jpeg, image/webp" multiple>
                 </div>
 
                 <div class="modal-actions-row">
-                    <button type="button" class="btn-danger-outline" id="triggerDeleteModalBtn" style="flex: 1;">Eliminar Producto</button>
+                    <button type="button" class="btn-danger-outline" id="triggerDeleteModalBtn"
+                        style="flex: 1;">Eliminar Producto</button>
                     <button type="submit" class="btn-primary" style="flex: 2;">Guardar Cambios</button>
                 </div>
             </form>
@@ -991,10 +1023,13 @@
     <div class="modal-overlay" id="confirmDeleteModalOverlay" style="z-index: 1100;">
         <div class="confirm-modal-body">
             <div class="confirm-title">¿Eliminar este producto?</div>
-            <div class="confirm-text">Esta acción es irreversible. Se borrará permanentemente el producto del inventario de la tienda.</div>
+            <div class="confirm-text">Esta acción es irreversible. Se borrará permanentemente el producto del inventario
+                de la tienda.</div>
             <div style="display: flex; gap: 10px; justify-content: center;">
-                <button type="button" class="btn-secondary" id="cancelDeleteBtn" style="flex: 1; height: 42px;">Cancelar</button>
-                <button type="button" class="btn-danger-filled" id="executeDeleteBtn" style="flex: 1; height: 42px;">Eliminar</button>
+                <button type="button" class="btn-secondary" id="cancelDeleteBtn"
+                    style="flex: 1; height: 42px;">Cancelar</button>
+                <button type="button" class="btn-danger-filled" id="executeDeleteBtn"
+                    style="flex: 1; height: 42px;">Eliminar</button>
             </div>
         </div>
     </div>
@@ -1014,7 +1049,7 @@
 
         // ===================== MOBILE SIDEBAR TOGGLE =====================
         const hamburgerBtn = document.getElementById('hamburgerBtn');
-        const mainSidebar  = document.getElementById('mainSidebar');
+        const mainSidebar = document.getElementById('mainSidebar');
         const sidebarBackdrop = document.getElementById('sidebarBackdrop');
 
         function openSidebar() {
@@ -1096,7 +1131,7 @@
         // ===================== SALES TAB =====================
         async function initSalesTabEngine() {
             const gridContainer = document.getElementById('salesGridContainer');
-            const actionPanel   = document.getElementById('salesActionPanel');
+            const actionPanel = document.getElementById('salesActionPanel');
 
             actionPanel.innerHTML = `<div class="sales-action-placeholder">Selecciona un artículo de la cuadrícula para ver variaciones de stock disponibles.</div>`;
 
@@ -1159,8 +1194,8 @@
                 <p style="font-size:12px; color:#666; margin-bottom:15px;">Precio base: $ ${product.price.toLocaleString('es-CO')}</p>
                 <div style="max-height:280px; overflow-y:auto; padding-right:4px;">
                     ${product.variants.map((variant) => {
-                        const isOutOfStock = variant.stock <= 0;
-                        return `
+                const isOutOfStock = variant.stock <= 0;
+                return `
                             <div class="sales-variant-row">
                                 <div class="sales-variant-info">
                                     <span class="color-preview" style="background-color:${variant.color};"></span>
@@ -1178,7 +1213,7 @@
                                 </button>
                             </div>
                         `;
-                    }).join('')}
+            }).join('')}
                 </div>
             `;
 
@@ -1243,8 +1278,8 @@
         }
 
         // ===================== VARIANT ENGINE =====================
-        const creationCategorySelect    = document.querySelector('#addProductTab .prodCategoryField');
-        const creationDynamicContainer  = document.querySelector('#addProductTab .dynamicAttributesContainer');
+        const creationCategorySelect = document.querySelector('#addProductTab .prodCategoryField');
+        const creationDynamicContainer = document.querySelector('#addProductTab .dynamicAttributesContainer');
 
         creationCategorySelect.addEventListener('change', (e) => {
             activeVariants = [];
@@ -1294,7 +1329,7 @@
         function bindVariantPickerActions(containerNode) {
             containerNode.querySelector('.addVariantBtnInstance').addEventListener('click', () => {
                 const colorVal = containerNode.querySelector('.varColorPicker').value.toLowerCase();
-                const sizeVal  = containerNode.querySelector('.varSizePicker').value;
+                const sizeVal = containerNode.querySelector('.varSizePicker').value;
                 const stockVal = parseInt(containerNode.querySelector('.varStockField').value, 10) || 0;
 
                 if (stockVal <= 0) return alert('Ingresa una cantidad válida.');
@@ -1336,15 +1371,15 @@
         }
 
         // ===================== EDIT MODAL =====================
-        const editModalOverlay          = document.getElementById('editModalOverlay');
-        const editDynamicContainer      = document.getElementById('editDynamicAttributesContainer');
-        const editCategorySelect        = document.getElementById('editProdCategory');
+        const editModalOverlay = document.getElementById('editModalOverlay');
+        const editDynamicContainer = document.getElementById('editDynamicAttributesContainer');
+        const editCategorySelect = document.getElementById('editProdCategory');
         const confirmDeleteModalOverlay = document.getElementById('confirmDeleteModalOverlay');
 
         function openEditModalWindow(product) {
-            document.getElementById('editProductId').value       = product.id;
-            document.getElementById('editProdName').value        = product.name;
-            document.getElementById('editProdPrice').value       = product.price;
+            document.getElementById('editProductId').value = product.id;
+            document.getElementById('editProdName').value = product.name;
+            document.getElementById('editProdPrice').value = product.price;
             document.getElementById('editProdDescription').value = product.description || '';
             editCategorySelect.value = product.category;
 
@@ -1403,36 +1438,107 @@
         // ===================== ADD PRODUCT =====================
         document.getElementById('catalogForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (activeVariants.length === 0) return alert('Agrega al menos una variante.');
+            const form = e.target;
+            const submitBtn = form.querySelector('.btn-primary');
 
-            const form  = e.target;
+            // 1. Gather values
+            const name = form.querySelector('.prodNameField').value.trim();
+            const priceRaw = form.querySelector('.prodPriceField').value;
+            const price = parseFloat(priceRaw);
+            const category = form.querySelector('.prodCategoryField').value;
+            const description = form.querySelector('.prodDescriptionField').value.trim();
             const files = Array.from(form.querySelector('.prodImageField').files);
-            if (files.length === 0) return alert('Selecciona una imagen.');
+
+            // 2. Strict Validation Safeguards (Run BEFORE locking the form)
+            if (!name) return alert('El nombre del producto es obligatorio.');
+            if (isNaN(price) || price <= 0) return alert('Por favor, ingresa un precio válido mayor a 0.');
+            if (!category) return alert('Debes seleccionar una categoría.');
+            if (files.length === 0) return alert('Selecciona al menos una imagen para el producto.');
+            if (!activeVariants || activeVariants.length === 0) {
+                return alert('Agrega al menos una variante con su respectiva talla, color y cantidad.');
+            }
+
+            const invalidVariant = activeVariants.some(v => !v.size || !v.color || isNaN(parseInt(v.stock, 10)));
+            if (invalidVariant) {
+                return alert('Todas las variantes deben tener talla, color y una cantidad de stock válida.');
+            }
+
+            // ==========================================
+            // UI LOCK & LOADING POPUP STATUS
+            // ==========================================
+            // Save original button state text to restore later if it fails
+            const originalBtnText = submitBtn.innerHTML;
+
+            // Disable button to prevent double-clicks instantly
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.6';
+            submitBtn.style.cursor = 'not-allowed';
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando producto...';
+
+            // Optional: Create a quick native floating indicator overlay
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.id = 'form-loading-overlay';
+            loadingOverlay.style = 'position: fixed; top: 20px; right: 20px; background: #333; color: #fff; padding: 15px 25px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: bold;';
+            loadingOverlay.innerText = '⏳ Subiendo archivos y guardando producto...';
+            document.body.appendChild(loadingOverlay);
 
             try {
-                const blobResponses = await Promise.all(files.map(f => upload(f.name, f, { access: 'public', handleUploadUrl: '/api/upload' })));
+                // 3. Process the upload pipeline securely
+                const blobResponses = await Promise.all(
+                    files.map(f => upload(f.name, f, { access: 'public', handleUploadUrl: '/api/upload' }))
+                );
                 const urls = blobResponses.map(r => r.url);
 
                 const payload = {
-                    name:        form.querySelector('.prodNameField').value,
-                    price:       parseFloat(form.querySelector('.prodPriceField').value),
-                    description: form.querySelector('.prodDescriptionField').value,
-                    category:    creationCategorySelect.value,
-                    sizes:       [...new Set(activeVariants.map(v => v.size))],
-                    colors:      [...new Set(activeVariants.map(v => v.color))],
-                    variants:    activeVariants,
-                    imageUrl:    urls[0],
-                    images:      urls
+                    name,
+                    price,
+                    description,
+                    category,
+                    sizes: [...new Set(activeVariants.map(v => v.size))],
+                    colors: [...new Set(activeVariants.map(v => v.color.toLowerCase()))],
+                    variants: activeVariants,
+                    imageUrl: urls[0],
+                    images: urls
                 };
 
-                const res = await fetch('/api/add-product', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (res.ok) {
+                const res = await fetch('/api/add-product', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+
+                // Remove the visual loading card overlay
+                loadingOverlay.remove();
+
+                if (res.ok && data.success) {
                     alert('¡Producto creado con éxito!');
                     form.reset();
-                    creationDynamicContainer.innerHTML = '';
+                    if (typeof creationDynamicContainer !== 'undefined') {
+                        creationDynamicContainer.innerHTML = '';
+                    } else {
+                        form.querySelector('.dynamicAttributesContainer').innerHTML = '';
+                    }
                     activeVariants = [];
+                } else {
+                    alert(`Error del servidor: ${data.error || 'No se pudo guardar el producto.'}`);
                 }
-            } catch { alert('Error al publicar producto.'); }
+            } catch (err) {
+                console.error(err);
+                alert('Error de red al publicar producto.');
+                if (document.getElementById('form-loading-overlay')) {
+                    document.getElementById('form-loading-overlay').remove();
+                }
+            } finally {
+                // ==========================================
+                // UI UNLOCK (Always runs regardless of success or failure)
+                // ==========================================
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+                submitBtn.innerHTML = originalBtnText;
+            }
         });
 
         // ===================== EDIT PRODUCT =====================
@@ -1450,16 +1556,16 @@
                 }
 
                 const payload = {
-                    id:          document.getElementById('editProductId').value,
-                    name:        document.getElementById('editProdName').value,
-                    price:       parseFloat(document.getElementById('editProdPrice').value),
+                    id: document.getElementById('editProductId').value,
+                    name: document.getElementById('editProdName').value,
+                    price: parseFloat(document.getElementById('editProdPrice').value),
                     description: document.getElementById('editProdDescription').value,
-                    category:    editCategorySelect.value,
-                    sizes:       [...new Set(activeVariants.map(v => v.size))],
-                    colors:      [...new Set(activeVariants.map(v => v.color))],
-                    variants:    activeVariants,
-                    imageUrl:    urls.length > 0 ? urls[0] : null,
-                    images:      urls.length > 0 ? urls : null
+                    category: editCategorySelect.value,
+                    sizes: [...new Set(activeVariants.map(v => v.size))],
+                    colors: [...new Set(activeVariants.map(v => v.color))],
+                    variants: activeVariants,
+                    imageUrl: urls.length > 0 ? urls[0] : null,
+                    images: urls.length > 0 ? urls : null
                 };
 
                 const res = await fetch('/api/edit-product', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -1474,4 +1580,5 @@
         fetchInventoryCatalog();
     </script>
 </body>
+
 </html>
