@@ -43,7 +43,7 @@ export default async function handler(request, response) {
         minute: '2-digit',
         second: '2-digit'
       }),
-      date: new Date().toLocaleDateString('es-CO'),
+      date: new Date().toISOString().split('T')[0],
       productId,
       name: request.body.productName || 'Prenda Básica',
       variantStr: `Talla ${size} - Color ${color}`,

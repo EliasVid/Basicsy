@@ -1,0 +1,111 @@
+<section id="salesTab" class="tab-content-panel active">
+
+    <div class="content-header">
+        <h2>Registrar Ventas</h2>
+        <p style="font-size:13px;color:#666;">
+            Selecciona un artículo para desplegar y reducir sus variantes de inventario.
+        </p>
+    </div>
+
+    <div class="content-body">
+
+        <div style="margin-bottom:20px;">
+
+            <label for="salesDateFilter">
+                Consultar ventas del día:
+            </label>
+        
+            <input
+                type="date"
+                id="salesDateFilter"
+                style="margin-left:10px;"
+            >
+        
+        </div>
+
+        <!-- Sales Dashboard -->
+        <div class="sales-dashboard"
+            style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;margin-bottom:25px;">
+
+            <div class="admin-card" style="padding:20px;">
+                <div style="font-size:12px;color:#666;text-transform:uppercase;">
+                    Ventas Hoy
+                </div>
+                <div id="salesTodayValue"
+                    style="font-size:24px;font-weight:bold;margin-top:8px;">
+                    $0
+                </div>
+            </div>
+
+            <div class="admin-card" style="padding:20px;">
+                <div style="font-size:12px;color:#666;text-transform:uppercase;">
+                    Ventas Totales
+                </div>
+                <div id="salesTotalValue"
+                    style="font-size:24px;font-weight:bold;margin-top:8px;">
+                    $0
+                </div>
+            </div>
+
+            <div class="admin-card" style="padding:20px;">
+                <div style="font-size:12px;color:#666;text-transform:uppercase;">
+                    Ventas Fecha Seleccionada
+                </div>
+            
+                <div id="salesSelectedDateValue"
+                     style="font-size:24px;font-weight:bold;margin-top:8px;">
+                     $0
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Sales Workspace -->
+        <div class="sales-workspace-layout">
+
+            <div class="sales-grid" id="salesGridContainer">
+                <div style="padding:20px;color:#999;">
+                    Cargando catálogo...
+                </div>
+            </div>
+
+            <div class="sales-action-panel" id="salesActionPanel">
+                <div class="sales-action-placeholder">
+                    Selecciona un artículo de la cuadrícula para ver variaciones de stock disponibles.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Sales History -->
+        <h3 style="font-size:16px;font-weight:bold;margin-bottom:12px;">
+            Historial Reciente de Ventas
+        </h3>
+
+        <div class="inventory-table-wrapper">
+            <table class="inventory-table">
+
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Artículo</th>
+                        <th>Variación</th>
+                        <th>Precio Cobrado</th>
+                    </tr>
+                </thead>
+
+                <tbody id="salesLedgerTableBody">
+                    <tr>
+                        <td colspan="4"
+                            style="text-align:center;color:#999;padding:25px;">
+                            No se registran ventas en este periodo.
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+</section>

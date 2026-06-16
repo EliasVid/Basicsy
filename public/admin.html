@@ -935,43 +935,7 @@
             </div>
         </section>
 
-        <section id="salesTab" class="tab-content-panel">
-            <div class="content-header">
-                <h2>Registrar Ventas</h2>
-                <p style="font-size: 13px; color: #666;">Selecciona un artículo para desplegar y reducir sus variantes
-                    de inventario.</p>
-            </div>
-            <div class="content-body">
-                <div class="sales-workspace-layout">
-                    <div class="sales-grid" id="salesGridContainer"></div>
-                    <div class="sales-action-panel" id="salesActionPanel">
-                        <div class="sales-action-placeholder">
-                            Selecciona un artículo de la cuadrícula para ver variaciones de stock disponibles.
-                        </div>
-                    </div>
-                </div>
-
-                <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 12px;">Historial Reciente de Ventas</h3>
-                <div class="inventory-table-wrapper">
-                    <table class="inventory-table">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Artículo</th>
-                                <th>Variación</th>
-                                <th>Precio Cobrado</th>
-                            </tr>
-                        </thead>
-                        <tbody id="salesLedgerTableBody">
-                            <tr>
-                                <td colspan="4" style="text-align: center; color: #999; padding: 25px;">No se registran
-                                    ventas en este periodo.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+        <div id="salesTabContainer"></div>
     </main>
 
     <!-- Edit Product Modal -->
@@ -1036,11 +1000,12 @@
 
     <script type="module">
         import { upload } from 'https://esm.run/@vercel/blob/client';
+        import { initSalesTabEngine } from './js/sales.js';
 
         let loadedCatalogData = [];
         let activeVariants = [];
         let recentSalesLogs = [];
-
+        
         const sizeTemplates = {
             body: ['Unica', 'S', 'M', 'L'],
             jean: ['6', '7', '8', '9'],
@@ -1072,20 +1037,36 @@
 
         // ===================== TAB ROUTER =====================
         document.querySelectorAll('.sidebar-link').forEach(link => {
-            link.addEventListener('click', () => {
-                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-                document.querySelectorAll('.tab-content-panel').forEach(p => p.classList.remove('active'));
+    link.addEventListener('click', async () => {
 
-                link.classList.add('active');
+        document.querySelectorAll('.sidebar-link')
+            .forEach(l => l.classList.remove('active'));
+
+        document.querySelectorAll('.tab-content-panel')
+            .forEach(p => p.classList.remove('active'));
+
+        link.classList.add('active');
+
                 const blockTarget = link.dataset.target;
-                document.getElementById(blockTarget).classList.add('active');
 
-                closeSidebar(); // auto-close on mobile after nav
+                if (blockTarget === 'salesTab') {
+
+                    await loadSalesTab();
+
+                    document.getElementById('salesTab')
+                        ?.classList.add('active');
+
+                } else {
+
+                    document.getElementById(blockTarget)
+                        ?.classList.add('active');
+
+                }
+
+                closeSidebar();
 
                 if (blockTarget === 'productsTab') {
                     fetchInventoryCatalog();
-                } else if (blockTarget === 'salesTab') {
-                    initSalesTabEngine();
                 }
             });
         });
@@ -1129,152 +1110,17 @@
         }
 
         // ===================== SALES TAB =====================
-        async function initSalesTabEngine() {
-            const gridContainer = document.getElementById('salesGridContainer');
-            const actionPanel = document.getElementById('salesActionPanel');
+        async function loadSalesTab() {
+            const container = document.getElementById('salesTabContainer');
 
-            actionPanel.innerHTML = `<div class="sales-action-placeholder">Selecciona un artículo de la cuadrícula para ver variaciones de stock disponibles.</div>`;
+            if (container.dataset.loaded) return;
 
-            try {
-                const catalogRes = await fetch('/api/get-catalog');
-                loadedCatalogData = await catalogRes.json();
-            } catch (catErr) {
-                gridContainer.innerHTML = `<p style="color:red; padding:20px;">Error cargando catálogo de ventas.</p>`;
-                return;
-            }
+            const html = await fetch('/partials/sales-tab.html');
+            container.innerHTML = await html.text();
 
-            try {
-                const salesRes = await fetch('/api/get-sales-history');
-                recentSalesLogs = salesRes.ok ? await salesRes.json() : [];
-            } catch {
-                recentSalesLogs = [];
-            }
+            container.dataset.loaded = 'true';
 
-            renderSalesLedgerHistoryTable();
-
-            if (loadedCatalogData.length === 0) {
-                gridContainer.innerHTML = `<p style="color:#999; padding:20px;">No hay productos disponibles para venta.</p>`;
-                return;
-            }
-
-            gridContainer.innerHTML = loadedCatalogData.map(product => {
-                const sampleImage = product.image || (product.images && product.images.length > 0 ? product.images[0] : '');
-                return `
-                    <div class="sales-product-card" data-id="${product.id}">
-                        <img src="${sampleImage}" alt="${product.name}">
-                        <div class="sales-product-name">${product.name}</div>
-                        <div class="sales-product-price">$ ${product.price.toLocaleString('es-CO')}</div>
-                    </div>
-                `;
-            }).join('');
-
-            gridContainer.querySelectorAll('.sales-product-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    gridContainer.querySelectorAll('.sales-product-card').forEach(c => c.classList.remove('selected'));
-                    card.classList.add('selected');
-                    const selectedProduct = loadedCatalogData.find(p => p.id === card.dataset.id);
-                    if (selectedProduct) renderProductSalesPickerRow(selectedProduct);
-                });
-            });
-        }
-
-        function renderProductSalesPickerRow(product) {
-            const actionPanel = document.getElementById('salesActionPanel');
-
-            if (!product.variants || product.variants.length === 0) {
-                actionPanel.innerHTML = `
-                    <h4 style="font-size:14px; margin-bottom:10px;">${product.name}</h4>
-                    <p style="font-size:13px; color:var(--danger-color);">Este producto no posee variantes registradas.</p>
-                `;
-                return;
-            }
-
-            actionPanel.innerHTML = `
-                <h4 style="font-size:15px; font-weight:800; margin-bottom:4px; text-transform:uppercase;">${product.name}</h4>
-                <p style="font-size:12px; color:#666; margin-bottom:15px;">Precio base: $ ${product.price.toLocaleString('es-CO')}</p>
-                <div style="max-height:280px; overflow-y:auto; padding-right:4px;">
-                    ${product.variants.map((variant) => {
-                const isOutOfStock = variant.stock <= 0;
-                return `
-                            <div class="sales-variant-row">
-                                <div class="sales-variant-info">
-                                    <span class="color-preview" style="background-color:${variant.color};"></span>
-                                    <span>Talla <strong>${variant.size}</strong></span>
-                                    <span style="color:#888;">(${variant.stock} uds)</span>
-                                </div>
-                                <button type="button" class="btn-sale-trigger"
-                                    data-pid="${product.id}"
-                                    data-color="${variant.color}"
-                                    data-size="${variant.size}"
-                                    data-price="${product.price}"
-                                    data-pname="${product.name}"
-                                    ${isOutOfStock ? 'disabled style="background:#ddd; color:#999;"' : ''}>
-                                    ${isOutOfStock ? 'Sin Stock' : '⚡ Vender'}
-                                </button>
-                            </div>
-                        `;
-            }).join('')}
-                </div>
-            `;
-
-            actionPanel.querySelectorAll('.btn-sale-trigger').forEach(btn => {
-                btn.addEventListener('click', async () => {
-                    const { pid, color, size, price, pname } = btn.dataset;
-                    btn.disabled = true;
-                    btn.innerText = 'Procesando...';
-
-                    try {
-                        const response = await fetch('/api/register-sale', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ productId: pid, color, size, price, productName: pname })
-                        });
-
-                        if (response.ok) {
-                            recentSalesLogs.unshift({
-                                timestamp: new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-                                name: pname,
-                                variantStr: `Talla ${size} - Color ${color}`,
-                                finalPrice: parseFloat(price)
-                            });
-
-                            const updatedResponse = await fetch('/api/get-catalog');
-                            loadedCatalogData = await updatedResponse.json();
-                            const matchedFreshProduct = loadedCatalogData.find(p => p.id === pid);
-                            if (matchedFreshProduct) renderProductSalesPickerRow(matchedFreshProduct);
-                            renderSalesLedgerHistoryTable();
-                        } else {
-                            const errorData = await response.json();
-                            alert(`Error de inventario: ${errorData.error || 'No se pudo procesar la reducción.'}`);
-                            initSalesTabEngine();
-                        }
-                    } catch (err) {
-                        alert('Error fatal de red intentando asentar la venta.');
-                        initSalesTabEngine();
-                    }
-                });
-            });
-        }
-
-        function renderSalesLedgerHistoryTable() {
-            const ledgerBody = document.getElementById('salesLedgerTableBody');
-
-            if (!recentSalesLogs || recentSalesLogs.length === 0) {
-                ledgerBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #999; padding: 25px;">No se registran ventas en este periodo.</td></tr>`;
-                return;
-            }
-
-            ledgerBody.innerHTML = recentSalesLogs.map(log => {
-                const displayPrice = log.finalPrice !== undefined ? log.finalPrice : (log.price !== undefined ? log.price : 0);
-                return `
-                    <tr>
-                        <td style="color:#666; font-size:13px;">${log.timestamp || ''}</td>
-                        <td style="font-weight:bold;">${log.name || 'Prenda Básica'}</td>
-                        <td><code style="background:#f5f5f5; padding:2px 6px; border-radius:4px; font-size:12px;">${log.variantStr || ''}</code></td>
-                        <td style="color:var(--success-color); font-weight:bold;">$ ${Number(displayPrice).toLocaleString('es-CO')}</td>
-                    </tr>
-                `;
-            }).join('');
+            await initSalesTabEngine();
         }
 
         // ===================== VARIANT ENGINE =====================
@@ -1543,108 +1389,108 @@
 
         // ===================== EDIT PRODUCT =====================
         document.getElementById('editFormInstance').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    
-    // Find the save changes button dynamically inside the form
-    const submitBtn = form.querySelector('button[type="submit"]') || form.querySelector('.btn-primary');
+            e.preventDefault();
+            const form = e.target;
 
-    // 1. Core Validation
-    const name = document.getElementById('editProdName').value.trim();
-    const priceRaw = document.getElementById('editProdPrice').value;
-    const price = parseFloat(priceRaw);
-    const category = editCategorySelect.value;
-    const id = document.getElementById('editProductId').value;
+            // Find the save changes button dynamically inside the form
+            const submitBtn = form.querySelector('button[type="submit"]') || form.querySelector('.btn-primary');
 
-    if (!id) return alert('Error interno: Falta el ID del producto.');
-    if (!name) return alert('El nombre del producto es obligatorio.');
-    if (isNaN(price) || price <= 0) return alert('Por favor, ingresa un precio válido mayor a 0.');
-    if (!category) return alert('Debes seleccionar una categoría.');
-    if (!activeVariants || activeVariants.length === 0) {
-        return alert('El producto debe tener al menos una variante.');
-    }
+            // 1. Core Validation
+            const name = document.getElementById('editProdName').value.trim();
+            const priceRaw = document.getElementById('editProdPrice').value;
+            const price = parseFloat(priceRaw);
+            const category = editCategorySelect.value;
+            const id = document.getElementById('editProductId').value;
 
-    const invalidVariant = activeVariants.some(v => !v.size || !v.color || isNaN(parseInt(v.stock, 10)));
-    if (invalidVariant) {
-        return alert('Todas las variantes deben tener talla, color y una cantidad de stock válida.');
-    }
+            if (!id) return alert('Error interno: Falta el ID del producto.');
+            if (!name) return alert('El nombre del producto es obligatorio.');
+            if (isNaN(price) || price <= 0) return alert('Por favor, ingresa un precio válido mayor a 0.');
+            if (!category) return alert('Debes seleccionar una categoría.');
+            if (!activeVariants || activeVariants.length === 0) {
+                return alert('El producto debe tener al menos una variante.');
+            }
 
-    const files = Array.from(document.getElementById('editProdImage').files);
+            const invalidVariant = activeVariants.some(v => !v.size || !v.color || isNaN(parseInt(v.stock, 10)));
+            if (invalidVariant) {
+                return alert('Todas las variantes deben tener talla, color y una cantidad de stock válida.');
+            }
 
-    // ==========================================
-    // UI LOCK & LOADING STATUS (EDIT)
-    // ==========================================
-    const originalBtnText = submitBtn.innerHTML;
-    
-    // Freeze button state instantly
-    submitBtn.disabled = true;
-    submitBtn.style.opacity = '0.6';
-    submitBtn.style.cursor = 'not-allowed';
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando cambios...';
+            const files = Array.from(document.getElementById('editProdImage').files);
 
-    // Create the floating temporary notification
-    const loadingOverlay = document.createElement('div');
-    loadingOverlay.id = 'edit-loading-overlay';
-    loadingOverlay.style = 'position: fixed; top: 20px; right: 20px; background: #2b6cb0; color: #fff; padding: 15px 25px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: bold;';
-    loadingOverlay.innerText = '⏳ Actualizando archivos y guardando cambios...';
-    document.body.appendChild(loadingOverlay);
+            // ==========================================
+            // UI LOCK & LOADING STATUS (EDIT)
+            // ==========================================
+            const originalBtnText = submitBtn.innerHTML;
 
-    try {
-        let urls = [];
-        // Only trigger asset uploads if the admin actually selected new images
-        if (files.length > 0) {
-            const blobResponses = await Promise.all(
-                files.map(f => upload(f.name, f, { access: 'public', handleUploadUrl: '/api/upload' }))
-            );
-            urls = blobResponses.map(r => r.url);
-        }
+            // Freeze button state instantly
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.6';
+            submitBtn.style.cursor = 'not-allowed';
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando cambios...';
 
-        const payload = {
-            id,
-            name,
-            price,
-            description: document.getElementById('editProdDescription').value.trim(),
-            category,
-            sizes:    [...new Set(activeVariants.map(v => v.size))],
-            colors:   [...new Set(activeVariants.map(v => v.color.toLowerCase()))],
-            variants: activeVariants,
-            imageUrl: urls.length > 0 ? urls[0] : null,
-            images:   urls.length > 0 ? urls : null
-        };
+            // Create the floating temporary notification
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.id = 'edit-loading-overlay';
+            loadingOverlay.style = 'position: fixed; top: 20px; right: 20px; background: #2b6cb0; color: #fff; padding: 15px 25px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: bold;';
+            loadingOverlay.innerText = '⏳ Actualizando archivos y guardando cambios...';
+            document.body.appendChild(loadingOverlay);
 
-        const res = await fetch('/api/edit-product', { 
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json' }, 
-            body: JSON.stringify(payload) 
+            try {
+                let urls = [];
+                // Only trigger asset uploads if the admin actually selected new images
+                if (files.length > 0) {
+                    const blobResponses = await Promise.all(
+                        files.map(f => upload(f.name, f, { access: 'public', handleUploadUrl: '/api/upload' }))
+                    );
+                    urls = blobResponses.map(r => r.url);
+                }
+
+                const payload = {
+                    id,
+                    name,
+                    price,
+                    description: document.getElementById('editProdDescription').value.trim(),
+                    category,
+                    sizes: [...new Set(activeVariants.map(v => v.size))],
+                    colors: [...new Set(activeVariants.map(v => v.color.toLowerCase()))],
+                    variants: activeVariants,
+                    imageUrl: urls.length > 0 ? urls[0] : null,
+                    images: urls.length > 0 ? urls : null
+                };
+
+                const res = await fetch('/api/edit-product', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                // Pull the notification overlay off the screen
+                loadingOverlay.remove();
+
+                if (res.ok) {
+                    alert('¡Cambios guardados correctamente!');
+                    editModalOverlay.classList.remove('active');
+                    fetchInventoryCatalog();
+                } else {
+                    const errData = await res.json().catch(() => ({}));
+                    alert(`Error al actualizar: ${errData.error || 'No se pudo guardar la información.'}`);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error de red al actualizar el producto.');
+                if (document.getElementById('edit-loading-overlay')) {
+                    document.getElementById('edit-loading-overlay').remove();
+                }
+            } finally {
+                // ==========================================
+                // UI UNLOCK GUARANTEE
+                // ==========================================
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+                submitBtn.innerHTML = originalBtnText;
+            }
         });
-
-        // Pull the notification overlay off the screen
-        loadingOverlay.remove();
-
-        if (res.ok) {
-            alert('¡Cambios guardados correctamente!');
-            editModalOverlay.classList.remove('active');
-            fetchInventoryCatalog();
-        } else {
-            const errData = await res.json().catch(() => ({}));
-            alert(`Error al actualizar: ${errData.error || 'No se pudo guardar la información.'}`);
-        }
-    } catch (err) { 
-        console.error(err);
-        alert('Error de red al actualizar el producto.'); 
-        if (document.getElementById('edit-loading-overlay')) {
-            document.getElementById('edit-loading-overlay').remove();
-        }
-    } finally {
-        // ==========================================
-        // UI UNLOCK GUARANTEE
-        // ==========================================
-        submitBtn.disabled = false;
-        submitBtn.style.opacity = '1';
-        submitBtn.style.cursor = 'pointer';
-        submitBtn.innerHTML = originalBtnText;
-    }
-});
 
         fetchInventoryCatalog();
     </script>
