@@ -113,11 +113,14 @@ export function renderProductSalesPickerRow(product) {
                 });
 
                 if (response.ok) {
+                    const freshDate = new Date();
                     recentSalesLogs.unshift({
-                        timestamp: new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                        // ISO Date String format (YYYY-MM-DD) works best with date inputs
+                        date: freshDate.toISOString().split('T')[0], 
+                        timestamp: freshDate.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                         name: pname,
                         variantStr: `Talla ${size} - Color ${color}`,
-                        finalPrice: parseFloat(price)
+                        finalPrice: parseFloat(price) // Let's keep finalPrice consistent
                     });
                     updateSalesDashboard();
 
@@ -161,46 +164,31 @@ export function renderSalesLedgerHistoryTable() {
 }
 
 export function updateSalesDashboard() {
+    const todayElement = document.getElementById('salesTodayValue');
+    const selectedElement = document.getElementById('salesSelectedDateValue');
+    const totalElement = document.getElementById('salesTotalValue');
+    const selectedDate = document.getElementById('salesDateFilter').value; // Returns YYYY-MM-DD
 
-    recentSalesLogs.forEach(sale => {
-        console.log("Sale date:", sale.date);
-    });
+    // Consistent comparison using ISO structure (YYYY-MM-DD)
+    const todayISO = new Date().toISOString().split('T')[0];
 
-    const todayElement =
-        document.getElementById('salesTodayValue');
+    // Helper helper function to fallback safely between database and client formats
+    const getSaleValue = (s) => Number(s.finalPrice !== undefined ? s.finalPrice : (s.price || 0));
 
-    const selectedElement =
-        document.getElementById('salesSelectedDateValue');
+    // Calculate metrics using standardized values
+    const todaySales = recentSalesLogs
+        .filter(s => s.date === todayISO)
+        .reduce((sum, s) => sum + getSaleValue(s), 0);
 
-    const totalElement =
-        document.getElementById('salesTotalValue');
+    const totalSales = recentSalesLogs
+        .reduce((sum, s) => sum + getSaleValue(s), 0);
 
-    const selectedDate =
-        document.getElementById('salesDateFilter').value;
+    const selectedSales = recentSalesLogs
+        .filter(s => s.date === selectedDate)
+        .reduce((sum, s) => sum + getSaleValue(s), 0);
 
-    const today =
-        new Date().toLocaleDateString('es-CO');
-
-    const todaySales =
-        recentSalesLogs
-            .filter(s => s.date === today)
-            .reduce((sum, s) => sum + Number(s.price || 0), 0);
-
-    const totalSales =
-        recentSalesLogs
-            .reduce((sum, s) => sum + Number(s.price || 0), 0);
-
-    const selectedSales =
-        recentSalesLogs
-            .filter(s => s.date === selectedDate)
-            .reduce((sum, s) => sum + Number(s.price || 0), 0);
-
-    todayElement.textContent =
-        `$ ${todaySales.toLocaleString('es-CO')}`;
-
-    totalElement.textContent =
-        `$ ${totalSales.toLocaleString('es-CO')}`;
-
-    selectedElement.textContent =
-        `$ ${selectedSales.toLocaleString('es-CO')}`;
+    // Update Dashboard UI Elements
+    todayElement.textContent = `$ ${todaySales.toLocaleString('es-CO')}`;
+    totalElement.textContent = `$ ${totalSales.toLocaleString('es-CO')}`;
+    selectedElement.textContent = `$ ${selectedSales.toLocaleString('es-CO')}`;
 }
