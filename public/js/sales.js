@@ -218,3 +218,43 @@ export function renderSalesLedgerHistoryTable() {
         });
     });
 }
+
+export function updateSalesDashboard() {
+    const todayElement = document.getElementById('salesTodayValue');
+    const selectedElement = document.getElementById('salesSelectedDateValue');
+    const totalElement = document.getElementById('salesTotalValue');
+    
+    // Safety check to ensure elements exist before running math
+    if (!todayElement || !selectedElement || !totalElement) return;
+
+    const selectedDate = document.getElementById('salesDateFilter')?.value || ""; 
+    const todayISO = new Date().toISOString().split('T')[0];
+
+    // Helper to safely read price formatting from client vs backend history
+    const getSaleValue = (s) => Number(s.finalPrice !== undefined ? s.finalPrice : (s.price || 0));
+
+    // Handle date checking normalization safely
+    const getSaleDateISO = (s) => {
+        if (s.date) return s.date;
+        if (s.timestamp) {
+            try { return new Date(s.timestamp).toISOString().split('T')[0]; } catch { return ''; }
+        }
+        return '';
+    };
+
+    const todaySales = recentSalesLogs
+        .filter(s => getSaleDateISO(s) === todayISO)
+        .reduce((sum, s) => sum + getSaleValue(s), 0);
+
+    const totalSales = recentSalesLogs
+        .reduce((sum, s) => sum + getSaleValue(s), 0);
+
+    const selectedSales = recentSalesLogs
+        .filter(s => getSaleDateISO(s) === selectedDate)
+        .reduce((sum, s) => sum + getSaleValue(s), 0);
+
+    // Update UI elements
+    todayElement.textContent = `$ ${todaySales.toLocaleString('es-CO')}`;
+    totalElement.textContent = `$ ${totalSales.toLocaleString('es-CO')}`;
+    selectedElement.textContent = `$ ${selectedSales.toLocaleString('es-CO')}`;
+}
