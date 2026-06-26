@@ -150,55 +150,71 @@ export function renderSalesLedgerHistoryTable() {
     const ledgerBody = document.getElementById('salesLedgerTableBody');
 
     if (!recentSalesLogs || recentSalesLogs.length === 0) {
-        ledgerBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #999; padding: 25px;">No se registran ventas en este periodo.</td></tr>`;
+        // Updated colspan to 5 to account for the new column
+        ledgerBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #999; padding: 25px;">No se registran ventas en este periodo.</td></tr>`;
         return;
     }
 
-    ledgerBody.innerHTML = recentSalesLogs.map(log => {
+    ledgerBody.innerHTML = recentSalesLogs.map((log, idx) => {
         const displayPrice = log.finalPrice !== undefined ? log.finalPrice : (log.price !== undefined ? log.price : 0);
+        
+        // Use an internal unique identifier from your database if available (like log.id), otherwise fallback to the array index
+        const saleId = log.id !== undefined ? log.id : idx;
+
         return `
-            <tr>
+            <tr data-sale-id="${saleId}">
                 <td style="color:#666; font-size:13px;">${log.timestamp || ''}</td>
                 <td style="font-weight:bold;">${log.name || 'Prenda Básica'}</td>
                 <td><code style="background:#f5f5f5; padding:2px 6px; border-radius:4px; font-size:12px;">${log.variantStr || ''}</code></td>
                 <td style="color:var(--success-color); font-weight:bold;">$ ${Number(displayPrice).toLocaleString('es-CO')}</td>
+                <td>
+                    <button type="button" class="btn-delete-sale" data-id="${saleId}" data-index="${idx}" style="background: none; border: none; color: #e53e3e; cursor: pointer; font-size: 14px; padding: 4px 8px;">
+                        ✕
+                    </button>
+                </td>
             </tr>
         `;
     }).join('');
-}
 
-export function updateSalesDashboard() {
-    const todayElement = document.getElementById('salesTodayValue');
-    const selectedElement = document.getElementById('salesSelectedDateValue');
-    const totalElement = document.getElementById('salesTotalValue');
-    const selectedDate = document.getElementById('salesDateFilter').value; 
+    // Bind event handlers to the delete buttons
+    ledgerBody.querySelectorAll('.btn-delete-sale').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const saleId = btn.dataset.id;
+            const arrayIndex = parseInt(btn.dataset.index, 10);
 
-    const todayISO = new Date().toISOString().split('T')[0];
+            if (!confirm('¿Estás seguro de que deseas eliminar este registro de venta? (No afectará al inventario)')) {
+                return;
+            }
 
-    // Safe extraction fallback between historical DB keys vs dynamic active client keys
-    const getSaleValue = (s) => Number(s.finalPrice !== undefined ? s.finalPrice : (s.price || 0));
+            btn.disabled = true;
+            btn.innerHTML = '...';
 
-    // Handle date comparisons safely if database dates have time stamps attached
-    const getSaleDateISO = (s) => {
-        if (!s.date && s.timestamp) {
-            // Fallback parsing if database entry only provides a timestamp string
-            try { return new Date(s.timestamp).toISOString().split('T')[0]; } catch { return ''; }
-        }
-        return s.date || '';
-    };
+            try {
+                // Change this endpoint to match your actual backend setup
+                const response = await fetch('/api/delete-sale', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: saleId, index: arrayIndex })
+                });
 
-    const todaySales = recentSalesLogs
-        .filter(s => getSaleDateISO(s) === todayISO)
-        .reduce((sum, s) => sum + getSaleValue(s), 0);
-
-    const totalSales = recentSalesLogs
-        .reduce((sum, s) => sum + getSaleValue(s), 0);
-
-    const selectedSales = recentSalesLogs
-        .filter(s => getSaleDateISO(s) === selectedDate)
-        .reduce((sum, s) => sum + getSaleValue(s), 0);
-
-    todayElement.textContent = `$ ${todaySales.toLocaleString('es-CO')}`;
-    totalElement.textContent = `$ ${totalSales.toLocaleString('es-CO')}`;
-    selectedElement.textContent = `$ ${selectedSales.toLocaleString('es-CO')}`;
+                if (response.ok) {
+                    // Remove item locally from the running logs cache array
+                    recentSalesLogs.splice(arrayIndex, 1);
+                    
+                    // Re-render components and refresh calculations
+                    renderSalesLedgerHistoryTable();
+                    updateSalesDashboard();
+                    
+                    alert('¡Registro de venta eliminado!');
+                } else {
+                    const errData = await response.json().catch(() => ({}));
+                    alert(`Error del servidor: ${errData.error || 'No se pudo borrar la venta.'}`);
+                    renderSalesLedgerHistoryTable(); // Restore view state
+                }
+            } catch (err) {
+                alert('Error de red al intentar eliminar la venta.');
+                renderSalesLedgerHistoryTable();
+            }
+        });
+    });
 }
