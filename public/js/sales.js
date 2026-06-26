@@ -9,19 +9,12 @@ export async function initSalesTabEngine() {
 
     try {
         const catalogRes = await fetch('/api/get-catalog');
-    
         console.log('catalogRes', catalogRes);
-    
         loadedCatalogData = await catalogRes.json();
-    
         console.log('loadedCatalogData', loadedCatalogData);
-    
     } catch (catErr) {
         console.error('CATALOG ERROR:', catErr);
-    
-        gridContainer.innerHTML =
-            `<p style="color:red; padding:20px;">Error cargando catálogo de ventas.</p>`;
-    
+        gridContainer.innerHTML = `<p style="color:red; padding:20px;">Error cargando catálogo de ventas.</p>`;
         return;
     }
 
@@ -32,7 +25,19 @@ export async function initSalesTabEngine() {
         recentSalesLogs = [];
     }
 
+    // 1. Render the history logs visually
     renderSalesLedgerHistoryTable();
+
+    // 🌟 FIX 1: RUN THE CALCULATIONS SO THE DASHBOARD CARDS UPDATE ON LOAD!
+    updateSalesDashboard();
+
+    // 🌟 FIX 2: BIND THE EVENT LISTENER SO THE CALENDAR SELECTION ACCURATELY UPDATES METRICS
+    const dateFilterInput = document.getElementById('salesDateFilter');
+    if (dateFilterInput) {
+        // Remove existing listener if any, then re-bind safely
+        dateFilterInput.removeEventListener('change', updateSalesDashboard);
+        dateFilterInput.addEventListener('change', updateSalesDashboard);
+    }
 
     if (loadedCatalogData.length === 0) {
         gridContainer.innerHTML = `<p style="color:#999; padding:20px;">No hay productos disponibles para venta.</p>`;
@@ -115,12 +120,11 @@ export function renderProductSalesPickerRow(product) {
                 if (response.ok) {
                     const freshDate = new Date();
                     recentSalesLogs.unshift({
-                        // ISO Date String format (YYYY-MM-DD) works best with date inputs
                         date: freshDate.toISOString().split('T')[0], 
                         timestamp: freshDate.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                         name: pname,
                         variantStr: `Talla ${size} - Color ${color}`,
-                        finalPrice: parseFloat(price) // Let's keep finalPrice consistent
+                        finalPrice: parseFloat(price)
                     });
                     updateSalesDashboard();
 
@@ -167,27 +171,33 @@ export function updateSalesDashboard() {
     const todayElement = document.getElementById('salesTodayValue');
     const selectedElement = document.getElementById('salesSelectedDateValue');
     const totalElement = document.getElementById('salesTotalValue');
-    const selectedDate = document.getElementById('salesDateFilter').value; // Returns YYYY-MM-DD
+    const selectedDate = document.getElementById('salesDateFilter').value; 
 
-    // Consistent comparison using ISO structure (YYYY-MM-DD)
     const todayISO = new Date().toISOString().split('T')[0];
 
-    // Helper helper function to fallback safely between database and client formats
+    // Safe extraction fallback between historical DB keys vs dynamic active client keys
     const getSaleValue = (s) => Number(s.finalPrice !== undefined ? s.finalPrice : (s.price || 0));
 
-    // Calculate metrics using standardized values
+    // Handle date comparisons safely if database dates have time stamps attached
+    const getSaleDateISO = (s) => {
+        if (!s.date && s.timestamp) {
+            // Fallback parsing if database entry only provides a timestamp string
+            try { return new Date(s.timestamp).toISOString().split('T')[0]; } catch { return ''; }
+        }
+        return s.date || '';
+    };
+
     const todaySales = recentSalesLogs
-        .filter(s => s.date === todayISO)
+        .filter(s => getSaleDateISO(s) === todayISO)
         .reduce((sum, s) => sum + getSaleValue(s), 0);
 
     const totalSales = recentSalesLogs
         .reduce((sum, s) => sum + getSaleValue(s), 0);
 
     const selectedSales = recentSalesLogs
-        .filter(s => s.date === selectedDate)
+        .filter(s => getSaleDateISO(s) === selectedDate)
         .reduce((sum, s) => sum + getSaleValue(s), 0);
 
-    // Update Dashboard UI Elements
     todayElement.textContent = `$ ${todaySales.toLocaleString('es-CO')}`;
     totalElement.textContent = `$ ${totalSales.toLocaleString('es-CO')}`;
     selectedElement.textContent = `$ ${selectedSales.toLocaleString('es-CO')}`;
