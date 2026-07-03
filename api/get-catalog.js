@@ -9,7 +9,17 @@ export default async function handler(request, response) {
     }
     
     const catalogData = await currentFileResponse.json();
+    
+    // SAFEGUARD: Ensure catalogData is actually an array before proceeding
+    if (!Array.isArray(catalogData)) {
+      throw new Error("Catalog data fetched from blob is not a valid array.");
+    }
+
     const redis = getRedisClient();
+    // SAFEGUARD: Ensure Redis client was successfully initialized
+    if (!redis) {
+      throw new Error("Redis client failed to initialize. Check environment variables.");
+    }
 
     // 1. Gather all variant keys safely
     const keysToFetch = [];
@@ -23,35 +33,38 @@ export default async function handler(request, response) {
       }
     });
 
-    // SAFEGUARD: If there are no structural variants to lookup, 
-    // skip Redis entirely and return the default catalog structure!
+    // If there are no keys to look up, bypass Redis entirely
     if (keysToFetch.length === 0) {
       return response.status(200).json(catalogData);
     }
 
-    // 2. Fetch from Redis safely now that we know keysToFetch is NOT empty
+    // 2. Fetch from Redis safely
     const stockValues = await redis.mget(keysToFetch);
 
-    // 3. Rehydrate values cleanly
+    // 3. Rehydrate values cleanly (FIXED INDEX LOGIC)
     let keyIndex = 0;
     const hydratedCatalog = catalogData.map(product => {
       const updatedVariants = (product.variants || []).map(v => {
-        const redisValue = stockValues[keyIndex++];
-        return { 
-          ...v, 
-          // If Redis doesn't have it, default to 0 stock instead of crashing
-          stock: redisValue !== null ? parseInt(redisValue, 10) : 0 
-        };
+        // ONLY read from stockValues and increment if this variant actually matches the key criteria
+        if (v.color && v.size) {
+          const redisValue = stockValues[keyIndex++];
+          return { 
+            ...v, 
+            stock: redisValue !== null && redisValue !== undefined ? parseInt(redisValue, 10) : 0 
+          };
+        }
+        
+        // Default fallback for variants without color/size criteria
+        return { ...v, stock: 0 };
       });
       return { ...product, variants: updatedVariants };
     });
 
-    // Always send back a structured JSON response
     return response.status(200).json(hydratedCatalog);
 
   } catch (error) {
     console.error("Backend Error in get-catalog:", error);
-    // Explicit JSON fallback structure even during server crashes!
-    return response.status(500).json({ error: error.message });
+    // Returns the actual error message to your browser console to help you debug live
+    return response.status(500).json({ error: error.message || "Internal Server Error" });
   }
 }
