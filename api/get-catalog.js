@@ -1,5 +1,5 @@
 import { getRedisClient } from './_redis.js';
-const CATALOG_URL = 'https://xg6snmqaui2yqczf.public.blob.vercel-storage.com/data/catalog.json';
+const CATALOG_URL = 'https://pub-6692269516284437b34c66fdc2f4d6d9.r2.dev/data/data_catalog.json';
 
 export default async function handler(request, response) {
   try {
