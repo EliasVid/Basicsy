@@ -1,13 +1,13 @@
-import { put } from '@vercel/blob';
-import { getRedisClient } from './_redis.js';
-import { verifyAdmin } from './_auth.js';
+import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { r2 } from "./_r2.js";
+import { getRedisClient } from "./_redis.js";
+import { verifyAdmin } from "./_auth.js";
 
-const CATALOG_URL = 'https://xg6snmqaui2yqczf.public.blob.vercel-storage.com/data/catalog.json';
-const CATALOG_BLOB_PATH = 'data/catalog.json';
+const CATALOG_KEY = "data/data_catalog.json";
 
 export default async function handler(request, response) {
-  if (request.method !== 'POST') {
-    return response.status(405).json({ error: 'Method not allowed' });
+  if (request.method !== "POST") {
+    return response.status(405).json({ error: "Method not allowed" });
   }
 
   // ADMIN CHECK
@@ -18,24 +18,60 @@ export default async function handler(request, response) {
   }
 
   try {
-    const { id, name, price, description, imageUrl, category, sizes, colors, variants, images } = request.body;
+    const {
+      id,
+      name,
+      price,
+      description,
+      imageUrl,
+      category,
+      sizes,
+      colors,
+      variants,
+      images,
+    } = request.body;
 
-    const currentFileResponse = await fetch(CATALOG_URL);
-    if (!currentFileResponse.ok) {
-      return response.status(404).json({ error: 'Catalog file not found' });
+    // Load catalog from R2
+    let catalog = [];
+
+    try {
+      const result = await r2.send(
+        new GetObjectCommand({
+          Bucket: process.env.R2_BUCKET,
+          Key: CATALOG_KEY,
+        })
+      );
+
+      const body = await result.Body.transformToString();
+      catalog = JSON.parse(body);
+    } catch (err) {
+      if (
+        err.name === "NoSuchKey" ||
+        err.Code === "NoSuchKey" ||
+        err.$metadata?.httpStatusCode === 404
+      ) {
+        return response.status(404).json({
+          error: "Catalog file not found",
+        });
+      }
+
+      throw err;
     }
-    
-    let catalog = await currentFileResponse.json();
-    const productIndex = catalog.findIndex(p => p.id === id);
+
+    const productIndex = catalog.findIndex((p) => p.id === id);
 
     if (productIndex === -1) {
-      return response.status(404).json({ error: 'Product not found' });
+      return response.status(404).json({
+        error: "Product not found",
+      });
     }
 
     const finalImageUrl = imageUrl || catalog[productIndex].image;
-    const finalImagesArray = (images && images.length > 0)
-      ? images
-      : catalog[productIndex].images;
+
+    const finalImagesArray =
+      images && images.length > 0
+        ? images
+        : catalog[productIndex].images;
 
     catalog[productIndex] = {
       ...catalog[productIndex],
@@ -47,22 +83,28 @@ export default async function handler(request, response) {
       category,
       sizes: sizes || [],
       colors: colors || [],
-      variants: variants || []
+      variants: variants || [],
     };
 
-    await put(CATALOG_BLOB_PATH, JSON.stringify(catalog, null, 2), {
-      access: 'public',
-      contentType: 'application/json',
-      addRandomSuffix: false
-    });
+    // Save catalog back to R2
+    await r2.send(
+      new PutObjectCommand({
+        Bucket: process.env.R2_BUCKET,
+        Key: CATALOG_KEY,
+        Body: JSON.stringify(catalog, null, 2),
+        ContentType: "application/json",
+      })
+    );
 
+    // Update Redis stock
     if (variants && Array.isArray(variants)) {
       const redis = getRedisClient();
       const pipeline = redis.multi();
 
-      variants.forEach(variant => {
+      variants.forEach((variant) => {
         if (variant.color && variant.size) {
           const redisKey = `stock:${id}:${variant.color.toLowerCase()}:${variant.size}`;
+
           const stockValue = parseInt(variant.stock, 10) || 0;
 
           pipeline.set(redisKey, stockValue);
@@ -74,11 +116,14 @@ export default async function handler(request, response) {
 
     return response.status(200).json({
       success: true,
-      product: catalog[productIndex]
+      product: catalog[productIndex],
     });
 
   } catch (error) {
     console.error("Error executing edit-product sync pipeline:", error);
-    return response.status(500).json({ error: error.message });
+
+    return response.status(500).json({
+      error: error.message,
+    });
   }
 }

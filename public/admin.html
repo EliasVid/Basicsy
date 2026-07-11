@@ -1259,6 +1259,7 @@
 
         // ===================== DELETE =====================
         document.getElementById('executeDeleteBtn').addEventListener('click', async () => {
+            console.log("DELETE PRODUCT API HIT");
             const targetedProductId = document.getElementById('editProductId').value;
             try {
                 const response = await fetch('/api/delete-product', {
