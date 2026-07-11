@@ -999,7 +999,6 @@
     </div>
 
     <script type="module">
-        import { upload } from 'https://esm.run/@vercel/blob@0.23.3/client';
         import { initSalesTabEngine } from './js/sales.js';
 
         let loadedCatalogData = [];
@@ -1330,10 +1329,25 @@
 
             try {
                 // 3. Process the upload pipeline securely
-                const blobResponses = await Promise.all(
-                    files.map(f => upload(f.name, f, { access: 'public', handleUploadUrl: '/api/upload' }))
+                const uploadResponses = await Promise.all(
+                    files.map(async (file) => {
+                        const formData = new FormData();
+                        formData.append("file", file);
+
+                        const res = await fetch("/api/upload", {
+                            method: "POST",
+                            body: formData
+                        });
+
+                        if (!res.ok) {
+                            throw new Error("Upload failed");
+                        }
+
+                        return res.json();
+                    })
                 );
-                const urls = blobResponses.map(r => r.url);
+
+                const urls = uploadResponses.map(r => r.url);
 
                 const payload = {
                     name,
@@ -1439,10 +1453,25 @@
                 let urls = [];
                 // Only trigger asset uploads if the admin actually selected new images
                 if (files.length > 0) {
-                    const blobResponses = await Promise.all(
-                        files.map(f => upload(f.name, f, { access: 'public', handleUploadUrl: '/api/upload' }))
+                    const uploadResponses = await Promise.all(
+                        files.map(async (file) => {
+                            const formData = new FormData();
+                            formData.append("file", file);
+
+                            const res = await fetch("/api/upload", {
+                                method: "POST",
+                                body: formData
+                            });
+
+                            if (!res.ok) {
+                                throw new Error("Upload failed");
+                            }
+
+                            return res.json();
+                        })
                     );
-                    urls = blobResponses.map(r => r.url);
+
+                    const urls = uploadResponses.map(r => r.url);
                 }
 
                 const payload = {
