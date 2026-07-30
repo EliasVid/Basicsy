@@ -1326,8 +1326,23 @@
                     return;
                 }
 
-                renderProducts(globalProductsList);
-                setupCategoryFilters();
+                // Set up the click listeners FIRST
+                setupCategoryFilters(); 
+
+                // Check the URL for a "category" parameter (e.g., ?category=jean)
+                const urlParams = new URLSearchParams(window.location.search);
+                const categoryParam = urlParams.get('category');
+                
+                // Find the sidebar link that matches the URL parameter
+                const targetFilter = document.querySelector(`#categoryFilterMenu a[data-category="${categoryParam}"]`);
+
+                if (targetFilter) {
+                    // If a match is found, simulate a click to apply the filter and update the title
+                    targetFilter.click(); 
+                } else {
+                    // Otherwise, just load all products normally
+                    renderProducts(globalProductsList);
+                }
 
             } catch (error) {
                 console.error('Error rendering catalog:', error);
@@ -1369,42 +1384,35 @@
             });
         }
 
-        // 1. Initial data fetch from the API
-        async function loadStorefrontCatalog() {
-            const container = document.getElementById('catalogContainer');
-            if (!container) return;
+        // 3. Binding click filter handlers to the "Browse by" navigation links
+        function setupCategoryFilters() {
+            const filterLinks = document.querySelectorAll('#categoryFilterMenu a');
+            const titleHeader = document.getElementById('catalogCurrentTitle');
 
-            try {
-                const response = await fetch('/api/get-catalog');
-                globalProductsList = await response.json();
+            filterLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
 
-                if (!globalProductsList || globalProductsList.length === 0) {
-                    container.innerHTML = `<p class="loading-text">No hay productos disponibles todavía.</p>`;
-                    return;
-                }
+                    filterLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
 
-                // Set up the click listeners FIRST
-                setupCategoryFilters(); 
+                    const selectedCategory = link.getAttribute('data-category');
 
-                // Check the URL for a "category" parameter (e.g., ?category=jean)
-                const urlParams = new URLSearchParams(window.location.search);
-                const categoryParam = urlParams.get('category');
-                
-                // Find the sidebar link that matches the URL parameter
-                const targetFilter = document.querySelector(`#categoryFilterMenu a[data-category="${categoryParam}"]`);
+                    if (selectedCategory === 'all') {
+                        titleHeader.innerText = 'Todos';
+                        renderProducts(globalProductsList);
+                    } else {
+                        titleHeader.innerText = link.innerText;
 
-                if (targetFilter) {
-                    // If a match is found, simulate a click to apply the filter and update the title
-                    targetFilter.click(); 
-                } else {
-                    // Otherwise, just load all products normally
-                    renderProducts(globalProductsList);
-                }
+                        const filtered = globalProductsList.filter(product => {
+                            if (!product.category) return false;
+                            return product.category.toLowerCase().trim() === selectedCategory;
+                        });
 
-            } catch (error) {
-                console.error('Error rendering catalog:', error);
-                container.innerHTML = `<p class="loading-text" style="color: red;">Error al cargar la vista del catálogo.</p>`;
-            }
+                        renderProducts(filtered);
+                    }
+                });
+            });
         }
 
         // 4. Quick View overlay display logic using the new Variant Schema Matrix
