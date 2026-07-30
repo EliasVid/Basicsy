@@ -10,7 +10,7 @@ export default async function handler(request, response) {
         'Pragma': 'no-cache'
       }
     });
-
+    
     if (currentFileResponse.status === 404) {
       return response.status(200).json([]);
     }
