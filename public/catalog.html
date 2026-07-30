@@ -314,6 +314,25 @@
             font-size: 0.9rem;
         }
 
+        /* --- OUT OF STOCK OVERLAY --- */
+        .out-of-stock-overlay {
+            position: absolute;
+            top: 16px; 
+            left: 16px; /* Pushes the rectangle slightly away from the rounded edge */
+            background: rgba(230, 230, 230, 0.9); /* The gray rectangle background */
+            padding: 4px 12px; /* Creates the rectangle shape around the text */
+            border-radius: 6px; /* Softens the corners of the gray rectangle */
+            
+            /* Matches the .product-name font styles */
+            font-family: 'Didact Gothic', sans-serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            text-transform: lowercase;
+            letter-spacing: 0.5px;
+            z-index: 2;
+        }
+
         /* --- INTERACTIVE LIGHTBOX MODAL STYLES --- */
         .modal-overlay {
             position: fixed;
@@ -825,6 +844,13 @@
                 max-width: 100%;
                 right: -100%;
             }
+
+            .out-of-stock-overlay {
+                font-size: 1.1rem;
+                padding: 3px 10px;
+                top: 12px;
+                left: 12px;
+            }
         }
 
         @media (max-width: 600px) {
@@ -880,6 +906,14 @@
 
             .catalog-title h1 {
                 font-size: 1.2rem;
+            }
+
+            .out-of-stock-overlay {
+                font-size: 0.75rem; /* Matches your mobile product titles */
+                padding: 2px 8px; /* Slimmer rectangle */
+                top: 8px; /* Closer to the edge for small images */
+                left: 8px;
+                border-radius: 4px;
             }
         }
 
@@ -952,7 +986,6 @@
         @media (max-width: 900px) {
             .modal-gallery-container {
                 flex-direction: row;
-                /* Stack them beautifully side-by-side or tweak proportions if preferred */
                 height: 100%;
             }
 
@@ -1175,7 +1208,6 @@
         function addItemToCart(product, size, colorHex) {
             const colorText = getColorName(colorHex);
 
-            // Generate composite key to separate identical items with divergent properties
             const existingItem = shoppingCart.find(item =>
                 item.id === product.id &&
                 item.size === size &&
@@ -1222,7 +1254,6 @@
             const itemsContainer = document.getElementById('cartItemsContainer');
             const totalDisplay = document.getElementById('cartSubtotalDisplay');
 
-            // Total piece volume count
             const totalUnits = shoppingCart.reduce((sum, item) => sum + item.quantity, 0);
             countLabel.innerText = totalUnits;
 
@@ -1261,7 +1292,6 @@
                     </div>
                 `;
 
-                // Wire up dynamic iteration counters inside drawer UI lines
                 row.querySelector('.dec-btn').addEventListener('click', () => updateCartItemQuantity(item.id, item.size, item.colorHex, -1));
                 row.querySelector('.inc-btn').addEventListener('click', () => updateCartItemQuantity(item.id, item.size, item.colorHex, 1));
 
@@ -1304,7 +1334,6 @@
             messageBody += `*Total del Pedido:* $${operationalTotal.toLocaleString('es-CO')} COP\n\n`;
             messageBody += `¿Me podrían confirmar la disponibilidad de las prendas para acordar el método de pago y envío? ✨`;
 
-            // Operational parameters (Uses international phone formatting structure syntax)
             const targetLineNumber = "573046510623"; // Replace this with your store's WhatsApp number
             const encodedString = encodeURIComponent(messageBody);
             const generationEndpoint = `https://wa.me/${targetLineNumber}?text=${encodedString}`;
@@ -1326,22 +1355,32 @@
                     return;
                 }
 
-                // Set up the click listeners FIRST
+                // First set up the click listeners
                 setupCategoryFilters(); 
 
-                // Check the URL for a "category" parameter (e.g., ?category=jean)
+                // Read the URL
                 const urlParams = new URLSearchParams(window.location.search);
                 const categoryParam = urlParams.get('category');
                 
-                // Find the sidebar link that matches the URL parameter
-                const targetFilter = document.querySelector(`#categoryFilterMenu a[data-category="${categoryParam}"]`);
+                let filterApplied = false;
 
-                if (targetFilter) {
-                    // If a match is found, simulate a click to apply the filter and update the title
-                    targetFilter.click(); 
-                } else {
-                    // Otherwise, just load all products normally
-                    renderProducts(globalProductsList);
+                // Safely check if a category is actually present in the URL
+                if (categoryParam) {
+                    const targetFilter = document.querySelector(`#categoryFilterMenu a[data-category="${categoryParam}"]`);
+                    if (targetFilter) {
+                        targetFilter.click(); 
+                        filterApplied = true;
+                    }
+                }
+
+                // If no filter matched the URL, safely trigger the "Todos" filter by default
+                if (!filterApplied) {
+                    const allFilter = document.querySelector('#categoryFilterMenu a[data-category="all"]');
+                    if (allFilter) {
+                        allFilter.click();
+                    } else {
+                        renderProducts(globalProductsList);
+                    }
                 }
 
             } catch (error) {
@@ -1361,14 +1400,21 @@
             }
 
             productsToDisplay.forEach((product) => {
+                // Calculate stock for the "Agotado" overlay
+                const productVariants = product.variants || [];
+                // Ensured variants stock is treated as a number
+                const totalStock = productVariants.reduce((sum, variant) => sum + (Number(variant.stock) || 0), 0);
+                const isAgotado = totalStock <= 0;
+
                 const card = document.createElement('div');
                 card.className = 'product-card';
 
-                const displayImage = product.image || (product.images && product.images.length > 0 ? product.images[0] : 'placeholder.jpg')
+                const displayImage = product.image || (product.images && product.images.length > 0 ? product.images[0] : 'placeholder.jpg');
 
                 card.innerHTML = `
                     <div class="product-image-wrapper">
                         <img src="${displayImage}" alt="${product.name}">
+                        ${isAgotado ? '<div class="out-of-stock-overlay">Agotado</div>' : ''}
                     </div>
                     <div class="product-info">
                         <h4 class="product-name">${product.name}</h4>
@@ -1415,12 +1461,10 @@
             });
         }
 
-        // 4. Quick View overlay display logic using the new Variant Schema Matrix
-        // 4. Quick View overlay display logic supporting multi-image galleries
+        // 4. Quick View overlay display logic
         function openProductQuickView(product) {
             const overlay = document.getElementById('productModalOverlay');
 
-            // Set up standard core product parameters
             const mainPreviewImg = document.getElementById('modalProductImg');
 
             const displayImage = product.image || (product.images && product.images.length > 0 ? product.images[0] : 'placeholder.jpg');
@@ -1433,7 +1477,6 @@
             document.getElementById('modalProductPrice').innerText = `$ ${product.price.toLocaleString('es-CO', { minimumFractionDigits: 2 })}`;
             document.getElementById('modalProductDescription').innerText = product.description || "Esta prenda clásica ha sido confeccionada con materiales seleccionados para brindarte la mayor comodidad, adaptabilidad y durabilidad en tu día a día.";
 
-            // Trackers and cleanups
             const thumbnailsTrack = document.getElementById('modalThumbnailsTrack');
             const colorsContainer = document.getElementById('modalColorsContainer');
             const sizesContainer = document.getElementById('modalSizesContainer');
@@ -1447,12 +1490,9 @@
             colorNameDisplay.innerText = '';
             stockDisplay.innerText = '0 unidades disponibles';
 
-            // --- RENDER DYNAMIC MULTI-IMAGE GALLERY TRACK ---
-            // Fallback to single [product.image] array field if legacy datasets lack the structural gallery array keys
             const imageGalleryList = product.images && product.images.length > 0 ? product.images : [product.image];
 
             if (imageGalleryList.length <= 1) {
-                // Hide track space if there is only a single standard display image file 
                 thumbnailsTrack.style.display = 'none';
                 if (document.querySelector('.modal-main-preview')) {
                     document.querySelector('.modal-main-preview').style.height = '100%';
@@ -1461,7 +1501,7 @@
             } else {
                 thumbnailsTrack.style.display = 'flex';
                 if (document.querySelector('.modal-main-preview')) {
-                    document.querySelector('.modal-main-preview').style.height = ''; // Let standard reset match media CSS sheets rules
+                    document.querySelector('.modal-main-preview').style.height = ''; 
                     document.querySelector('.modal-main-preview').style.width = '';
                 }
 
@@ -1472,7 +1512,6 @@
 
                     thumbItem.innerHTML = `<img src="${imgUrl}" alt="${product.name} gallery image ${index + 1}">`;
 
-                    // Toggle active image switch actions on user click events
                     thumbItem.addEventListener('click', () => {
                         document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
                         thumbItem.classList.add('active');
@@ -1483,7 +1522,6 @@
                 });
             }
 
-            // --- VARIANT LOGIC AND CART SYSTEM PIPELINE ---
             const productVariants = product.variants || [];
 
             if (productVariants.length === 0) {
@@ -1606,7 +1644,6 @@
             overlay.classList.add('active');
         }
 
-        // Structural Event Trigger Wireframing Initialization
         document.getElementById('modalCloseBtn').addEventListener('click', () => {
             document.getElementById('productModalOverlay').classList.remove('active');
         });
@@ -1617,17 +1654,14 @@
             }
         });
 
-        // Cart Visibility Control Mapping
         document.getElementById('cartGlobalTrigger').addEventListener('click', openCartDrawer);
         document.getElementById('cartCloseBtn').addEventListener('click', closeCartDrawer);
         document.getElementById('cartOverlayComponent').addEventListener('click', (e) => {
             if (e.target.id === 'cartOverlayComponent') closeCartDrawer();
         });
 
-        // WhatsApp Checkout Event Dispatch hook
         document.getElementById('whatsappCheckoutTriggerBtn').addEventListener('click', executeWhatsAppCheckoutRedirect);
 
-        // Core lifecycle mount hooks
         window.addEventListener('DOMContentLoaded', () => {
             loadStorefrontCatalog();
             loadCartFromStorage();
