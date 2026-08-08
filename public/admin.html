@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catalog Admin Dashboard</title>
+    <title>La Estelar | Admin Dashboard</title>
+    <!-- Added Material Symbols font -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
     <style>
         :root {
             --sidebar-width: 240px;
@@ -205,6 +207,15 @@
             display: block;
             margin-top: 5px;
         }
+
+        /* ===================== IMAGE SORTING PREVIEW GRID (OPTIMIZADO MÓVIL) ===================== */
+        .image-preview-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
+        .preview-thumb-card { position: relative; width: 95px; height: 95px; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.08); display: flex; flex-direction: column; align-items: center; }
+        .preview-thumb-img { width: 100%; height: 62px; object-fit: cover; }
+        .preview-badge-order { position: absolute; top: 3px; left: 3px; background: rgba(0,0,0,0.75); color: #fff; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px; }
+        .preview-actions-bar { display: flex; width: 100%; height: 33px; background: #f0f0f0; justify-content: space-around; align-items: center; border-top: 1px solid #ddd; }
+        .preview-action-btn { background: none; border: none; cursor: pointer; font-size: 14px; color: #222; font-weight: bold; padding: 4px 8px; display: flex; align-items: center; justify-content: center; }
+        .preview-action-btn:hover { color: var(--danger-color); background: rgba(0,0,0,0.05); }
 
         /* ===================== VARIANTS ===================== */
         .variant-container {
@@ -923,10 +934,11 @@
 
                         <div class="dynamicAttributesContainer"></div>
 
+                        <!-- MODIFIED: Image Handling for Add Product -->
                         <div class="form-group" style="margin-top: 20px;">
-                            <label>Imágenes del Producto</label>
-                            <input type="file" class="prodImageField" accept="image/png, image/jpeg, image/webp"
-                                multiple required>
+                            <label>Imágenes del Producto (La primera será la principal)</label>
+                            <input type="file" class="prodImageField" accept="image/png, image/jpeg, image/webp" multiple>
+                            <div class="image-preview-grid" id="addImagePreviewGrid"></div>
                         </div>
                         <button type="submit" class="btn-primary" style="width:100%; margin-top:15px;">Publicar
                             Producto</button>
@@ -968,10 +980,11 @@
 
                 <div class="dynamicAttributesContainer" id="editDynamicAttributesContainer"></div>
 
+                <!-- MODIFIED: Image Handling for Edit Product -->
                 <div class="form-group" style="margin-top: 20px;">
-                    <label>Reemplazar Imágenes (Dejar vacío para conservar actuales)</label>
-                    <input type="file" class="prodImageField" id="editProdImage"
-                        accept="image/png, image/jpeg, image/webp" multiple>
+                    <label>Administrar Imágenes (Agrega nuevas o reordena las existentes)</label>
+                    <input type="file" class="prodImageField" id="editProdImage" accept="image/png, image/jpeg, image/webp" multiple>
+                    <div class="image-preview-grid" id="editImagePreviewGrid"></div>
                 </div>
 
                 <div class="modal-actions-row">
@@ -1005,11 +1018,86 @@
         let activeVariants = [];
         let recentSalesLogs = [];
         
+        // Unified Image state arrays
+        let addSelectedImages = [];
+        let editSelectedImages = [];
+        
         const sizeTemplates = {
             body: ['Unica', 'S', 'M', 'L'],
             jean: ['4', '6', '8', '10', '12', '14', '16'],
             top: ['Unica', 'S', 'M', 'L']
         };
+
+        // ===================== UNIFIED IMAGE SORTING HANDLERS =====================
+        function setupImageSorting(inputSelector, gridSelector, imagesArrayRef) {
+            const inputEl = document.querySelector(inputSelector);
+            const gridEl = document.querySelector(gridSelector);
+
+            inputEl.addEventListener('change', (e) => {
+                const newFiles = Array.from(e.target.files);
+                newFiles.forEach(f => imagesArrayRef.push(f)); 
+                inputEl.value = ''; 
+                renderUnifiedPreviews(gridEl, imagesArrayRef);
+            });
+        }
+
+        function renderUnifiedPreviews(gridEl, imagesArray) {
+            if (imagesArray.length === 0) {
+                gridEl.innerHTML = '';
+                return;
+            }
+
+            gridEl.innerHTML = imagesArray.map((item, idx) => {
+                const imgSrc = typeof item === 'string' ? item : URL.createObjectURL(item);
+                return `
+                    <div class="preview-thumb-card">
+                        <span class="preview-badge-order">#${idx + 1}</span>
+                        <img src="${imgSrc}" class="preview-thumb-img" alt="thumb">
+                        <div class="preview-actions-bar">
+                            <button type="button" class="preview-action-btn move-left" data-idx="${idx}" title="Mover izquierda" ${idx === 0 ? 'style="visibility:hidden;"' : ''}>◀</button>
+                            <button type="button" class="preview-action-btn delete-img" data-idx="${idx}" title="Eliminar">✕</button>
+                            <button type="button" class="preview-action-btn move-right" data-idx="${idx}" title="Mover derecha" ${idx === imagesArray.length - 1 ? 'style="visibility:hidden;"' : ''}>▶</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Bind actions
+            gridEl.querySelectorAll('.move-left').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const i = parseInt(btn.dataset.idx, 10);
+                    if (i > 0) {
+                        const temp = imagesArray[i];
+                        imagesArray[i] = imagesArray[i - 1];
+                        imagesArray[i - 1] = temp;
+                        renderUnifiedPreviews(gridEl, imagesArray);
+                    }
+                });
+            });
+
+            gridEl.querySelectorAll('.move-right').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const i = parseInt(btn.dataset.idx, 10);
+                    if (i < imagesArray.length - 1) {
+                        const temp = imagesArray[i];
+                        imagesArray[i] = imagesArray[i + 1];
+                        imagesArray[i + 1] = temp;
+                        renderUnifiedPreviews(gridEl, imagesArray);
+                    }
+                });
+            });
+
+            gridEl.querySelectorAll('.delete-img').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const i = parseInt(btn.dataset.idx, 10);
+                    imagesArray.splice(i, 1);
+                    renderUnifiedPreviews(gridEl, imagesArray);
+                });
+            });
+        }
+
+        setupImageSorting('#addProductTab .prodImageField', '#addImagePreviewGrid', addSelectedImages);
+        setupImageSorting('#editProdImage', '#editImagePreviewGrid', editSelectedImages);
 
         // ===================== MOBILE SIDEBAR TOGGLE =====================
         const hamburgerBtn = document.getElementById('hamburgerBtn');
@@ -1036,30 +1124,18 @@
 
         // ===================== TAB ROUTER =====================
         document.querySelectorAll('.sidebar-link').forEach(link => {
-    link.addEventListener('click', async () => {
+            link.addEventListener('click', async () => {
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                document.querySelectorAll('.tab-content-panel').forEach(p => p.classList.remove('active'));
 
-        document.querySelectorAll('.sidebar-link')
-            .forEach(l => l.classList.remove('active'));
-
-        document.querySelectorAll('.tab-content-panel')
-            .forEach(p => p.classList.remove('active'));
-
-        link.classList.add('active');
-
+                link.classList.add('active');
                 const blockTarget = link.dataset.target;
 
                 if (blockTarget === 'salesTab') {
-
                     await loadSalesTab();
-
-                    document.getElementById('salesTab')
-                        ?.classList.add('active');
-
+                    document.getElementById('salesTab')?.classList.add('active');
                 } else {
-
-                    document.getElementById(blockTarget)
-                        ?.classList.add('active');
-
+                    document.getElementById(blockTarget)?.classList.add('active');
                 }
 
                 closeSidebar();
@@ -1084,7 +1160,7 @@
 
                 tbody.innerHTML = loadedCatalogData.map(product => {
                     const totalStock = (product.variants || []).reduce((acc, curr) => acc + curr.stock, 0);
-                    const sampleImage = product.image || (product.images && product.images.length > 0 ? product.images[0] : '');
+                    const sampleImage = product.image || (product.images && product.images.length > 0 ? product.images[0] : (product.imageUrl || ''));
                     return `
                         <tr data-id="${product.id}">
                             <td><img src="${sampleImage}" class="prod-thumb" alt="Preview"></td>
@@ -1111,14 +1187,10 @@
         // ===================== SALES TAB =====================
         async function loadSalesTab() {
             const container = document.getElementById('salesTabContainer');
-
             if (container.dataset.loaded) return;
-
             const html = await fetch('/partials/sales-tab.html');
             container.innerHTML = await html.text();
-
             container.dataset.loaded = 'true';
-
             await initSalesTabEngine();
         }
 
@@ -1228,6 +1300,12 @@
             document.getElementById('editProdDescription').value = product.description || '';
             editCategorySelect.value = product.category;
 
+            // Load existing images into sorting engine
+            const existingImages = product.images && product.images.length > 0 ? product.images : (product.imageUrl ? [product.imageUrl] : (product.image ? [product.image] : []));
+            editSelectedImages.length = 0; 
+            existingImages.forEach(img => editSelectedImages.push(img));
+            renderUnifiedPreviews(document.getElementById('editImagePreviewGrid'), editSelectedImages);
+
             activeVariants = JSON.parse(JSON.stringify(product.variants || []));
             renderVariantControlEngine(product.category, editDynamicContainer);
             editModalOverlay.classList.add('active');
@@ -1259,7 +1337,6 @@
 
         // ===================== DELETE =====================
         document.getElementById('executeDeleteBtn').addEventListener('click', async () => {
-            console.log("DELETE PRODUCT API HIT");
             const targetedProductId = document.getElementById('editProductId').value;
             try {
                 const response = await fetch('/api/delete-product', {
@@ -1287,19 +1364,16 @@
             const form = e.target;
             const submitBtn = form.querySelector('.btn-primary');
 
-            // 1. Gather values
             const name = form.querySelector('.prodNameField').value.trim();
             const priceRaw = form.querySelector('.prodPriceField').value;
             const price = parseFloat(priceRaw);
             const category = form.querySelector('.prodCategoryField').value;
             const description = form.querySelector('.prodDescriptionField').value.trim();
-            const files = Array.from(form.querySelector('.prodImageField').files);
 
-            // 2. Strict Validation Safeguards (Run BEFORE locking the form)
             if (!name) return alert('El nombre del producto es obligatorio.');
             if (isNaN(price) || price <= 0) return alert('Por favor, ingresa un precio válido mayor a 0.');
             if (!category) return alert('Debes seleccionar una categoría.');
-            if (files.length === 0) return alert('Selecciona al menos una imagen para el producto.');
+            if (addSelectedImages.length === 0) return alert('Selecciona al menos una imagen para el producto.');
             if (!activeVariants || activeVariants.length === 0) {
                 return alert('Agrega al menos una variante con su respectiva talla, color y cantidad.');
             }
@@ -1309,19 +1383,13 @@
                 return alert('Todas las variantes deben tener talla, color y una cantidad de stock válida.');
             }
 
-            // ==========================================
-            // UI LOCK & LOADING POPUP STATUS
-            // ==========================================
-            // Save original button state text to restore later if it fails
             const originalBtnText = submitBtn.innerHTML;
 
-            // Disable button to prevent double-clicks instantly
             submitBtn.disabled = true;
             submitBtn.style.opacity = '0.6';
             submitBtn.style.cursor = 'not-allowed';
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando producto...';
 
-            // Optional: Create a quick native floating indicator overlay
             const loadingOverlay = document.createElement('div');
             loadingOverlay.id = 'form-loading-overlay';
             loadingOverlay.style = 'position: fixed; top: 20px; right: 20px; background: #333; color: #fff; padding: 15px 25px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: bold;';
@@ -1329,26 +1397,17 @@
             document.body.appendChild(loadingOverlay);
 
             try {
-                // 3. Process the upload pipeline securely
-                const uploadResponses = await Promise.all(
-                    files.map(async (file) => {
+                const finalUrls = await Promise.all(
+                    addSelectedImages.map(async (item) => {
+                        if (typeof item === 'string') return item; 
                         const formData = new FormData();
-                        formData.append("file", file);
-
-                        const res = await fetch("/api/upload", {
-                            method: "POST",
-                            body: formData
-                        });
-
-                        if (!res.ok) {
-                            throw new Error("Upload failed");
-                        }
-
-                        return res.json();
+                        formData.append("file", item);
+                        const res = await fetch("/api/upload", { method: "POST", body: formData });
+                        if (!res.ok) throw new Error("Upload failed");
+                        const data = await res.json();
+                        return data.url;
                     })
                 );
-
-                const urls = uploadResponses.map(r => r.url);
 
                 const payload = {
                     name,
@@ -1358,8 +1417,8 @@
                     sizes: [...new Set(activeVariants.map(v => v.size))],
                     colors: [...new Set(activeVariants.map(v => v.color.toLowerCase()))],
                     variants: activeVariants,
-                    imageUrl: urls[0],
-                    images: urls
+                    imageUrl: finalUrls.length > 0 ? finalUrls[0] : null,
+                    images: finalUrls
                 };
 
                 const res = await fetch('/api/add-product', {
@@ -1369,13 +1428,13 @@
                 });
 
                 const data = await res.json();
-
-                // Remove the visual loading card overlay
                 loadingOverlay.remove();
 
                 if (res.ok && data.success) {
                     alert('¡Producto creado con éxito!');
                     form.reset();
+                    addSelectedImages.length = 0;
+                    document.getElementById('addImagePreviewGrid').innerHTML = '';
                     if (typeof creationDynamicContainer !== 'undefined') {
                         creationDynamicContainer.innerHTML = '';
                     } else {
@@ -1392,9 +1451,6 @@
                     document.getElementById('form-loading-overlay').remove();
                 }
             } finally {
-                // ==========================================
-                // UI UNLOCK (Always runs regardless of success or failure)
-                // ==========================================
                 submitBtn.disabled = false;
                 submitBtn.style.opacity = '1';
                 submitBtn.style.cursor = 'pointer';
@@ -1406,11 +1462,8 @@
         document.getElementById('editFormInstance').addEventListener('submit', async (e) => {
             e.preventDefault();
             const form = e.target;
-
-            // Find the save changes button dynamically inside the form
             const submitBtn = form.querySelector('button[type="submit"]') || form.querySelector('.btn-primary');
 
-            // 1. Core Validation
             const name = document.getElementById('editProdName').value.trim();
             const priceRaw = document.getElementById('editProdPrice').value;
             const price = parseFloat(priceRaw);
@@ -1421,6 +1474,7 @@
             if (!name) return alert('El nombre del producto es obligatorio.');
             if (isNaN(price) || price <= 0) return alert('Por favor, ingresa un precio válido mayor a 0.');
             if (!category) return alert('Debes seleccionar una categoría.');
+            if (editSelectedImages.length === 0) return alert('El producto debe tener al menos una imagen.');
             if (!activeVariants || activeVariants.length === 0) {
                 return alert('El producto debe tener al menos una variante.');
             }
@@ -1430,20 +1484,13 @@
                 return alert('Todas las variantes deben tener talla, color y una cantidad de stock válida.');
             }
 
-            const files = Array.from(document.getElementById('editProdImage').files);
-
-            // ==========================================
-            // UI LOCK & LOADING STATUS (EDIT)
-            // ==========================================
             const originalBtnText = submitBtn.innerHTML;
 
-            // Freeze button state instantly
             submitBtn.disabled = true;
             submitBtn.style.opacity = '0.6';
             submitBtn.style.cursor = 'not-allowed';
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando cambios...';
 
-            // Create the floating temporary notification
             const loadingOverlay = document.createElement('div');
             loadingOverlay.id = 'edit-loading-overlay';
             loadingOverlay.style = 'position: fixed; top: 20px; right: 20px; background: #2b6cb0; color: #fff; padding: 15px 25px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: bold;';
@@ -1451,29 +1498,17 @@
             document.body.appendChild(loadingOverlay);
 
             try {
-                let urls = [];
-                // Only trigger asset uploads if the admin actually selected new images
-                if (files.length > 0) {
-                    const uploadResponses = await Promise.all(
-                        files.map(async (file) => {
-                            const formData = new FormData();
-                            formData.append("file", file);
-
-                            const res = await fetch("/api/upload", {
-                                method: "POST",
-                                body: formData
-                            });
-
-                            if (!res.ok) {
-                                throw new Error("Upload failed");
-                            }
-
-                            return res.json();
-                        })
-                    );
-
-                    const urls = uploadResponses.map(r => r.url);
-                }
+                const finalUrls = await Promise.all(
+                    editSelectedImages.map(async (item) => {
+                        if (typeof item === 'string') return item; 
+                        const formData = new FormData();
+                        formData.append("file", item);
+                        const res = await fetch("/api/upload", { method: "POST", body: formData });
+                        if (!res.ok) throw new Error("Upload failed");
+                        const data = await res.json();
+                        return data.url;
+                    })
+                );
 
                 const payload = {
                     id,
@@ -1484,8 +1519,8 @@
                     sizes: [...new Set(activeVariants.map(v => v.size))],
                     colors: [...new Set(activeVariants.map(v => v.color.toLowerCase()))],
                     variants: activeVariants,
-                    imageUrl: urls.length > 0 ? urls[0] : null,
-                    images: urls.length > 0 ? urls : null
+                    imageUrl: finalUrls.length > 0 ? finalUrls[0] : null,
+                    images: finalUrls.length > 0 ? finalUrls : null
                 };
 
                 const res = await fetch('/api/edit-product', {
@@ -1494,7 +1529,6 @@
                     body: JSON.stringify(payload)
                 });
 
-                // Pull the notification overlay off the screen
                 loadingOverlay.remove();
 
                 if (res.ok) {
@@ -1512,9 +1546,6 @@
                     document.getElementById('edit-loading-overlay').remove();
                 }
             } finally {
-                // ==========================================
-                // UI UNLOCK GUARANTEE
-                // ==========================================
                 submitBtn.disabled = false;
                 submitBtn.style.opacity = '1';
                 submitBtn.style.cursor = 'pointer';
