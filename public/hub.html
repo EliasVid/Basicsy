@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Smarti - Link Hub</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "inverse-primary": "#c6c6c6",
+                        "on-primary-container": "#848484",
+                        "surface-container-highest": "#e3e1ec",
+                        "secondary-fixed": "#e2e2e2",
+                        "primary-fixed": "#e2e2e2",
+                        "surface-container": "#eeedf7",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#fbf8ff",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#1b1b1b",
+                        "tertiary-container": "#1b1b1b",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "surface-variant": "#e3e1ec",
+                        "secondary": "#5d5f5f",
+                        "surface-container-high": "#e8e7f1",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#848484",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#616363",
+                        "inverse-on-surface": "#f1effa",
+                        "outline": "#7e7576",
+                        "secondary-container": "#dfe0e0",
+                        "surface-tint": "#5e5e5e",
+                        "error": "#ba1a1a",
+                        "on-surface": "#1a1b22",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "surface": "#fbf8ff",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "tertiary": "#000000",
+                        "on-secondary-fixed-variant": "#454747",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#dad9e3",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-surface-variant": "#4c4546",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#2f3038",
+                        "on-background": "#1a1b22",
+                        "background": "#f4f4f5",
+                        "on-error": "#ffffff",
+                        "outline-variant": "#cfc4c5",
+                        "surface-container-low": "#f4f2fd",
+                        "primary-container": "#1b1b1b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "bubble": "1.5rem"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "unit": "4px",
+                        "margin-mobile": "20px",
+                        "container-max": "640px",
+                        "stack-gap": "12px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter"],
+                        "headline-md-mobile": ["Hanken Grotesk"],
+                        "title-sm": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-md-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "title-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .link-bubble {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .link-bubble:hover {
+            box-shadow: 0px 6px 24px rgba(0, 0, 0, 0.08);
+            border-color: #000000;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background text-on-background min-h-screen flex flex-col font-body-md antialiased selection:bg-primary-container selection:text-on-primary">
+    <!-- TopAppBar -->
+    <header class="w-full sticky top-0 z-50 bg-surface dark:bg-surface-dim">
+        <div class="flex items-center justify-between px-margin-mobile h-16 max-w-container-max mx-auto">
+            <div
+                class="flex items-center gap-3 cursor-pointer active:scale-95 transition-transform hover:opacity-80 transition-opacity">
+                <span class="material-symbols-outlined text-primary dark:text-primary-fixed"
+                    data-icon="link">link</span>
+                <span
+                    class="font-headline-md text-headline-md font-black tracking-tighter text-primary dark:text-primary-fixed">LINK HUB</span>
+            </div>
+            <nav class="hidden md:flex gap-6">
+                <!-- Navigation elements for desktop if needed, currently omitted for pure mobile focus -->
+            </nav>
+        </div>
+    </header>
+    <!-- Main Content -->
+    <main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile py-8 flex flex-col gap-8">
+        <!-- Profile Header Area (Generated Component) -->
+        <section class="flex flex-col items-center justify-center text-center gap-4">
+            <div
+                class="w-24 h-24 rounded-full border-4 border-surface-container-lowest shadow-[0px_4px_20px_rgba(0,0,0,0.04)] overflow-hidden bg-secondary-fixed">
+                <img class="w-full h-full object-cover"
+                    data-alt="A minimalist black and white headshot portrait of a creative professional against a clean, light grey backdrop. The lighting is soft and even, highlighting a modern, approachable aesthetic suitable for a premium digital portfolio. The mood is calm and sophisticated."
+                    src="img/logo.jpg" />
+            </div>
+            <div>
+                <h1
+                    class="font-headline-md-mobile text-headline-md-mobile md:font-headline-md md:text-headline-md text-primary">
+                    Basicsy</h1>
+                <p class="font-body-md text-body-md text-secondary mt-1 max-w-xs mx-auto">Tienda Digital de Bodys, básicos, tops, y jeans.</p>
+            </div>
+        </section>
+        <!-- Link List -->
+        <section class="flex flex-col gap-stack-gap w-full">
+            <!-- Link Bubble 1 -->
+            <a class="link-bubble group flex items-center justify-between bg-surface-container-lowest p-6 rounded-bubble border border-transparent hover:border-primary cursor-pointer"
+                href="https://basicsy.vercel.app">
+                <div class="flex items-center gap-4">
+                    <span class="material-symbols-outlined text-primary" data-icon="folder_open">language</span>
+                    <span class="font-title-sm text-title-sm text-primary">Website</span>
+                </div>
+                <span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors"
+                    data-icon="arrow_forward">arrow_forward</span>
+            </a>
+            <!-- Link Bubble 2 -->
+            <a class="link-bubble group flex items-center justify-between bg-surface-container-lowest p-6 rounded-bubble border border-transparent hover:border-primary cursor-pointer"
+                href="https://www.instagram.com/basicsy.co">
+                <div class="flex items-center gap-4">
+                    <span class="material-symbols-outlined text-primary" data-icon="lightbulb"><img src="img/instagram.png" width="25px" height="25px" alt=""></span>
+                    <span class="font-title-sm text-title-sm text-primary">Instagram</span>
+                </div>
+                <span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors"
+                    data-icon="arrow_forward">arrow_forward</span>
+            </a>
+            <!-- Link Bubble 3 -->
+            <a class="link-bubble group flex items-center justify-between bg-surface-container-lowest p-6 rounded-bubble border border-transparent hover:border-primary cursor-pointer"
+                href="https://api.whatsapp.com/message/2UMPMIKRZOBEA1">
+                <div class="flex items-center gap-4">
+                    <span class="material-symbols-outlined text-primary"
+                        data-icon="design_services"><img src="img/whatsapp.png" width="30px" height="30px"></span>
+                    <span class="font-title-sm text-title-sm text-primary">Whatsapp</span>
+                </div>
+                <span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors"
+                    data-icon="arrow_forward">arrow_forward</span>
+            </a>
+        </section>
+    </main>
+    <!-- Social Footer -->
+    <footer class="w-full mt-auto bg-surface dark:bg-surface-dim border-t border-outline-variant dark:border-outline">
+        <div class="flex flex-col items-center gap-4 py-8 px-margin-mobile w-full max-w-container-max mx-auto">
+            <div class="flex gap-6 mb-2">
+                <a aria-label="Instagram"
+                    class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200"
+                    href="#">
+                    <!-- Simple CSS Icon placeholders since we strictly follow material symbols logic, but user asked for specific socials not in standard icon set. Using generic alternatives as closest match -->
+                    <span class="material-symbols-outlined text-2xl" data-icon="photo_camera">photo_camera</span>
+                </a>
+                <a aria-label="Twitter/X"
+                    class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200"
+                    href="#">
+                    <span class="material-symbols-outlined text-2xl" data-icon="alternate_email">alternate_email</span>
+                </a>
+                <a aria-label="LinkedIn"
+                    class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200"
+                    href="#">
+                    <span class="material-symbols-outlined text-2xl" data-icon="work">work</span>
+                </a>
+            </div>
+            <div class="flex gap-4 font-label-caps text-label-caps">
+                <a class="text-secondary hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200"
+                    href="#">Privacy</a>
+                <a class="text-secondary hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200"
+                    href="#">Terms</a>
+                <a class="text-secondary hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200"
+                    href="#">Contact</a>
+            </div>
+            <p class="font-label-caps text-label-caps text-secondary dark:text-secondary-fixed-dim mt-2">© 2026 Smarti </p>
+        </div>
+    </footer>
+    <!-- WhatsApp Floating Action Button (FAB) -->
+    <a aria-label="Chat on WhatsApp"
+        class="fixed bottom-6 right-6 md:bottom-10 md:right-10 w-14 h-14 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-transform z-50"
+        href="https://api.whatsapp.com/message/2UMPMIKRZOBEA1">
+        <img src="img/wppWhite.webp" alt="">
+    </a>
+</body>
+
+</html>
