@@ -151,10 +151,48 @@
             align-items: start;
         }
 
-        /* --- SIDEBAR FILTERS --- */
+        /* --- SIDEBAR FILTERS & SEARCH --- */
         .filter-sidebar {
             width: 240px;
             flex-shrink: 0;
+        }
+
+        .search-section {
+            margin-bottom: 30px;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            border: 1px solid #eaeaea;
+            border-radius: 6px;
+            padding: 8px 12px;
+            background: #fdfdfd;
+            transition: border-color 0.2s;
+        }
+
+        .search-container:focus-within {
+            border-color: #000;
+        }
+
+        .search-input-icon {
+            font-size: 20px;
+            color: #767676;
+            margin-right: 8px;
+        }
+
+        .search-container input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-family: 'Didact Gothic', sans-serif;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .search-container input::placeholder {
+            color: #aaa;
         }
 
         .filter-section {
@@ -318,12 +356,10 @@
         .out-of-stock-overlay {
             position: absolute;
             top: 16px; 
-            left: 16px; /* Pushes the rectangle slightly away from the rounded edge */
-            background: rgba(230, 230, 230, 0.9); /* The gray rectangle background */
-            padding: 4px 12px; /* Creates the rectangle shape around the text */
-            border-radius: 6px; /* Softens the corners of the gray rectangle */
-            
-            /* Matches the .product-name font styles */
+            left: 16px;
+            background: rgba(230, 230, 230, 0.9);
+            padding: 4px 12px;
+            border-radius: 6px;
             font-family: 'Didact Gothic', sans-serif;
             font-size: 1.5rem;
             font-weight: bold;
@@ -773,6 +809,7 @@
                 padding-bottom: 15px;
             }
 
+            .search-section,
             .filter-section h3 {
                 font-size: 0.9rem;
                 margin-bottom: 10px;
@@ -909,9 +946,9 @@
             }
 
             .out-of-stock-overlay {
-                font-size: 0.75rem; /* Matches your mobile product titles */
-                padding: 2px 8px; /* Slimmer rectangle */
-                top: 8px; /* Closer to the edge for small images */
+                font-size: 0.75rem;
+                padding: 2px 8px;
+                top: 8px;
                 left: 8px;
                 border-radius: 4px;
             }
@@ -947,7 +984,6 @@
             padding-bottom: 4px;
         }
 
-        /* Custom scrollbar styling for the thumbnail strip */
         .modal-thumbnails-track::-webkit-scrollbar {
             height: 4px;
         }
@@ -982,7 +1018,6 @@
             border-color: #000;
         }
 
-        /* Responsive adjustment for mobile screen dimensions */
         @media (max-width: 900px) {
             .modal-gallery-container {
                 flex-direction: row;
@@ -1038,6 +1073,14 @@
 
     <main class="catalog-layout">
         <aside class="filter-sidebar">
+            <!-- SECCIÓN DE BÚSQUEDA AÑADIDA -->
+            <div class="search-section">
+                <div class="search-container">
+                    <span class="material-symbols-outlined search-input-icon">search</span>
+                    <input type="text" id="searchInput" placeholder="Buscar productos..." />
+                </div>
+            </div>
+
             <div class="filter-section">
                 <h3>Explorar por</h3>
                 <ul class="filter-list" id="categoryFilterMenu">
@@ -1149,6 +1192,9 @@
         // Master state records
         let globalProductsList = [];
         let shoppingCart = [];
+        
+        // Filter state variables
+        let currentCategory = 'all';
 
         // Dynamic helper to match raw hex strings into localized human titles
         function getColorName(hex) {
@@ -1183,7 +1229,6 @@
                 '#a47942': 'mocca',
                 '#ffa5dd': 'rosado',
                 '#3d2f4b': 'uva',
-                '#583400': 'cafe oscuro',
                 '#00c7fc': 'azul cielo',
                 '#5f485a': 'uva'
             };
@@ -1355,8 +1400,9 @@
                     return;
                 }
 
-                // First set up the click listeners
-                setupCategoryFilters(); 
+                // First set up the click listeners and search handler
+                setupCategoryFilters();
+                setupSearchFilter();
 
                 // Read the URL
                 const urlParams = new URLSearchParams(window.location.search);
@@ -1389,20 +1435,81 @@
             }
         }
 
+        // Centralized Filter Logic (Search + Category)
+        function applyFilters() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+            let filtered = globalProductsList;
+
+            // 1. Apply category filtering
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(product => {
+                    return product.category && product.category.toLowerCase().trim() === currentCategory;
+                });
+            }
+
+            // 2. Apply search filtering
+            if (searchTerm !== '') {
+                filtered = filtered.filter(product => {
+                    const nameMatch = product.name && product.name.toLowerCase().includes(searchTerm);
+                    const descMatch = product.description && product.description.toLowerCase().includes(searchTerm);
+                    return nameMatch || descMatch;
+                });
+            }
+
+            renderProducts(filtered);
+        }
+
+        // Binding search input listener
+        function setupSearchFilter() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', applyFilters);
+            }
+        }
+
+        // Binding click filter handlers to the "Browse by" navigation links
+        function setupCategoryFilters() {
+            const filterLinks = document.querySelectorAll('#categoryFilterMenu a');
+            const titleHeader = document.getElementById('catalogCurrentTitle');
+
+            filterLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    filterLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+
+                    currentCategory = link.getAttribute('data-category');
+
+                    if (currentCategory === 'all') {
+                        titleHeader.innerText = 'Todos';
+                    } else {
+                        titleHeader.innerText = link.innerText;
+                    }
+
+                    // Reset search text on category change (optional, remove this line if you want search terms to persist between category clicks)
+                    document.getElementById('searchInput').value = '';
+
+                    applyFilters();
+                });
+            });
+        }
+
+
         // 2. Function responsible for mapping the product subset onto the HTML grid
         function renderProducts(productsToDisplay) {
             const container = document.getElementById('catalogContainer');
             container.innerHTML = '';
 
             if (productsToDisplay.length === 0) {
-                container.innerHTML = `<p class="loading-text">No se encontraron productos en esta categoría.</p>`;
+                container.innerHTML = `<p class="loading-text">No se encontraron productos que coincidan con tu búsqueda.</p>`;
                 return;
             }
 
             productsToDisplay.forEach((product) => {
-                // Calculate stock for the "Agotado" overlay
                 const productVariants = product.variants || [];
-                // Ensured variants stock is treated as a number
                 const totalStock = productVariants.reduce((sum, variant) => sum + (Number(variant.stock) || 0), 0);
                 const isAgotado = totalStock <= 0;
 
@@ -1430,43 +1537,11 @@
             });
         }
 
-        // 3. Binding click filter handlers to the "Browse by" navigation links
-        function setupCategoryFilters() {
-            const filterLinks = document.querySelectorAll('#categoryFilterMenu a');
-            const titleHeader = document.getElementById('catalogCurrentTitle');
-
-            filterLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-
-                    filterLinks.forEach(l => l.classList.remove('active'));
-                    link.classList.add('active');
-
-                    const selectedCategory = link.getAttribute('data-category');
-
-                    if (selectedCategory === 'all') {
-                        titleHeader.innerText = 'Todos';
-                        renderProducts(globalProductsList);
-                    } else {
-                        titleHeader.innerText = link.innerText;
-
-                        const filtered = globalProductsList.filter(product => {
-                            if (!product.category) return false;
-                            return product.category.toLowerCase().trim() === selectedCategory;
-                        });
-
-                        renderProducts(filtered);
-                    }
-                });
-            });
-        }
 
         // 4. Quick View overlay display logic
         function openProductQuickView(product) {
             const overlay = document.getElementById('productModalOverlay');
-
             const mainPreviewImg = document.getElementById('modalProductImg');
-
             const displayImage = product.image || (product.images && product.images.length > 0 ? product.images[0] : 'placeholder.jpg');
             
             mainPreviewImg.src = displayImage;
