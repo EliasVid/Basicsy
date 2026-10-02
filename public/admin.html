@@ -146,6 +146,45 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .content-header-title-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Search Box Styles */
+        .admin-search-box {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px 12px;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            transition: border-color 0.2s;
+        }
+
+        .admin-search-box:focus-within {
+            border-color: #999;
+        }
+
+        .admin-search-box input {
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+            font-size: 14px;
+            padding-left: 8px;
+            color: #333;
+        }
+
+        .admin-search-box input::placeholder {
+            color: #aaa;
         }
 
         .content-body {
@@ -665,7 +704,6 @@
         /* ===================== RESPONSIVE ===================== */
         @media (max-width: 768px) {
 
-            /* Show mobile header, hide sidebar by default */
             .mobile-header {
                 display: flex;
             }
@@ -677,7 +715,6 @@
                 overflow: auto;
             }
 
-            /* Sidebar becomes a slide-in drawer */
             .sidebar {
                 position: fixed;
                 top: 0;
@@ -691,7 +728,6 @@
                 transform: translateX(0);
             }
 
-            /* Main workspace fills full width, offset for fixed header */
             .main-workspace {
                 margin-top: var(--header-height);
                 height: auto;
@@ -703,7 +739,11 @@
                 padding: 20px 16px 10px;
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 6px;
+                gap: 12px;
+            }
+
+            .admin-search-box {
+                max-width: 100%;
             }
 
             .content-header h2 {
@@ -714,13 +754,11 @@
                 padding: 16px 16px 40px;
             }
 
-            /* Admin card full width on mobile */
             .admin-card {
                 max-width: 100%;
                 padding: 20px;
             }
 
-            /* Variant picker row becomes 2-col grid on mobile */
             .picker-row {
                 grid-template-columns: 1fr 1fr;
                 grid-template-rows: auto auto;
@@ -735,7 +773,6 @@
                 align-self: end;
             }
 
-            /* Sales layout stacks vertically on mobile */
             .sales-workspace-layout {
                 grid-template-columns: 1fr;
             }
@@ -754,14 +791,12 @@
                 padding-bottom: 24px;
             }
 
-            /* Inventory table scrollable on small screens */
             .inventory-table th,
             .inventory-table td {
                 padding: 12px 14px;
                 font-size: 13px;
             }
 
-            /* Modal full screen on mobile */
             .modal-overlay {
                 padding: 0;
                 align-items: flex-end;
@@ -789,7 +824,6 @@
                 margin: 16px;
             }
 
-            /* Make buttons easier to tap */
             .btn-primary,
             .btn-danger-outline,
             .btn-danger-filled,
@@ -824,7 +858,6 @@
             }
         }
 
-        /* Tablet: sidebar visible but workspace doesn't overflow */
         @media (min-width: 769px) and (max-width: 1024px) {
             :root {
                 --sidebar-width: 200px;
@@ -873,11 +906,18 @@
 
     <main class="main-workspace">
 
+        <!-- PRODUCTS TAB / INVENTORY -->
         <section id="productsTab" class="tab-content-panel active">
             <div class="content-header">
-                <h2>Inventario de Productos</h2>
-                <p style="font-size: 13px; color: #666;">Haz clic en cualquier fila para editar los detalles del
-                    artículo.</p>
+                <div class="content-header-title-group">
+                    <h2>Inventario de Productos</h2>
+                    <p style="font-size: 13px; color: #666;">Haz clic en cualquier fila para editar los detalles del artículo.</p>
+                </div>
+                <!-- SEARCH BAR 1 (INVENTORY/EDIT) -->
+                <div class="admin-search-box">
+                    <span class="material-symbols-outlined" style="font-size: 20px; color: #999;">search</span>
+                    <input type="text" id="inventorySearchInput" placeholder="Buscar productos para editar...">
+                </div>
             </div>
             <div class="content-body">
                 <div class="inventory-table-wrapper">
@@ -893,8 +933,7 @@
                         </thead>
                         <tbody id="inventoryTableBody">
                             <tr>
-                                <td colspan="5" style="text-align: center; color: #999; padding: 40px;">Cargando
-                                    catálogo...</td>
+                                <td colspan="5" style="text-align: center; color: #999; padding: 40px;">Cargando catálogo...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -902,9 +941,12 @@
             </div>
         </section>
 
+        <!-- ADD PRODUCT TAB -->
         <section id="addProductTab" class="tab-content-panel">
             <div class="content-header">
-                <h2>Nuevo Artículo</h2>
+                <div class="content-header-title-group">
+                    <h2>Nuevo Artículo</h2>
+                </div>
             </div>
             <div class="content-body">
                 <div class="admin-card">
@@ -934,7 +976,6 @@
 
                         <div class="dynamicAttributesContainer"></div>
 
-                        <!-- MODIFIED: Image Handling for Add Product -->
                         <div class="form-group" style="margin-top: 20px;">
                             <label>Imágenes del Producto (La primera será la principal)</label>
                             <input type="file" class="prodImageField" accept="image/png, image/jpeg, image/webp" multiple>
@@ -947,7 +988,24 @@
             </div>
         </section>
 
-        <div id="salesTabContainer"></div>
+        <!-- SALES TAB -->
+        <section id="salesTab" class="tab-content-panel">
+            <div class="content-header">
+                <div class="content-header-title-group">
+                    <h2>Registrar Ventas</h2>
+                    <p style="font-size: 13px; color: #666;">Selecciona un producto del grid para registrar su venta.</p>
+                </div>
+                <!-- SEARCH BAR 2 (SALES) -->
+                <div class="admin-search-box">
+                    <span class="material-symbols-outlined" style="font-size: 20px; color: #999;">search</span>
+                    <input type="text" id="salesSearchInput" placeholder="Buscar productos para venta...">
+                </div>
+            </div>
+            <div class="content-body" id="salesTabContainer">
+                <!-- Partials will be injected here -->
+            </div>
+        </section>
+
     </main>
 
     <!-- Edit Product Modal -->
@@ -980,7 +1038,6 @@
 
                 <div class="dynamicAttributesContainer" id="editDynamicAttributesContainer"></div>
 
-                <!-- MODIFIED: Image Handling for Edit Product -->
                 <div class="form-group" style="margin-top: 20px;">
                     <label>Administrar Imágenes (Agrega nuevas o reordena las existentes)</label>
                     <input type="file" class="prodImageField" id="editProdImage" accept="image/png, image/jpeg, image/webp" multiple>
@@ -1018,7 +1075,6 @@
         let activeVariants = [];
         let recentSalesLogs = [];
         
-        // Unified Image state arrays
         let addSelectedImages = [];
         let editSelectedImages = [];
         
@@ -1062,7 +1118,6 @@
                 `;
             }).join('');
 
-            // Bind actions
             gridEl.querySelectorAll('.move-left').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const i = parseInt(btn.dataset.idx, 10);
@@ -1098,6 +1153,34 @@
 
         setupImageSorting('#addProductTab .prodImageField', '#addImagePreviewGrid', addSelectedImages);
         setupImageSorting('#editProdImage', '#editImagePreviewGrid', editSelectedImages);
+
+        // ===================== SEARCH LOGIC (INVENTORY & SALES) =====================
+
+        // Inventory / Edit Search Listener
+        document.getElementById('inventorySearchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            const filteredData = loadedCatalogData.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) || 
+                (product.category && product.category.toLowerCase().includes(searchTerm))
+            );
+            renderInventoryTable(filteredData);
+        });
+
+        // Sales Tab Search Listener
+        document.getElementById('salesSearchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            // We search against the DOM elements inside the grid dynamically injected
+            const productCards = document.querySelectorAll('.sales-product-card');
+            
+            productCards.forEach(card => {
+                const productName = card.querySelector('.sales-product-name')?.innerText.toLowerCase() || '';
+                if (productName.includes(searchTerm)) {
+                    card.style.display = ''; // Show
+                } else {
+                    card.style.display = 'none'; // Hide
+                }
+            });
+        });
 
         // ===================== MOBILE SIDEBAR TOGGLE =====================
         const hamburgerBtn = document.getElementById('hamburgerBtn');
@@ -1148,40 +1231,47 @@
 
         // ===================== INVENTORY =====================
         async function fetchInventoryCatalog() {
-            const tbody = document.getElementById('inventoryTableBody');
             try {
                 const response = await fetch('/api/get-catalog');
                 loadedCatalogData = await response.json();
-
-                if (loadedCatalogData.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px; color:#999;">No hay productos en tu catálogo.</td></tr>`;
-                    return;
-                }
-
-                tbody.innerHTML = loadedCatalogData.map(product => {
-                    const totalStock = (product.variants || []).reduce((acc, curr) => acc + curr.stock, 0);
-                    const sampleImage = product.image || (product.images && product.images.length > 0 ? product.images[0] : (product.imageUrl || ''));
-                    return `
-                        <tr data-id="${product.id}">
-                            <td><img src="${sampleImage}" class="prod-thumb" alt="Preview"></td>
-                            <td style="font-weight:bold;">${product.name}</td>
-                            <td><span class="badge ${product.category}">${product.category}</span></td>
-                            <td>$ ${product.price.toLocaleString('es-CO')}</td>
-                            <td><strong>${totalStock}</strong> uds (${(product.variants || []).length} var.)</td>
-                        </tr>
-                    `;
-                }).join('');
-
-                tbody.querySelectorAll('tr').forEach(row => {
-                    row.addEventListener('click', () => {
-                        const productMatch = loadedCatalogData.find(p => p.id === row.dataset.id);
-                        if (productMatch) openEditModalWindow(productMatch);
-                    });
-                });
-
+                
+                // Clear the search bar every time we fetch full list
+                document.getElementById('inventorySearchInput').value = '';
+                
+                renderInventoryTable(loadedCatalogData);
             } catch (error) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red; padding:20px;">Error leyendo inventario.</td></tr>`;
+                document.getElementById('inventoryTableBody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:red; padding:20px;">Error leyendo inventario.</td></tr>`;
             }
+        }
+
+        function renderInventoryTable(dataList) {
+            const tbody = document.getElementById('inventoryTableBody');
+            
+            if (dataList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px; color:#999;">No se encontraron productos.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = dataList.map(product => {
+                const totalStock = (product.variants || []).reduce((acc, curr) => acc + curr.stock, 0);
+                const sampleImage = product.image || (product.images && product.images.length > 0 ? product.images[0] : (product.imageUrl || ''));
+                return `
+                    <tr data-id="${product.id}">
+                        <td><img src="${sampleImage}" class="prod-thumb" alt="Preview"></td>
+                        <td style="font-weight:bold;">${product.name}</td>
+                        <td><span class="badge ${product.category}">${product.category}</span></td>
+                        <td>$ ${product.price.toLocaleString('es-CO')}</td>
+                        <td><strong>${totalStock}</strong> uds (${(product.variants || []).length} var.)</td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.querySelectorAll('tr').forEach(row => {
+                row.addEventListener('click', () => {
+                    const productMatch = loadedCatalogData.find(p => p.id === row.dataset.id);
+                    if (productMatch) openEditModalWindow(productMatch);
+                });
+            });
         }
 
         // ===================== SALES TAB =====================
@@ -1300,7 +1390,6 @@
             document.getElementById('editProdDescription').value = product.description || '';
             editCategorySelect.value = product.category;
 
-            // Load existing images into sorting engine
             const existingImages = product.images && product.images.length > 0 ? product.images : (product.imageUrl ? [product.imageUrl] : (product.image ? [product.image] : []));
             editSelectedImages.length = 0; 
             existingImages.forEach(img => editSelectedImages.push(img));
@@ -1318,7 +1407,6 @@
 
         document.getElementById('closeModalBtn').addEventListener('click', () => editModalOverlay.classList.remove('active'));
 
-        // Close modals on backdrop click
         editModalOverlay.addEventListener('click', (e) => {
             if (e.target === editModalOverlay) editModalOverlay.classList.remove('active');
         });
