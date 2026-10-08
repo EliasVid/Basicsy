@@ -438,6 +438,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            cursor: zoom-in; /* Indicate it can be zoomed */
         }
 
         .modal-right-details {
@@ -1042,6 +1043,54 @@
                 height: auto;
             }
         }
+
+        /* --- IMAGE ZOOM OVERLAY STYLES --- */
+        .image-zoom-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 4000; /* Highest z-index */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-zoom-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .image-zoom-overlay img {
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain; /* ensures entire image fits within screen without cropping */
+            cursor: zoom-out;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            border-radius: 4px;
+        }
+
+        .zoom-close-btn {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 36px;
+            cursor: pointer;
+            z-index: 4010;
+            transition: transform 0.2s;
+        }
+
+        .zoom-close-btn:hover {
+            transform: scale(1.1);
+        }
     </style>
 </head>
 
@@ -1073,7 +1122,6 @@
 
     <main class="catalog-layout">
         <aside class="filter-sidebar">
-            <!-- SECCIÓN DE BÚSQUEDA AÑADIDA -->
             <div class="search-section">
                 <div class="search-container">
                     <span class="material-symbols-outlined search-input-icon">search</span>
@@ -1188,12 +1236,17 @@
         </div>
     </div>
 
+    <!-- IMAGE ZOOM OVERLAY -->
+    <div class="image-zoom-overlay" id="imageZoomOverlay">
+        <button class="zoom-close-btn" id="zoomCloseBtn">✕</button>
+        <img id="zoomedImage" src="" alt="Zoomed Product">
+    </div>
+
     <script>
         // Master state records
         let globalProductsList = [];
         let shoppingCart = [];
         
-        // Filter state variables
         let currentCategory = 'all';
 
         // Dynamic helper to match raw hex strings into localized human titles
@@ -1410,7 +1463,6 @@
                 
                 let filterApplied = false;
 
-                // Safely check if a category is actually present in the URL
                 if (categoryParam) {
                     const targetFilter = document.querySelector(`#categoryFilterMenu a[data-category="${categoryParam}"]`);
                     if (targetFilter) {
@@ -1419,7 +1471,6 @@
                     }
                 }
 
-                // If no filter matched the URL, safely trigger the "Todos" filter by default
                 if (!filterApplied) {
                     const allFilter = document.querySelector('#categoryFilterMenu a[data-category="all"]');
                     if (allFilter) {
@@ -1435,21 +1486,18 @@
             }
         }
 
-        // Centralized Filter Logic (Search + Category)
         function applyFilters() {
             const searchInput = document.getElementById('searchInput');
             const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
             let filtered = globalProductsList;
 
-            // 1. Apply category filtering
             if (currentCategory !== 'all') {
                 filtered = filtered.filter(product => {
                     return product.category && product.category.toLowerCase().trim() === currentCategory;
                 });
             }
 
-            // 2. Apply search filtering
             if (searchTerm !== '') {
                 filtered = filtered.filter(product => {
                     const nameMatch = product.name && product.name.toLowerCase().includes(searchTerm);
@@ -1461,7 +1509,6 @@
             renderProducts(filtered);
         }
 
-        // Binding search input listener
         function setupSearchFilter() {
             const searchInput = document.getElementById('searchInput');
             if (searchInput) {
@@ -1469,7 +1516,6 @@
             }
         }
 
-        // Binding click filter handlers to the "Browse by" navigation links
         function setupCategoryFilters() {
             const filterLinks = document.querySelectorAll('#categoryFilterMenu a');
             const titleHeader = document.getElementById('catalogCurrentTitle');
@@ -1489,7 +1535,6 @@
                         titleHeader.innerText = link.innerText;
                     }
 
-                    // Reset search text on category change (optional, remove this line if you want search terms to persist between category clicks)
                     document.getElementById('searchInput').value = '';
 
                     applyFilters();
@@ -1498,7 +1543,6 @@
         }
 
 
-        // 2. Function responsible for mapping the product subset onto the HTML grid
         function renderProducts(productsToDisplay) {
             const container = document.getElementById('catalogContainer');
             container.innerHTML = '';
@@ -1736,6 +1780,36 @@
         });
 
         document.getElementById('whatsappCheckoutTriggerBtn').addEventListener('click', executeWhatsAppCheckoutRedirect);
+
+
+        // --- IMAGE ZOOM LOGIC ---
+        const imageZoomOverlay = document.getElementById('imageZoomOverlay');
+        const zoomedImage = document.getElementById('zoomedImage');
+        const modalProductImg = document.getElementById('modalProductImg');
+        const zoomCloseBtn = document.getElementById('zoomCloseBtn');
+
+        // Open zoom overlay when clicking main preview image
+        modalProductImg.addEventListener('click', () => {
+            if (modalProductImg.src) {
+                zoomedImage.src = modalProductImg.src;
+                imageZoomOverlay.classList.add('active');
+            }
+        });
+
+        // Close zoom overlay
+        function closeZoomOverlay() {
+            imageZoomOverlay.classList.remove('active');
+        }
+
+        zoomCloseBtn.addEventListener('click', closeZoomOverlay);
+        
+        // Also close when clicking anywhere on the background overlay or the image itself
+        imageZoomOverlay.addEventListener('click', (e) => {
+            if (e.target.id === 'imageZoomOverlay' || e.target.id === 'zoomedImage') {
+                closeZoomOverlay();
+            }
+        });
+
 
         window.addEventListener('DOMContentLoaded', () => {
             loadStorefrontCatalog();
